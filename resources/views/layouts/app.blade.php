@@ -85,7 +85,7 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light" style="background: linear-gradient(135deg, #0d6efd 0%, #00c8fa 100%);">
+        <nav class="navbar navbar-expand-md navbar-light" style="background: linear-gradient(135deg, #1a1a1a 0%, #878787 100%);">
             <div class="container">
                 <a class="navbar-brand text-white" href="{{ url('/') }}">
                     {{ config('app.name', 'Sis360') }}
@@ -99,16 +99,21 @@
                     @auth
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('home') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('home') }}">
-                                <i class="fas fa-chart-pie"></i> Estadisticas
+                            <a class="nav-link text-white {{ request()->is('pub/listado') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('pub.listado') }}">
+                                Publicadores
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->is('pub') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('pub.index') }}">
+                                 Agregar Informes
                             </a>
                         </li>
                         @if(Auth::user()->role === 'admin')
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a class="nav-link text-white {{ request()->is('usuarios') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('usuarios.index') }}">
-                                    <i class="fas fa-user"></i> Usuarios
+                                     Usuarios
                                 </a>
-                            </li>
+                            </li> --}}
                         @endif
                     </ul>
                                        

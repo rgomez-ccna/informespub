@@ -6,23 +6,19 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UsuarioController;
 
+use App\Http\Controllers\PublicadorController;
+use App\Http\Controllers\RegistroController;
 
-// Ruta pública para la página de bienvenida
+// Ruta raíz
 Route::get('/', function () {
-    // Redirige a 'home' si el usuario está autenticado
-    if (Auth::check()) {
-        return redirect()->route('home');
-    }
-    // Si no está autenticado, muestra la vista de bienvenida
-    return view('welcome');
-})->name('welcome');
-
+    return Auth::check() ? redirect()->route('pub.listado') : redirect()->route('login');
+});
 
 
 // Rutas protegidas con autenticación
 Route::middleware(['auth'])->group(function () {
     // RUTA HOME
-    Route::get('/home', [HomeController::class, 'index'])->name('home'); // Esta ruta será la que use el usuario autenticado.
+    Route::get('/pub', [PublicadorController::class, 'index'])->name('pub.listado'); // Esta ruta será la que use el usuario autenticado.
 
     // USUARIOS
     Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
@@ -40,6 +36,31 @@ Route::middleware(['auth'])->group(function () {
             return response()->json(['session' => false], 401); // Sesión expirada
         }
     })->name('check.session');
+
+
+
+    
+// Publicadores agrupados por grupo (como lista tipo reporte)
+Route::get('/pub/listado', [PublicadorController::class, 'listado'])->name('pub.listado');
+
+// Tarjeta S-21 (detalle de registros por publicador)
+Route::get('/pub/s21/{id}', [PublicadorController::class, 's21'])->name('pub.s21');
+
+
+ // PUBLICADORES
+ Route::resource('pub', PublicadorController::class);
+
+
+
+ // REGISTROS
+ Route::resource('reg', RegistroController::class);
+ Route::get('/reg/create/{id}', [RegistroController::class, 'create'])->name('reg.create');
+ Route::post('/reg/create/{id}', [RegistroController::class, 'store'])->name('reg.store');
+ Route::get('/reg/enviar/{mes}/{anho}', [RegistroController::class, 'show']);
+ Route::get('/reg/s21/{id_publicador}', [RegistroController::class, 's21'])->name('reg.s21');
+
+
+
 });
 
 // Rutas de autenticación (login, registro, etc.)
