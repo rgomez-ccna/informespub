@@ -38,25 +38,30 @@ class RegistroController extends Controller
 
     // Guardar nuevo registro
     public function store(Request $request, $id)
-    {
-        $request->validate([
-            'a_servicio' => 'required|string|max:10',
-            'mes' => 'required|string|max:20',
-        ]);
+{
+    $request->validate([
+        'a_servicio' => 'required|string|max:10',
+        'mes' => 'required|string|max:20',
+    ]);
 
-        $data = $request->all();
-        $data['id_publicador'] = $id;
+    $data = $request->all();
+    $data['id_publicador'] = $id;
 
-        // Si no es auxiliar, la actividad es el checkbox
-        if (!$request->has('aux') || $request->input('aux') == "") {
-            $data['actividad'] = $request->has('actividad') ? 1 : 0;
-            $data['horas'] = null; // No registran horas
-        }
-
-        Registro::create($data);
-
-        return redirect()->route('reg.s21', $id)->with('success', 'Informe cargado correctamente.');
+    // Detectar si es auxiliar o no
+    if (!$request->has('aux') || $request->input('aux') == "") {
+        // No es auxiliar
+        $data['actividad'] = $request->has('actividad') ? 1 : 0;
+        $data['horas'] = null; // No informa horas
+    } else {
+        // Es auxiliar
+        $data['actividad'] = null; // No necesita actividad
     }
+
+    Registro::create($data);
+
+    return redirect()->route('reg.s21', $id)->with('success', 'Informe cargado correctamente.');
+}
+
 
     // Formulario para editar
     public function edit($id)
@@ -69,25 +74,31 @@ class RegistroController extends Controller
 
     // Actualizar informe
     public function update(Request $request, $id)
-    {
-        $registro = Registro::findOrFail($id);
+{
+    $registro = Registro::findOrFail($id);
 
-        $request->validate([
-            'a_servicio' => 'required|string|max:10',
-            'mes' => 'required|string|max:20',
-        ]);
+    $request->validate([
+        'a_servicio' => 'required|string|max:10',
+        'mes' => 'required|string|max:20',
+    ]);
 
-        $data = $request->all();
+    $data = $request->all();
 
-        if (!$request->has('aux') || $request->input('aux') == "") {
-            $data['actividad'] = $request->has('actividad') ? 1 : 0;
-            $data['horas'] = null;
-        }
-
-        $registro->update($data);
-
-        return redirect()->route('reg.s21', $registro->id_publicador)->with('success', 'Informe actualizado correctamente.');
+    // Detectar si es auxiliar o no
+    if (!$request->has('aux') || $request->input('aux') == "") {
+        // NO es auxiliar, actividad obligatoria
+        $data['actividad'] = $request->has('actividad') ? 1 : 0;
+        $data['horas'] = null;
+    } else {
+        // Es auxiliar, horas obligatorias
+        $data['actividad'] = null;
     }
+
+    $registro->update($data);
+
+    return redirect()->route('reg.s21', $registro->id_publicador)->with('success', 'Informe actualizado correctamente.');
+}
+
 
     // Eliminar informe
     public function destroy($id)

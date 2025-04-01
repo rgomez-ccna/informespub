@@ -32,7 +32,7 @@
 <div class="container">
     <form class="row g-3 my-0" id="form-busqueda">
         <div class="col-auto">
-            <input placeholder="Buscar Publicador" type="text" class="form-control" id="buscador">
+            <input placeholder="Buscar Publicador" type="text" class="form-control" id="buscador" autofocus>
         </div>
     </form>
 
@@ -46,14 +46,15 @@
             <table class="table table-sm table-bordered table-hover my-1">
                 <thead>
                     <tr>
-                        <th>Nombre</th>
-                        <th>Rol</th> {{-- antes era mail --}}
-                        <th>PR</th>
-                        <th>Anciano</th>
-                        <th>S. Ministerial</th>
-                        <th>Teléfono</th>
-                        <th>Opciones</th>
+                        <th style="width: 25%;">Nombre</th>
+                        <th style="width: 10%;">&nbsp;</th>
+                        <th style="width: 10%;">&nbsp;</th>
+                        <th style="width: 10%;">&nbsp;</th>
+                        <th style="width: 10%;">&nbsp;</th>
+                        <th style="width: 25%;">Teléfono</th>
+                        <th style="width: 10%;">&nbsp;</th>
                     </tr>
+                    
                 </thead>
                 <tbody>
                     @foreach ($grupo_publicadores as $publicador)

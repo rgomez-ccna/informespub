@@ -97,15 +97,16 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     @auth
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->is('pub/listado') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('pub.listado') }}">
-                                Publicadores
-                            </a>
-                        </li>
+                    <ul class="navbar-nav me-auto gap-3">
+                        
                         <li class="nav-item">
                             <a class="nav-link text-white {{ request()->is('pub') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('pub.index') }}">
                                  Agregar Informes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->is('pub/listado') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('pub.listado') }}">
+                                Publicadores
                             </a>
                         </li>
                         @if(Auth::user()->role === 'admin')

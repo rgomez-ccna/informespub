@@ -5,7 +5,6 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h5>Nuevo Registro para: <span class="text-primary">{{ $publicador->nombre }}</span></h5>
-    
 </div>
 
 @if ($errors->any())
@@ -18,106 +17,126 @@
         </ul>
     </div>
 @endif
+
 <div class="col-6">
-    <form action="{{ isset($registro) ? route('reg.update', $registro->id) : route('reg.store', $publicador->id) }}" method="POST">
-        @csrf
-        @if(isset($registro)) @method('PUT') @endif
-    
-        <input type="hidden" name="id_publicador" value="{{ $publicador->id }}">
-    
-        <div class="mb-2">
-            <label>Año de Servicio</label>
-            <select name="a_servicio" class="form-select form-select-sm" required>
-                @for($year = now()->year; $year >= 2023; $year--)
-                    <option value="{{ $year }}" {{ (old('a_servicio', $registro->a_servicio ?? '') == $year) ? 'selected' : '' }}> {{ $year }} </option>
-                @endfor
-            </select>
-        </div>
-    
-    
+
+<form action="{{ isset($registro) ? route('reg.update', $registro->id) : route('reg.store', $publicador->id) }}" method="POST">
+    @csrf
+    @if(isset($registro)) @method('PUT') @endif
+
+    <input type="hidden" name="id_publicador" value="{{ $publicador->id }}">
+
+    {{-- Año --}}
+    <div class="mb-2">
+        <label>Año de Servicio</label>
+        <select name="a_servicio" class="form-select form-select-sm" required>
+            @for($year = now()->year; $year >= 2023; $year--)
+                <option value="{{ $year }}" {{ (old('a_servicio', $registro->a_servicio ?? '') == $year) ? 'selected' : '' }}> {{ $year }} </option>
+            @endfor
+        </select>
+    </div>
+
+    {{-- Mes --}}
     @php
     $meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-    $mesAnterior = $meses[now()->subMonth()->month - 1]; // obtiene el mes anterior
+    $mesAnterior = $meses[now()->subMonth()->month - 1];
     @endphp
     <div class="mb-2">
         <label>Mes</label>
         <select name="mes" class="form-select" required>
             <option value="">Seleccionar</option>
             @foreach($meses as $mes)
-                <option value="{{ $mes }}" 
-                    {{ old('mes', $registro->mes ?? $mesAnterior) == $mes ? 'selected' : '' }}>
-                    {{ $mes }}
-                </option>
+                <option value="{{ $mes }}" {{ old('mes', $registro->mes ?? $mesAnterior) == $mes ? 'selected' : '' }}>{{ $mes }}</option>
             @endforeach
         </select>
     </div>
-    
-    
-    
-    
-        @if($showAux)
-        <div class="mb-2">
-            <label>¿Hizo auxiliar este mes?</label>
-            <select name="aux" class="form-select form-select-sm" id="selectAux" required>
-                <option value="">Seleccionar</option>
-                <option value="">No</option>
-                <option value="(Auxiliar)">Si</option>
-            </select>
+
+    {{-- Auxiliar --}}
+    @if($showAux)
+    <div class="mb-2">
+        <label>¿Hizo auxiliar este mes?</label>
+        <select name="aux" class="form-select form-select-sm" id="selectAux" required>
+            <option value="">Seleccione</option>
+            <option value="">No</option>
+            <option value="(Auxiliar)">Sí</option>
+        </select>
+    </div>
+    @endif
+
+    {{-- Si no es auxiliar - Participación --}}
+    @if($showAux)
+    <div id="predicacionContainer" class="mb-2" style="display: none;">
+        <label><b>Participación en predicación *</b></label><br>
+        <div class="form-check form-check-inline" style="font-size: 1.2em;">
+            <input class="form-check-input" style="width:22px; height:22px;" type="radio" name="actividad" id="predico_si" value="1">
+            <label class="form-check-label" for="predico_si"> Predicó</label>
         </div>
-        @endif
-    
-        @if($showAux)
-        <div id="checkboxContainer" class="mb-2" style="display: none;">
-            <label><input type="checkbox" name="actividad" value="1"> Participó en predicación</label>
+        <div class="form-check form-check-inline" style="font-size: 1.2em;">
+            <input class="form-check-input" style="width:22px; height:22px;" type="radio" name="actividad" id="predico_no" value="0">
+            <label class="form-check-label" for="predico_no"> No predicó</label>
         </div>
-        @endif
-    
-        <div id="horasContainer" class="mb-2">
-            <label>Horas (sólo auxiliares o precursores)</label>
-            <input type="number" name="horas" class="form-control form-control-sm" value="{{ old('horas', $registro->horas ?? '') }}">
-        </div>
-    
-        <div class="mb-2">
-            <label># Cursos Bíblicos</label>
-            <input type="number" name="cursos" class="form-control form-control-sm" value="{{ old('cursos', $registro->cursos ?? '') }}">
-        </div>
-    
-        <div class="mb-2">
-            <label>Notas</label>
-            <input type="text" name="notas" class="form-control form-control-sm" value="{{ old('notas', $registro->notas ?? '') }}">
-        </div>
-    
-        <div class="text-center mt-3">
-            <a href="{{ route('reg.s21', $publicador->id) }}" class="btn btn-secondary btn-sm">Volver</a>
-            
-            <button type="submit" class="btn btn-primary btn-sm">{{ isset($registro) ? 'Actualizar' : 'Guardar' }}</button>
-        </div>
-    
-    </form>
-   
+    </div>
+    @endif
+
+    {{-- Si es auxiliar - Horas --}}
+    <div id="horasContainer" class="mb-2">
+        <label>Horas (sólo auxiliares o precursores)</label>
+        <input type="number" name="horas" class="form-control form-control-sm" value="{{ old('horas', $registro->horas ?? '') }}">
+    </div>
+
+    {{-- Cursos --}}
+    <div class="mb-2">
+        <label># Cursos Bíblicos</label>
+        <input type="number" name="cursos" class="form-control form-control-sm" value="{{ old('cursos', $registro->cursos ?? '') }}">
+    </div>
+
+    {{-- Notas --}}
+    <div class="mb-2">
+        <label>Notas</label>
+        <input type="text" name="notas" class="form-control form-control-sm" value="{{ old('notas', $registro->notas ?? '') }}">
+    </div>
+
+    {{-- Botones --}}
+    <div class="text-center mt-3">
+        <a href="{{ route('reg.s21', $publicador->id) }}" class="btn btn-secondary btn-sm">Volver</a>
+        <button type="submit" class="btn btn-primary btn-sm">{{ isset($registro) ? 'Actualizar' : 'Guardar' }}</button>
+    </div>
+
+</form>
 </div>
-
-
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const selectAux = document.getElementById('selectAux');
-    const checkboxContainer = document.getElementById('checkboxContainer');
+    const predicacionContainer = document.getElementById('predicacionContainer');
     const horasContainer = document.getElementById('horasContainer');
+    const radios = document.querySelectorAll('input[name="actividad"]');
+    const inputHoras = document.querySelector('input[name="horas"]');
 
-    if (selectAux) {
-        selectAux.addEventListener('change', () => {
-            if (selectAux.value === '(Auxiliar)') {
-                horasContainer.style.display = 'block';
-                checkboxContainer.style.display = 'none';
-            } else {
-                checkboxContainer.style.display = 'block';
-                horasContainer.style.display = 'none';
-            }
-        });
+    function toggleFields() {
+        if (selectAux.value === '(Auxiliar)') {
+            horasContainer.style.display = 'block';
+            inputHoras.required = true;
+            predicacionContainer.style.display = 'none';
+            radios.forEach(r => { r.checked = false; r.required = false; });
+        } else if (selectAux.value === '') {
+            predicacionContainer.style.display = 'block';
+            radios.forEach(r => { r.required = true; });
+            horasContainer.style.display = 'none';
+            inputHoras.value = '';
+            inputHoras.required = false;
+        } else {
+            predicacionContainer.style.display = 'none';
+            horasContainer.style.display = 'none';
+            radios.forEach(r => { r.checked = false; r.required = false; });
+            inputHoras.value = '';
+            inputHoras.required = false;
+        }
     }
+
+    selectAux.addEventListener('change', toggleFields);
+    toggleFields();
 });
 </script>
-
 @endsection

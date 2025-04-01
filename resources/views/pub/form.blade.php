@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container col-8">
+<div class="container col-10">
     <h5 class="mb-3">{{ isset($publicador) ? 'Editar' : 'Nuevo' }} Publicador</h5>
 
     <form action="{{ isset($publicador) ? route('pub.update', $publicador->id) : route('pub.store') }}" method="POST">
@@ -45,9 +45,14 @@
             </div>
 
             <div class="col-sm-6">
-                <label class="form-label">Rol / Cargo</label>
-                <input type="text" name="rol" class="form-control form-control-sm" value="{{ old('rol', $publicador->rol ?? '') }}">
+                <label class="form-label">Rol</label>
+                <select name="rol" class="form-select form-select-sm">
+                    <option value="">Seleccione (opcional)</option>
+                    <option value="Sup. de Grupo" {{ old('rol', $publicador->rol ?? '') == 'Sup. de Grupo' ? 'selected' : '' }}>Sup. de Grupo</option>
+                    <option value="Sup. Auxiliar" {{ old('rol', $publicador->rol ?? '') == 'Sup. Auxiliar' ? 'selected' : '' }}>Sup. Auxiliar</option>
+                </select>
             </div>
+            
         </div>
 
         <hr class="my-3">

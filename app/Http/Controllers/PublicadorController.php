@@ -4,18 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Models\Publicador;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+use App\Models\Registro;
 
 class PublicadorController extends Controller
 {
+   
+
     public function index(Request $request)
     {
         $nombre = $request->get('nombre');
-
-        $publicadors = Publicador::where('nombre', 'like', '%' . $nombre . '%')
-                        ->orderBy('grupo', 'ASC')
-                        ->get();
-
-        return view('pub.index', compact('publicadors'));
+    
+        $publicadors = Publicador::with('registros')
+            ->where('nombre', 'like', '%'.$nombre.'%')
+            ->orderBy('grupo','ASC')
+            ->get();
+    
+        // Calcular estados
+        $lastReportStatuses = [];
+        $publisherActivityStatuses = [];
+    
+        foreach ($publicadors as $pub) {
+            $lastReportStatuses[$pub->id] = $this->lastReportStatus($pub->id);
+            $publisherActivityStatuses[$pub->id] = $this->publisherActivityStatus($pub->id);
+        }
+    
+        return view('pub.index', compact('publicadors', 'lastReportStatuses', 'publisherActivityStatuses'));
     }
 
     public function create()
@@ -81,6 +95,52 @@ class PublicadorController extends Controller
 
 
 
+
+
+    // --------------------
+// Estado de INFORME
+private function lastReportStatus($publicadorId)
+{
+    $currentMonthStart = now()->startOfMonth();
+    $currentMonthEnd = now()->endOfMonth();
+
+    $lastReport = Registro::where('id_publicador', $publicadorId)
+        ->whereBetween('created_at', [$currentMonthStart, $currentMonthEnd])
+        ->first();
+
+    return $lastReport ? 'success' : 'danger';
+}
+
+// --------------------
+// Estado de ACTIVIDAD
+private function publisherActivityStatus($publicadorId)
+{
+    $reports = Registro::where('id_publicador', $publicadorId)
+        ->whereBetween('created_at', [now()->subMonths(7), now()])
+        ->orderBy('created_at')
+        ->get();
+
+    if ($reports->isEmpty()) return 'inactivo';
+
+    $consecutive = 1;
+    $prevDate = Carbon::parse($reports->first()->created_at);
+
+    for ($i = 1; $i < $reports->count(); $i++) {
+        $date = Carbon::parse($reports[$i]->created_at);
+        $diff = $prevDate->diffInMonths($date);
+
+        if ($diff == 1 || ($prevDate->month == 12 && $date->month == 1)) {
+            $consecutive++;
+        } else {
+            $consecutive = 1;
+        }
+
+        if ($consecutive == 6) return 'activo';
+        $prevDate = $date;
+    }
+
+    return ($prevDate->diffInMonths(now()) < 6) ? 'irregular' : 'inactivo';
+}
 
     ///RESUMEN 
     // Vista tipo listado agrupado por grupo
