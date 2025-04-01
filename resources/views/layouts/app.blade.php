@@ -135,9 +135,9 @@
                                 </li>
                             @endif
                             @if (Route::has('register'))
-                                <li class="nav-item">
+                                {{-- <li class="nav-item">
                                     <a class="nav-link text-white rounded-2" href="{{ route('register') }}">{{ __('Registro') }}</a>
-                                </li>
+                                </li> --}}
                             @endif
                         @else
                             <li class="nav-item dropdown">
