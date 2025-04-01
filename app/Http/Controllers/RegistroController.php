@@ -38,29 +38,36 @@ class RegistroController extends Controller
 
     // Guardar nuevo registro
     public function store(Request $request, $id)
-{
-    $request->validate([
-        'a_servicio' => 'required|string|max:10',
-        'mes' => 'required|string|max:20',
-    ]);
-
-    $data = $request->all();
-    $data['id_publicador'] = $id;
-
-    // Detectar si es auxiliar o no
-    if (!$request->has('aux') || $request->input('aux') == "") {
-        // No es auxiliar
-        $data['actividad'] = $request->has('actividad') ? 1 : 0;
-        $data['horas'] = null; // No informa horas
-    } else {
-        // Es auxiliar
-        $data['actividad'] = null; // No necesita actividad
+    {
+        $request->validate([
+            'a_servicio' => 'required|string|max:10',
+            'mes' => 'required|string|max:20',
+        ]);
+    
+        $data = $request->all();
+        $data['id_publicador'] = $id;
+    
+        $publicador = Publicador::findOrFail($id);
+    
+        // Detectar tipo
+        if (!$request->has('aux') || $request->input('aux') == "") {
+            // No es auxiliar
+            $data['actividad'] = $request->has('actividad') ? 1 : 0;
+    
+            // SOLO borra horas si no es precursor regular
+            if (!$publicador->precursor) {
+                $data['horas'] = null;
+            }
+        } else {
+            // Es auxiliar
+            $data['actividad'] = null;
+        }
+    
+        Registro::create($data);
+    
+        return redirect()->route('reg.s21', $id)->with('success', 'Informe cargado correctamente.');
     }
-
-    Registro::create($data);
-
-    return redirect()->route('reg.s21', $id)->with('success', 'Informe cargado correctamente.');
-}
+    
 
 
     // Formulario para editar
@@ -76,6 +83,7 @@ class RegistroController extends Controller
     public function update(Request $request, $id)
 {
     $registro = Registro::findOrFail($id);
+    $publicador = $registro->publicador;
 
     $request->validate([
         'a_servicio' => 'required|string|max:10',
@@ -86,9 +94,13 @@ class RegistroController extends Controller
 
     // Detectar si es auxiliar o no
     if (!$request->has('aux') || $request->input('aux') == "") {
-        // NO es auxiliar, actividad obligatoria
+        // NO es auxiliar, pero puede ser precursor regular
         $data['actividad'] = $request->has('actividad') ? 1 : 0;
-        $data['horas'] = null;
+
+        // Solo borra horas si no es precursor regular
+        if (!$publicador->precursor) {
+            $data['horas'] = null;
+        }
     } else {
         // Es auxiliar, horas obligatorias
         $data['actividad'] = null;
@@ -100,6 +112,7 @@ class RegistroController extends Controller
 }
 
 
+
     // Eliminar informe
     public function destroy($id)
     {
@@ -108,4 +121,19 @@ class RegistroController extends Controller
 
         return redirect()->back()->with('success', 'Registro eliminado correctamente.');
     }
+
+
+
+    public function enviarInformes(Request $request)
+{
+    // Obtener publicadores con sus registros
+    $publicadores = Publicador::with(['registros' => function($q) use ($request) {
+        if ($request->filled('mes') && $request->filled('anho')) {
+            $q->where('mes', $request->mes)->where('a_servicio', $request->anho);
+        }
+    }])->orderBy('nombre')->get();
+
+    return view('reg.enviar-informes', compact('publicadores'));
+}
+
 }

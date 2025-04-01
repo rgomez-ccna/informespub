@@ -109,6 +109,11 @@
                                 Publicadores
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->is('reg/enviar-informes') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('reg.enviar-informes') }}">
+                                Enviar Informes
+                            </a>
+                        </li>
                         @if(Auth::user()->role === 'admin')
                             {{-- <li class="nav-item">
                                 <a class="nav-link text-white {{ request()->is('usuarios') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('usuarios.index') }}">

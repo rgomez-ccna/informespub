@@ -52,13 +52,13 @@ Route::get('/pub/s21/{id}', [PublicadorController::class, 's21'])->name('pub.s21
 
 
 
- // REGISTROS
- Route::resource('reg', RegistroController::class);
- Route::get('/reg/create/{id}', [RegistroController::class, 'create'])->name('reg.create');
- Route::post('/reg/create/{id}', [RegistroController::class, 'store'])->name('reg.store');
- Route::get('/reg/enviar/{mes}/{anho}', [RegistroController::class, 'show']);
- Route::get('/reg/s21/{id_publicador}', [RegistroController::class, 's21'])->name('reg.s21');
 
+// REGISTROS
+Route::resource('reg', RegistroController::class)->except(['show']);
+Route::get('/reg/create/{id}', [RegistroController::class, 'create'])->name('reg.create');
+Route::post('/reg/create/{id}', [RegistroController::class, 'store'])->name('reg.store');
+Route::get('/reg/s21/{id_publicador}', [RegistroController::class, 's21'])->name('reg.s21');
+Route::get('reg/enviar-informes', [RegistroController::class, 'enviarInformes'])->name('reg.enviar-informes');
 
 
 });
