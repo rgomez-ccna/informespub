@@ -74,10 +74,16 @@
 
         <hr class="my-3">
 
-        <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary btn-sm me-2">Guardar</button>
-            <a href="{{ route('pub.index') }}" class="btn btn-secondary btn-sm">Volver</a>
+        <div class="">
+            <a href="{{ route('pub.index') }}" class="btn btn-secondary">
+                <i class="fa fa-arrow-left"></i> Volver
+            </a>
+            <button type="submit" class="btn btn-primary">
+                Guardar <i class="fa fa-check"></i>
+
+            </button>
         </div>
+        
 
     </form>
 </div>

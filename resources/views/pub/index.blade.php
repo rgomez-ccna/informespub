@@ -11,10 +11,13 @@
 
 <nav class="navbar navbar-light bg-light mb-2">
     <div class="container-fluid">
-        <a class="text-white btn bg-primary " href="{{ route('pub.create') }}">Agregar Nuevo Pub</a>
+        <a class="text-white btn bg-secondary " href="{{ route('pub.create') }}">
+            <i class="fa fa-user-plus"></i> Agregar Nuevo Pub
+        </a>
+        
         <form class="d-flex" action="{{ url('/pub') }}" method="GET">
             <input name="nombre" class="form-control me-2" type="search" placeholder="Buscar Publicador">
-            <button class="btn btn-outline-success" type="submit">Buscar</button>
+            <button class="btn btn-outline-primary" type="submit">Buscar</button>
         </form>
     </div>
 </nav>
@@ -38,7 +41,7 @@
                                 <th>Publicador</th>
                                 <th></th>
                                 <th>Informar:</th>
-                                <th></th>
+                                <th class="text-end">Acciones</th>
                             </tr>
                         </thead>
                         <style>
@@ -49,33 +52,41 @@
                             @foreach ($grupo_publicadores as $pub)
                                 <tr class="{{ $publisherActivityStatuses[$pub->id] == 'activo' ? '' : ($publisherActivityStatuses[$pub->id] == 'irregular' ? 'bg-soft-yellow' : 'bg-soft-red') }}">
                                     <td>{{ $loop->index + 1 }}</td>
-
+                    
                                     @if($pub->precursor)
-                                        <td style="background:#b6ffe4">{{ $pub->nombre }}</td>
+                                        <td style="background:#cfffed">{{ $pub->nombre }}</td>
                                     @else
                                         <td>{{ $pub->nombre }}</td>
                                     @endif
-
+                    
                                     @php
                                         $publicadores_precursor = $grupo_publicadores->where('precursor', true);
                                     @endphp
-
+                    
                                     <td class="p-0">
                                         <p class="text-{{ $lastReportStatuses[$pub->id] }} m-0 d-block text-center" style="width: 100%; height: 100%;">
                                             {{ $lastReportStatuses[$pub->id] == 'success' ? 'Informó' : 'No informó' }}
                                         </p>
                                     </td>
-
+                    
                                     <td>
-                                        <a href="{{ route('reg.s21', ['id_publicador' => $pub->id]) }}" class="btn btn-primary btn-sm">Agregar Informe</a>
+                                        <a href="{{ route('reg.s21', ['id_publicador' => $pub->id]) }}" class="btn btn-primary btn-sm">
+                                            <i class="fa fa-id-card"></i> Agregar Informe
+                                        </a>
                                     </td>
-
-                                    <td>
-                                        <a href="{{ route('pub.edit', $pub->id) }}" class="btn btn-warning btn-sm">Editar</a>
+                    
+                                    <td class="text-end">
+                                        <a href="{{ route('pub.edit', $pub->id) }}" class="btn btn-secondary btn-sm">
+                                            <i class="fa fa-edit"></i> Editar PUB
+                                        </a>
+                                        
                                         <form method="POST" action="{{ route('pub.destroy', $pub->id) }}" style="display: inline-block;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar al publicador {{ $pub->nombre }}?')">Eliminar</button>
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('⚠️ ATENCIÓN:\n\nSe eliminará el publicador {{ $pub->nombre }} y TODOS sus registros.\n\n❌ Esta acción NO se puede deshacer.\n\n¿Deseas continuar?')">
+                                                <i class="fa fa-trash"></i> Eliminar PUB
+                                            </button>
+                                            
                                         </form>
                                     </td>
                                 </tr>
@@ -83,10 +94,11 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="3">Precursores : {{ $publicadores_precursor->count() }}</th>
+                                <th colspan="5">Precursores : {{ $publicadores_precursor->count() }}</th>
                             </tr>
                         </tfoot>
                     </table>
+                    
 
                 </div>
             </div>

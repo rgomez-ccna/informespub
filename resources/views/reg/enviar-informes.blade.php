@@ -22,89 +22,91 @@
             </select>
         </div>
         <div class="col-12 col-lg-2">
-            <button class="btn btn-success btn-sm w-100" type="submit">Calcular</button>
+            <button class="btn btn-secondary btn-sm w-100" type="submit">Calcular</button>
         </div>
     </form>
-    
 
-    {{-- Mostrar resultados solo si se envió el filtro --}}
     @if(request('mes') && request('anho'))
 
     <div class="alert alert-info">Informe de: <strong>{{ request('mes') }} {{ request('anho') }}</strong></div>
 
     {{-- ======================= --}}
-    {{-- ===== PUBLICADORES ==== --}}
-    {{-- ======================= --}}
-    <div class="card mb-3">
-        <div class="card-header alert alert-primary">Publicadores</div>
-        <div class="card-body table-responsive">
-
-            <table class="table table-sm table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>Publicador</th>
-                        <th>Participación</th>
-                        <th>Cursos</th>
-                        <th>Notas</th>
-                    </tr>
-                </thead>
-                <tbody>
+{{-- ===== PUBLICADORES ==== --}}
+{{-- ======================= --}}
+<div class="mb-3">
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered table-hover">
+            <thead class="table-primary">
+                <tr>
+                    <th>PUBLICADORES</th>
+                    <th>Participación</th>
+                    <th>Cursos</th>
+                    <th>Notas</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                    $totalPub = 0;
+                    $totalCursosPub = 0;
+                    $sinInformePub = [];
+                @endphp
+                @foreach($publicadores->where('precursor', null) as $pub)
                     @php
-                        $totalPub = 0;
-                        $sinInformePub = [];
+                        $reg = $pub->registros->where('mes', request('mes'))->where('a_servicio', request('anho'))->first();
                     @endphp
-                    @foreach($publicadores->where('precursor', null) as $pub)
-                        @php
-                            $reg = $pub->registros->where('mes', request('mes'))->where('a_servicio', request('anho'))->first();
+                    @if($reg && empty($reg->aux))
+                        <tr>
+                            <td>{{ $pub->nombre }}</td>
+                            <td class="text-center">@if($reg->actividad) <i class="fa fa-check text-success"></i> @endif</td>
+                            <td class="text-center">{{ $reg->cursos ?? '-' }}</td>
+                            <td>{{ $reg->notas ?? '' }}</td>
+                        </tr>
+                        @php 
+                            $totalPub++; 
+                            $totalCursosPub += $reg->cursos ?? 0;
                         @endphp
-
-                        {{-- Publicador que informó --}}
-                        @if($reg && empty($reg->aux))
-                            <tr>
-                                <td>{{ $pub->nombre }}</td>
-                                <td class="text-center">@if($reg->actividad) <i class="fa fa-check text-success"></i> @endif</td>
-                                <td class="text-center">{{ $reg->cursos ?? '-' }}</td>
-                                <td>{{ $reg->notas ?? '' }}</td>
-                            </tr>
-                            @php $totalPub++; @endphp
-
-                        {{-- Publicador sin registro --}}
-                        @elseif(!$reg)
-                            @php $sinInformePub[] = $pub; @endphp
-                        @endif
-                    @endforeach
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="4">Total Publicadores: {{ $publicadores->where('precursor', null)->count() }} | Informaron: {{ $totalPub }} | Sin informar: {{ count($sinInformePub) }}</td>
-                    </tr>
-                </tfoot>
-            </table>
-
-            {{-- Publicadores sin informar --}}
-            @if(count($sinInformePub))
-                <p><b>Sin Informe:</b></p>
-                <ul>
-                    @foreach($sinInformePub as $pub)
-                        <li>{{ $pub->nombre }}</li>
-                    @endforeach
-                </ul>
-            @endif
-
-        </div>
+                    @elseif(!$reg)
+                        @php $sinInformePub[] = $pub; @endphp
+                    @endif
+                @endforeach
+            </tbody>
+            <tfoot>
+                <tr class="table-secondary">
+                    <td><b>Totales</b></td>
+                    <td></td>
+                    <td class="text-center"><b>{{ $totalCursosPub }}</b></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="4">Total Publicadores: {{ $publicadores->where('precursor', null)->count() }} | Informaron: {{ $totalPub }} | Sin informar: {{ count($sinInformePub) }}</td>
+                </tr>
+                @if(count($sinInformePub))
+                <tr>
+                    <td colspan="4">
+                        <b>Sin Informe:</b><br>
+                        <ul class="mb-0 ps-3">
+                            @foreach($sinInformePub as $pub)
+                                <li>{{ $pub->nombre }}</li>
+                            @endforeach
+                        </ul>
+                    </td>
+                </tr>
+                @endif
+            </tfoot>
+        </table>
     </div>
+</div>
+
 
     {{-- ======================= --}}
     {{-- ===== AUXILIARES ====== --}}
     {{-- ======================= --}}
-    <div class="card mb-3">
-        <div class="card-header alert alert-secondary">Auxiliares</div>
-        <div class="card-body table-responsive">
-
+    <div class="mb-3">
+        <div class="table-responsive">
             <table class="table table-sm table-bordered table-hover">
-                <thead>
+                <thead class="table-warning">
                     <tr>
-                        <th>Publicador</th>
+                        <th>PREC. AUXILIARES</th>
                         <th>Horas</th>
                         <th>Cursos</th>
                         <th>Notas</th>
@@ -113,6 +115,8 @@
                 <tbody>
                     @php
                         $totalAux = 0;
+                        $totalHorasAux = 0;
+                        $totalCursosAux = 0;
                     @endphp
                     @foreach($publicadores->where('precursor', null) as $pub)
                         @php
@@ -125,77 +129,98 @@
                                 <td class="text-center">{{ $reg->cursos ?? '-' }}</td>
                                 <td>{{ $reg->notas ?? '' }}</td>
                             </tr>
-                            @php $totalAux++; @endphp
+                            @php 
+                                $totalAux++; 
+                                $totalHorasAux += $reg->horas ?? 0;
+                                $totalCursosAux += $reg->cursos ?? 0;
+                            @endphp
                         @endif
                     @endforeach
                 </tbody>
                 <tfoot>
+                    <tr class="table-secondary">
+                        <td><b>Totales</b></td>
+                        <td class="text-center"><b>{{ $totalHorasAux }}</b></td>
+                        <td class="text-center"><b>{{ $totalCursosAux }}</b></td>
+                        <td></td>
+                    </tr>
                     <tr>
                         <td colspan="4">Total Auxiliares del mes: {{ $totalAux }}</td>
                     </tr>
                 </tfoot>
             </table>
-
         </div>
     </div>
 
-    {{-- ======================= --}}
-    {{-- ===== REGULARES ======= --}}
-    {{-- ======================= --}}
-    <div class="card mb-3">
-        <div class="card-header alert alert-dark">Regulares</div>
-        <div class="card-body table-responsive">
-
-            <table class="table table-sm table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>Publicador</th>
-                        <th>Horas</th>
-                        <th>Cursos</th>
-                        <th>Notas</th>
-                    </tr>
-                </thead>
-                <tbody>
+   {{-- ======================= --}}
+{{-- ===== REGULARES ======= --}}
+{{-- ======================= --}}
+<div class="mb-3">
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered table-hover">
+            <thead class="table-success">
+                <tr>
+                    <th>PREC. REGULARES</th>
+                    <th>Horas</th>
+                    <th>Cursos</th>
+                    <th>Notas</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                    $totalPrec = 0;
+                    $totalHorasPrec = 0;
+                    $totalCursosPrec = 0;
+                    $sinInformePrec = [];
+                @endphp
+                @foreach($publicadores->where('precursor', '1') as $pub)
                     @php
-                        $totalPrec = 0;
-                        $sinInformePrec = [];
+                        $reg = $pub->registros->where('mes', request('mes'))->where('a_servicio', request('anho'))->first();
                     @endphp
-                    @foreach($publicadores->where('precursor', '1') as $pub)
-                        @php
-                            $reg = $pub->registros->where('mes', request('mes'))->where('a_servicio', request('anho'))->first();
+                    @if($reg)
+                        <tr>
+                            <td>{{ $pub->nombre }}</td>
+                            <td class="text-center">{{ $reg->horas ?? '-' }}</td>
+                            <td class="text-center">{{ $reg->cursos ?? '-' }}</td>
+                            <td>{{ $reg->notas ?? '' }}</td>
+                        </tr>
+                        @php 
+                            $totalPrec++; 
+                            $totalHorasPrec += $reg->horas ?? 0;
+                            $totalCursosPrec += $reg->cursos ?? 0;
                         @endphp
-                        @if($reg)
-                            <tr>
-                                <td>{{ $pub->nombre }}</td>
-                                <td class="text-center">{{ $reg->horas ?? '-' }}</td>
-                                <td class="text-center">{{ $reg->cursos ?? '-' }}</td>
-                                <td>{{ $reg->notas ?? '' }}</td>
-                            </tr>
-                            @php $totalPrec++; @endphp
-                        @else
-                            @php $sinInformePrec[] = $pub; @endphp
-                        @endif
-                    @endforeach
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="4">Total Regulares: {{ $publicadores->where('precursor', '1')->count() }} | Informaron: {{ $totalPrec }} | Sin informar: {{ count($sinInformePrec) }}</td>
-                    </tr>
-                </tfoot>
-            </table>
-
-            {{-- Regulares sin informar --}}
-            @if(count($sinInformePrec))
-                <p><b>Sin Informe:</b></p>
-                <ul>
-                    @foreach($sinInformePrec as $pub)
-                        <li>{{ $pub->nombre }}</li>
-                    @endforeach
-                </ul>
-            @endif
-
-        </div>
+                    @else
+                        @php $sinInformePrec[] = $pub; @endphp
+                    @endif
+                @endforeach
+            </tbody>
+            <tfoot>
+                <tr class="table-secondary">
+                    <td><b>Totales</b></td>
+                    <td class="text-center"><b>{{ $totalHorasPrec }}</b></td>
+                    <td class="text-center"><b>{{ $totalCursosPrec }}</b></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="4">Total Regulares: {{ $publicadores->where('precursor', '1')->count() }} | Informaron: {{ $totalPrec }} | Sin informar: {{ count($sinInformePrec) }}</td>
+                </tr>
+                @if(count($sinInformePrec))
+                <tr>
+                    <td colspan="4">
+                        <b>Sin Informe:</b><br>
+                        <ul class="mb-0 ps-3">
+                            @foreach($sinInformePrec as $pub)
+                                <li>{{ $pub->nombre }}</li>
+                            @endforeach
+                        </ul>
+                    </td>
+                </tr>
+                @endif
+            </tfoot>
+        </table>
     </div>
+</div>
+
 
     @endif
 

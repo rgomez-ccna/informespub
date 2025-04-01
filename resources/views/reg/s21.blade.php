@@ -54,19 +54,32 @@
                                 <tr>
                                     <td>{{ $publicador->nombre }}</td>
                                     <td>{{ $registro->mes }}</td>
-                                    <td>{{ $registro->actividad ? 'Predicó' : 'No' }}</td>
+                                    <td class="text-center">
+                                        @if($registro->aux == '(Auxiliar)' || $publicador->precursor)
+                                            {{-- vacío --}}
+                                        @else
+                                            {!! $registro->actividad ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i>' !!}
+                                        @endif
+                                    </td>
+                                    
                                     <td>{{ $registro->horas }}</td>
                                     <td>{{ $registro->cursos }}</td>
                                     <td>{{ $registro->notas }}</td>
                                     <td>{{ $registro->aux }}</td>
-                                    <td>
-                                        <a href="{{ route('reg.edit', $registro->id) }}" class="btn btn-warning btn-sm">Editar</a>
+                                    <td class="text-end">
+                                        <a href="{{ route('reg.edit', $registro->id) }}" class="btn btn-secondary btn-sm">
+                                            <i class="fa fa-edit"></i> Editar FILA
+                                        </a>
+                                        
                                         <form action="{{ route('reg.destroy', $registro->id) }}" method="POST" class="d-inline-block">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar registro?')">Eliminar</button>
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar esta FILA?')">
+                                                <i class="fa fa-trash"></i> Eliminar FILA
+                                            </button>
                                         </form>
                                     </td>
+                                    
                                     <td>{{ $registro->created_at }}</td>
                                 </tr>
                             @endforeach

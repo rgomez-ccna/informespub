@@ -97,46 +97,67 @@
     </div>
 
     {{-- Botones --}}
-    <div class="text-center mt-3">
-        <a href="{{ route('reg.s21', $publicador->id) }}" class="btn btn-secondary btn-sm">Volver</a>
-        <button type="submit" class="btn btn-primary btn-sm">{{ isset($registro) ? 'Actualizar' : 'Guardar' }}</button>
+    <div class=" mt-3">
+        <a href="{{ route('reg.s21', $publicador->id) }}" class="btn btn-secondary me-2">
+            <i class="fa fa-arrow-left"></i> Volver
+        </a>
+        
+        <button type="submit" class="btn btn-primary ">
+            <i class="fa fa-check"></i> {{ isset($registro) ? 'Actualizar' : 'Guardar' }}
+        </button>
     </div>
+    
 
 </form>
 </div>
 </div>
-
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const selectAux = document.getElementById('selectAux');
-    const predicacionContainer = document.getElementById('predicacionContainer');
-    const horasContainer = document.getElementById('horasContainer');
-    const radios = document.querySelectorAll('input[name="actividad"]');
-    const inputHoras = document.querySelector('input[name="horas"]');
-
-    function toggleFields() {
-        if (selectAux.value === '(Auxiliar)') {
-            horasContainer.style.display = 'block';
-            inputHoras.required = true;
-            predicacionContainer.style.display = 'none';
-            radios.forEach(r => { r.checked = false; r.required = false; });
-        } else if (selectAux.value === '') {
-            predicacionContainer.style.display = 'block';
-            radios.forEach(r => { r.required = true; });
-            horasContainer.style.display = 'none';
-            inputHoras.value = '';
-            inputHoras.required = false;
-        } else {
-            predicacionContainer.style.display = 'none';
-            horasContainer.style.display = 'none';
-            radios.forEach(r => { r.checked = false; r.required = false; });
-            inputHoras.value = '';
-            inputHoras.required = false;
+    document.addEventListener('DOMContentLoaded', () => {
+        const selectAux = document.getElementById('selectAux');
+        const predicacionContainer = document.getElementById('predicacionContainer');
+        const horasContainer = document.getElementById('horasContainer');
+        const radios = document.querySelectorAll('input[name="actividad"]');
+        const inputHoras = document.querySelector('input[name="horas"]');
+        const esPrecursor = {{ $publicador->precursor ? 'true' : 'false' }};
+    
+        function toggleFields() {
+            if (selectAux && selectAux.value === '(Auxiliar)') {
+                // Auxiliar informa horas
+                horasContainer.style.display = 'block';
+                inputHoras.required = true;
+                predicacionContainer.style.display = 'none';
+                radios.forEach(r => { r.checked = false; r.required = false; });
+    
+            } else if (selectAux && selectAux.value === '') {
+                // Publicador común informa participación
+                predicacionContainer.style.display = 'block';
+                radios.forEach(r => { r.required = true; });
+                horasContainer.style.display = 'none';
+                inputHoras.value = '';
+                inputHoras.required = false;
+    
+            } else if (!selectAux && esPrecursor) {
+                // Precursor Regular informa horas
+                horasContainer.style.display = 'block';
+                inputHoras.required = true;
+                predicacionContainer.style.display = 'none';
+                radios.forEach(r => { r.checked = false; r.required = false; });
+    
+            } else {
+                // Otros casos (no deberían ocurrir)
+                predicacionContainer.style.display = 'none';
+                horasContainer.style.display = 'none';
+                radios.forEach(r => { r.checked = false; r.required = false; });
+                inputHoras.value = '';
+                inputHoras.required = false;
+            }
         }
-    }
-
-    selectAux.addEventListener('change', toggleFields);
-    toggleFields();
-});
-</script>
+    
+        if (selectAux) {
+            selectAux.addEventListener('change', toggleFields);
+        }
+        toggleFields();
+    });
+    </script>
+    
 @endsection
