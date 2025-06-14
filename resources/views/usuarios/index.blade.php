@@ -34,20 +34,9 @@
                             <td>{{ $usuario->name }}</td>
                             <td>{{ $usuario->email }}</td>
                             <td>
-                                @switch($usuario->role)
-                                    @case('vendedor')
-                                        <span class="badge bg-primary">{{ $usuario->role }}</span>
-                                        @break
-                                    @case('admin')
-                                        <span class="badge bg-success">{{ $usuario->role }}</span>
-                                        @break
-                                    @case('disabled')
-                                        <span class="badge bg-secondary">{{ $usuario->role }}</span>
-                                        @break
-                                    @default
-                                        <span class="badge bg-warning">{{ $usuario->role }}</span>
-                                @endswitch
+                                <span class="badge text-dark role-{{ $usuario->role }}">{{ $usuario->role }}</span>
                             </td>
+
                             <td>{{ $usuario->created_at->format('d-m-Y') }}</td>
                             <td>
                                 <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
@@ -66,6 +55,11 @@
             </table>
         </div>
     </div>
+
+<style>
+
+
+</style>
 
     <script>
         function confirmDelete(id) {

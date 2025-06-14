@@ -45,42 +45,6 @@
     }
 </style>
 
-<style>
-    /* Estilo para el overlay de carga */
-    #loadingOverlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* Color de fondo inicial azul */
-        z-index: 1050;
-        overflow: hidden; /* Para ocultar el desbordamiento de la línea */
-    }
-
-    /* Estilo para la línea animada */
-    #loadingOverlay::after {
-        content: "";
-        position: absolute;
-        width: 100%;
-        height: 2px;
-        top: 50%; /* Posicionamos la línea en el centro vertical */
-        left: 0;
-        background: linear-gradient(to right, rgb(255, 255, 255), rgb(45, 105, 255)); /* Gradiente de transición entre blanco y azul */
-        animation: pasa 1s linear infinite; /* Animación de la línea con duración de 3 segundos */
-    }
-
-    /* Definición de la animación */
-    @keyframes pasa {
-        0% {
-            transform: translateX(-100%);
-        }
-        100% {
-            transform: translateX(100%);
-        }
-    }
-</style>
 
 <style>
 /* ======= ESTILO EXCLUSIVO PARA TABLERO ======= */
@@ -148,7 +112,13 @@
     }
 }
 </style>
-
+<style>
+.role-superadmin { background-color: #c380ff !important; }
+.role-admin { background-color: #89a6ff !important; }
+.role-usuario { background-color: #caffbf !important; }
+.role-visita { background-color: #ffd6a5 !important; }
+.role-disabled { background-color: #ffb3b3 !important; }
+</style>
 
 </head>
 <body>

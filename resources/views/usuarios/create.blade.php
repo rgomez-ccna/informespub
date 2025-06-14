@@ -2,15 +2,6 @@
 
 @section('content')
 
-<style>
-.role-superadmin { background-color: #c380ff !important; }
-.role-admin { background-color: #89a6ff !important; }
-.role-usuario { background-color: #caffbf !important; }
-.role-visita { background-color: #ffd6a5 !important; }
-.role-disabled { background-color: #ffb3b3 !important; }
-</style>
-
-
 
 <div class="container">
     <div class="row">
