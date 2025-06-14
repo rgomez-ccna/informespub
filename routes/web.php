@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UsuarioController;
 
 use App\Http\Controllers\PublicadorController;
@@ -14,8 +13,20 @@ use App\Http\Controllers\LimpiezaController;
 
 // Ruta raíz
 Route::get('/', function () {
-    return Auth::check() ? redirect()->route('pub.listado') : redirect()->route('login');
+    if (!Auth::check()) {
+        return redirect()->route('login');
+    }
+
+    $rol = Auth::user()->role;
+
+    if (in_array($rol, ['usuario'])) {
+        return redirect()->route('tablero.index');
+    }
+
+    // solo Para admin y superadmin // por ahora para el visita tambien
+    return redirect()->route('pub.listado');
 });
+
 
 
 // Rutas protegidas con autenticación
@@ -94,5 +105,15 @@ Route::prefix('tablero/vida-ministerio')->name('vidaministerio.')->group(functio
 
 });
 
-// Rutas de autenticación (login, registro, etc.)
-Auth::routes();
+
+// Rutas de autenticación (solo login y logout, sin registro ni recuperación)
+Auth::routes([
+    'register' => false,
+    'reset' => false,
+    'verify' => false,
+]);
+
+//🔒 Y como seguridad extra (opcional, por si alguien prueba /register a mano):
+Route::get('/register', function () {
+    abort(403); // o redirect()->route('login')
+});

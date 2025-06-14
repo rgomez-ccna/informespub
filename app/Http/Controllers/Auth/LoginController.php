@@ -7,50 +7,35 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 
-
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
     use AuthenticatesUsers;
 
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
+    // Redirección por defecto (solo si no se define manualmente)
     protected $redirectTo = RouteServiceProvider::HOME;
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
     }
 
+    // Redirección dinámica según el rol
     protected function authenticated(Request $request, $user)
     {
+        // 1. Bloquear cuentas deshabilitadas
         if ($user->role === 'disabled') {
-            auth()->logout(); // Cierra la sesión del usuario "disabled".
-            return redirect()->route('login')->with('message', 'Tu cuenta ha sido deshabilitada. Contacta al administrador para obtener ayuda.');
+            auth()->logout();
+            return redirect()->route('login')->withErrors([
+                'email' => 'Tu cuenta ha sido desactivada. Contactá al administrador.'
+            ]);
         }
-    
-        // Establecer el ID del usuario en la sesión después de que haya iniciado sesión
-        session(['vendedor_id' => $user->id]);
-    
-        // Continúa con la lógica predeterminada o redirige según lo necesites
+
+        // 2. Redirigir usuario o visita directo al tablero
+        if (in_array($user->role, ['usuario', 'visita'])) {
+            return redirect()->route('tablero.index');
+        }
+
+        // 3. Admin y superadmin al home normal
         return redirect()->intended($this->redirectTo);
     }
 }

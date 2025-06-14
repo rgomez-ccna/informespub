@@ -3,10 +3,14 @@
 @section('content')
 
 <style>
-.role-vendedor { background-color: lightblue; }
-.role-admin { background-color: lightgreen; }
-.role-disabled { background-color: lightcoral; }
+.role-superadmin { background-color: #c380ff !important; }
+.role-admin { background-color: #89a6ff !important; }
+.role-usuario { background-color: #caffbf !important; }
+.role-visita { background-color: #ffd6a5 !important; }
+.role-disabled { background-color: #ffb3b3 !important; }
 </style>
+
+
 
 <div class="container">
     <div class="row">
@@ -30,11 +34,14 @@
                 </div>
 
                 <div class="mb-3">
-                    <select class="form-select form-select-sm role-selector" id="role" name="role">
-                        <option value="vendedor" {{ (isset($usuario) && $usuario->role == 'vendedor') ? 'selected' : '' }}>Vendedor</option>
-                        <option value="admin" {{ (isset($usuario) && $usuario->role == 'admin') ? 'selected' : '' }}>Admin</option>
-                        <option value="disabled" {{ (isset($usuario) && $usuario->role == 'disabled') ? 'selected' : '' }}>Desactivado</option>
-                    </select>
+             <select class="form-select form-select-sm role-selector" id="role" name="role" required>
+                <option value="superadmin" {{ (isset($usuario) && $usuario->role == 'superadmin') ? 'selected' : '' }}>Superadmin</option>
+                <option value="admin" {{ (isset($usuario) && $usuario->role == 'admin') ? 'selected' : '' }}>Admin</option>
+                <option value="usuario" {{ (isset($usuario) && $usuario->role == 'usuario') ? 'selected' : '' }}>Usuario</option>
+                <option value="visita" {{ (isset($usuario) && $usuario->role == 'visita') ? 'selected' : '' }}>Visita</option>
+                <option value="disabled" {{ (isset($usuario) && $usuario->role == 'disabled') ? 'selected' : '' }}>Desactivado</option>
+            </select>
+
                 </div>
                 
                 
@@ -65,7 +72,7 @@
                 </div>
                @endif
                <a href="{{ route('usuarios.index') }}" class="btn btn-secondary btn-sm mt-2">
-                <i class="fas fa-reply"></i> Atrás </a>
+                <i class="fa-solid fa-arrow-left"></i> Atrás </a>
                <button type="submit" class="btn btn-primary btn-sm mt-2">
                 <i class="fas fa-check"></i> {{ isset($usuario) ? 'Actualizar' : 'Crear ' }}
             </button>
@@ -94,28 +101,36 @@ function togglePassword(inputId, iconId) {
 
 </script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const roleSelector = document.querySelector('.role-selector');
-    
-        function updateRoleColor() {
-            roleSelector.className = 'form-select form-select-sm role-selector';
-            switch(roleSelector.value) {
-                case 'vendedor':
-                    roleSelector.classList.add('role-vendedor');
-                    break;
-                case 'admin':
-                    roleSelector.classList.add('role-admin');
-                    break;
-                case 'disabled':
-                    roleSelector.classList.add('role-disabled');
-                    break;
-            }
+document.addEventListener('DOMContentLoaded', function () {
+    const roleSelector = document.querySelector('.role-selector');
+
+    function updateRoleColor() {
+        roleSelector.className = 'form-select form-select-sm role-selector';
+        switch(roleSelector.value) {
+            case 'superadmin':
+                roleSelector.classList.add('role-superadmin');
+                break;
+            case 'admin':
+                roleSelector.classList.add('role-admin');
+                break;
+            case 'usuario':
+                roleSelector.classList.add('role-usuario');
+                break;
+            case 'visita':
+                roleSelector.classList.add('role-visita');
+                break;
+            case 'disabled':
+                roleSelector.classList.add('role-disabled');
+                break;
         }
-    
-        roleSelector.addEventListener('change', updateRoleColor);
-        updateRoleColor(); // Actualizar al cargar la página
-    });
-    </script>
+    }
+
+    roleSelector.addEventListener('change', updateRoleColor);
+    updateRoleColor();
+});
+</script>
+
+
     
 @endsection
 

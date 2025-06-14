@@ -7,32 +7,45 @@
     <div class="row g-3">
 
         @php
-            $departamentos = [
-    ['nombre' => 'Limpieza', 'ruta' => 'limpieza.index', 'color' => '#9fc131'],
-    ['nombre' => 'Reunión Vida y Ministerio', 'ruta' => 'vidaministerio.index', 'color' => '#00a8b5'],
-    ['nombre' => 'Reunión Pública: Presidente y Lector', 'ruta' => 'publica.index', 'color' => '#254463'],
-    ['nombre' => 'Discursos Públicos (Salidas y Visitas)', 'ruta' => 'discursos.index', 'color' => '#5c5d8c'],
-    ['nombre' => 'Anuncios', 'ruta' => 'tablero.anuncios', 'color' => '#007a33'],
-    ['nombre' => 'Acomodadores', 'ruta' => 'acomodadores.index', 'color' => '#9055a2'],
-    ['nombre' => 'Programa de Salidas al Ministerio', 'ruta' => 'ministerio.index', 'color' => '#1d6176'],
-    ['nombre' => 'Informe Mensual de Cuentas', 'ruta' => 'tablero.cuentas', 'color' => '#5e412f'],
-    ['nombre' => 'Territorio', 'ruta' => 'tablero.territorio', 'color' => '#008891'],
-];
+           $departamentos = [
+                ['nombre' => 'Reunión Vida y Ministerio', 'ruta' => 'vidaministerio.index', 'color' => '#f34155'],
+                ['nombre' => 'Reunión Pública: Presidente y Lector', 'ruta' => 'publica.index', 'color' => '#4361ee'],
+                ['nombre' => 'Programa de Salidas al Ministerio', 'ruta' => 'ministerio.index', 'color' => '#48cae4'],
+                ['nombre' => 'Limpieza', 'ruta' => 'limpieza.index', 'color' => '#80ed99'],
+                ['nombre' => 'Discursos Públicos (Salidas y Visitas)', 'ruta' => 'discursos.index', 'color' => '#f9c74f'],
+                ['nombre' => 'Acomodadores', 'ruta' => 'acomodadores.index', 'color' => '#b388eb'],
+
+                // Desactivados (gris y sin link)
+                ['nombre' => 'Anuncios', 'ruta' => null, 'color' => '#d3d3d3', 'disabled' => true],
+                ['nombre' => 'Informe Mensual de Cuentas', 'ruta' => null, 'color' => '#d3d3d3', 'disabled' => true],
+                ['nombre' => 'Territorio', 'ruta' => null, 'color' => '#d3d3d3', 'disabled' => true],
+            
+            ];
 
         @endphp
 
-        @foreach($departamentos as $d)
-        <div class="col-md-6 col-lg-4">
-            <a href="{{ route($d['ruta']) }}" class="text-decoration-none">
-                <div class="card border rounded-3 shadow tablero-card bg-white position-relative" style="--color: {{ $d['color'] }};">
-                    <div class="barra-color"></div>
-                    <div class="card-body d-flex justify-content-center align-items-center text-center" style="height: 100px;">
-                        <h5 class="mb-0 fw-semibold text-dark">{{ $d['nombre'] }}</h5>
+       @foreach($departamentos as $d)
+            <div class="col-md-6 col-lg-4">
+                @if(!empty($d['disabled']))
+                    <div class="card border rounded-3 shadow tablero-card bg-white position-relative opacity-50" style="--color: {{ $d['color'] }};">
+                        <div class="barra-color"></div>
+                        <div class="card-body d-flex justify-content-center align-items-center text-center" style="height: 100px; cursor: not-allowed;">
+                            <h5 class="mb-0 fw-semibold text-muted">{{ $d['nombre'] }}</h5>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                @else
+                    <a href="{{ route($d['ruta']) }}" class="text-decoration-none">
+                        <div class="card border rounded-3 shadow tablero-card bg-white position-relative" style="--color: {{ $d['color'] }};">
+                            <div class="barra-color"></div>
+                            <div class="card-body d-flex justify-content-center align-items-center text-center" style="height: 100px;">
+                                <h5 class="mb-0 fw-semibold text-dark">{{ $d['nombre'] }}</h5>
+                            </div>
+                        </div>
+                    </a>
+                @endif
+            </div>
         @endforeach
+
 
     </div>
 </div>

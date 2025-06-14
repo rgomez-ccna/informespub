@@ -166,7 +166,9 @@
                     <!-- Left Side Of Navbar -->
                     @auth
                     <ul class="navbar-nav me-auto gap-3">
-                        
+                       
+                        {{-- Para admin y superadmin --}}
+                        @if(in_array(Auth::user()->role, ['admin', 'superadmin']))
                         <li class="nav-item">
                             <a class="nav-link text-white {{ request()->is('pub') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('pub.index') }}">
                                  Agregar Informes
@@ -182,18 +184,20 @@
                                 Enviar Informes
                             </a>
                         </li>
+                         @endif
+
                        <li class="nav-item">
                             <a class="nav-link text-white {{ request()->is('tablero') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('tablero.index') }}">
                                 Tablero de Anuncios
                             </a>
                         </li>
 
-                        @if(Auth::user()->role === 'admin')
-                            {{-- <li class="nav-item">
+                        @if(Auth::user()->role === 'superadmin')
+                            <li class="nav-item">
                                 <a class="nav-link text-white {{ request()->is('usuarios') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('usuarios.index') }}">
                                      Usuarios
                                 </a>
-                            </li> --}}
+                            </li> 
                         @endif
                     </ul>
                                        
@@ -205,7 +209,7 @@
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
-                                    <a class="nav-link text-white rounded-2" href="{{ route('login') }}">{{ __('Inicio') }}</a>
+                                   <a class="nav-link text-white rounded-2" href="{{ route('login') }}"> <i class="fa-solid fa-right-from-bracket"></i> {{ __('Iniciar sesión') }}</a>
                                 </li>
                             @endif
                             @if (Route::has('register'))
@@ -215,20 +219,21 @@
                             @endif
                         @else
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle text-white rounded-2" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }}
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle text-white rounded-2 d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa-solid fa-circle-user fa-lg"></i> {{ Auth::user()->name }}
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                 document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        <i class="fa-solid fa-right-from-bracket me-2"></i> Cerrar sesión
                                     </a>
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>
                                 </div>
                             </li>
+
+
                         @endguest
                     </ul>
                 </div>

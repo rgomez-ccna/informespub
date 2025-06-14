@@ -14,7 +14,8 @@ class UsuarioController extends Controller
     
         // Ordenar manualmente los usuarios
         $usuariosOrdenados = $usuarios->sort(function ($a, $b) {
-            $orden = ['admin' => 1, 'vendedor' => 2, 'disabled' => 3];
+            $orden = ['superadmin'=>1,'admin'=>2,'usuario'=>3,'visita'=>4,'disabled'=>5];
+
     
             return $orden[$a->role] <=> $orden[$b->role];
         });

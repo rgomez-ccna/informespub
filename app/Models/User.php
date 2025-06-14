@@ -44,9 +44,5 @@ class User extends Authenticatable
     ];
 
 
-   //Relación uno a muchos con el modelo Venta.
-    public function ventas()
-    {
-        return $this->hasMany(Venta::class);
-    }
+   
 }
