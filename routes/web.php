@@ -9,6 +9,9 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\PublicadorController;
 use App\Http\Controllers\RegistroController;
 
+use App\Http\Controllers\TableroController;
+use App\Http\Controllers\LimpiezaController;
+
 // Ruta raíz
 Route::get('/', function () {
     return Auth::check() ? redirect()->route('pub.listado') : redirect()->route('login');
@@ -59,6 +62,34 @@ Route::get('/reg/create/{id}', [RegistroController::class, 'create'])->name('reg
 Route::post('/reg/create/{id}', [RegistroController::class, 'store'])->name('reg.store');
 Route::get('/reg/s21/{id_publicador}', [RegistroController::class, 's21'])->name('reg.s21');
 Route::get('reg/enviar-informes', [RegistroController::class, 'enviarInformes'])->name('reg.enviar-informes');
+
+
+Route::get('/tablero', [TableroController::class, 'index'])->name('tablero.index');
+// Rutas vacías de prueba (ajustar después con controladores reales)
+
+Route::view('/tablero/anuncios', 'tablero.anuncios')->name('tablero.anuncios');
+
+
+Route::view('/tablero/cuentas', 'tablero.cuentas')->name('tablero.cuentas');
+Route::view('/tablero/territorio', 'tablero.territorio')->name('tablero.territorio');
+
+// limpieza
+Route::resource('tablero/limpieza', LimpiezaController::class)->names('limpieza');
+// acomodadores
+Route::resource('tablero/acomodadores', App\Http\Controllers\AcomodadorController::class)->names('acomodadores');
+// Salidas de ministerio
+Route::resource('tablero/ministerio', App\Http\Controllers\SalidaMinisterioController::class)->names('ministerio');
+// Reunion pública
+Route::resource('tablero/publica', App\Http\Controllers\ReunionPublicaController::class)->names('publica');
+// Discurso público VISITAS y SALIDAS
+Route::resource('tablero/discursos', App\Http\Controllers\DiscursoPublicoController::class)->names('discursos');
+
+Route::prefix('tablero/vida-ministerio')->name('vidaministerio.')->group(function () {
+    Route::get('/', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'index'])->name('index');
+    Route::get('/crear', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'create'])->name('create');
+    Route::post('/', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'store'])->name('store');
+    Route::delete('/{id}', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'destroy'])->name('destroy');
+});
 
 
 });

@@ -82,6 +82,74 @@
     }
 </style>
 
+<style>
+/* ======= ESTILO EXCLUSIVO PARA TABLERO ======= */
+
+/* -------- ENCABEZADO DE CADA PROGRAMA -------- */
+.banner-programa {
+    border: 3px solid #6b5b95;
+    padding: 10px 6px;
+    text-align: center;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+.banner-programa .titulo {
+    margin: 0;
+    font-weight: 700;
+    color: #4b3f61;
+    letter-spacing: 1px;
+}
+.banner-programa .subtitulo {
+    margin: 0;
+    color: #4b3f61;
+    font-weight: 600;
+}
+
+/* -------- TABLA DEL PROGRAMA -------- */
+.tabla-programa {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+}
+.tabla-programa thead th {
+    background: #6b5b95;
+    color: #fff;
+    border: 1px solid #4b3f61;
+    font-weight: 600;
+    font-size: 14px;
+}
+.tabla-programa tbody td {
+    border: 1px solid #d8d1e6;
+    color: #333;
+    padding: 6px 8px;
+}
+.tabla-programa tbody tr:nth-child(even) {
+    background: #f3f0f7 !important;
+}
+.tabla-programa tbody tr:nth-child(odd) {
+    background: #ffffff;
+}
+
+/* -------- IMPRESIÓN -------- */
+@media print {
+    nav.navbar,
+    .no-print {
+        display: none !important;
+    }
+    * {
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+    table {
+        font-size: 14px;
+    }
+    body {
+        margin: 0;
+    }
+}
+</style>
+
+
 </head>
 <body>
     <div id="app">
@@ -114,6 +182,12 @@
                                 Enviar Informes
                             </a>
                         </li>
+                       <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->is('tablero') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('tablero.index') }}">
+                                Tablero de Anuncios
+                            </a>
+                        </li>
+
                         @if(Auth::user()->role === 'admin')
                             {{-- <li class="nav-item">
                                 <a class="nav-link text-white {{ request()->is('usuarios') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('usuarios.index') }}">

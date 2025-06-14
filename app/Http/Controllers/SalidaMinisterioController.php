@@ -1,0 +1,89 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\SalidaMinisterio;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+
+class SalidaMinisterioController extends Controller
+{
+    // INDEX: mostrar salidas de la semana activa
+    public function index()
+{
+    $inicio = SalidaMinisterio::where('es_nueva_semana', true)
+                ->orderByDesc('fecha')
+                ->first();
+
+    if (!$inicio) {
+        $registros = collect();
+        $sinAgrupar = collect();
+    } else {
+        $sinAgrupar = SalidaMinisterio::where('fecha', '>=', $inicio->fecha)
+                        ->orderBy('fecha')
+                        ->orderBy('hora')
+                        ->get();
+
+        $registros = $sinAgrupar->groupBy('fecha');
+    }
+
+    return view('tablero.ministerio.index', compact('registros', 'sinAgrupar'));
+}
+
+
+    // CREAR
+    public function create()
+    {
+        return view('tablero.ministerio.form');
+    }
+
+    // EDITAR
+    public function edit(SalidaMinisterio $salida)
+    {
+        return view('tablero.ministerio.form', ['registro' => $salida]);
+    }
+
+    // GUARDAR
+    public function store(Request $request)
+    {
+        $data = $this->validateData($request);
+        $data['es_nueva_semana'] = $request->has('es_nueva_semana');
+        $data['es_fila_info'] = $request->has('es_fila_info');
+
+        SalidaMinisterio::create($data);
+        return to_route('ministerio.index');
+    }
+
+    // ACTUALIZAR
+    public function update(Request $request, SalidaMinisterio $salida)
+    {
+        $data = $this->validateData($request);
+        $data['es_nueva_semana'] = $request->has('es_nueva_semana');
+        $data['es_fila_info'] = $request->has('es_fila_info');
+
+        $salida->update($data);
+        return to_route('ministerio.index');
+    }
+
+    // ELIMINAR
+    public function destroy(SalidaMinisterio $ministerio)
+    {
+        $ministerio->delete();
+        return to_route('ministerio.index');
+    }
+
+
+    // VALIDACIÓN
+    private function validateData(Request $request): array
+    {
+        return $request->validate([
+            'fecha'           => ['required', 'date'],
+            'hora'            => ['nullable', 'string', 'max:20'],
+            'conductor'       => ['nullable', 'string', 'max:100'],
+            'punto_encuentro' => ['nullable', 'string', 'max:255'],
+            'territorio'      => ['nullable', 'string', 'max:100'],
+            'es_nueva_semana' => ['nullable', 'boolean'],
+            'es_fila_info'    => ['nullable', 'boolean'],
+        ]);
+    }
+}
