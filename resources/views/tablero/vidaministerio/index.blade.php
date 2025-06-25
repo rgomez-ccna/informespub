@@ -69,6 +69,7 @@
             <div><strong>{{ \Carbon\Carbon::parse($r->fecha)->format('d/m/Y') }}</strong> | Lectura semanal: <strong>{{ $r->lectura_semanal }}</strong></div>
             <div class="text-end">
                 <div><strong>Presidente:</strong> {{ $r->presidente }}</div>
+                <div>Ayudante <small>(Auditorio Principal)</small>: Alberto Villegas</div>
                 <div><strong>Consejero Auxiliar:</strong> {{ $r->consejero_auxiliar }}</div>
             </div>
         </div>
@@ -80,7 +81,7 @@
 
         {{-- TESOROS --}}
         @if ($r->tesoro_titulo || $r->perlas_disertante || $r->lectura_lector_auxiliar || $r->lectura_lector_principal)
-        <div class="seccion-title mt-4" style="color: #2a6f74;">
+        <div class="seccion-title mt-4 fw-bold" style="color: #2a6f74;">
             <i class="fa-solid fa-gem me-2"></i> TESOROS DE LA BIBLIA
         </div>
         <hr class="mt-1 mb-2">
@@ -115,7 +116,7 @@
 
         {{-- MAESTROS --}}
         @if ($r->asignaciones_maestros)
-        <div class="seccion-title mt-4" style="color: #c69214;">
+        <div class="seccion-title mt-4 fw-bold" style="color: #c69214;">
             <i class="fa-solid fa-wheat-awn me-2"></i> SEAMOS MEJORES MAESTROS
         </div>
         <hr class="mt-1 mb-2">
@@ -162,7 +163,7 @@
 
         {{-- VIDA CRISTIANA --}}
         @if ($r->vida_cristiana || $r->estudio_conductor || $r->estudio_lector)
-        <div class="seccion-title mt-4" style="color: #a73229;">
+        <div class="seccion-title mt-4 fw-bold" style="color: #a73229;">
             <i class="fa-solid fa-book me-2"></i> NUESTRA VIDA CRISTIANA
         </div>
         <hr class="mt-1 mb-2">
