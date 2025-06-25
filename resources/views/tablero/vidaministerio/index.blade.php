@@ -75,7 +75,7 @@
         </div>
 
         <ul class="mb-2 small ps-3 list-unstyled">
-             <li>• Canción <strong>{{ $r->cancion_inicio }}</strong> <span class="float-end"><b>Oración:</b> {{ $r->oracion_final }}</span></li>
+             <li>• Canción <strong>{{ $r->cancion_inicio }}</strong> <span class="float-end"><b>Oración:</b> {{ $r->oracion_inicio }}</span></li>
              <li>• Palabras de introducción <span class="text-muted">(1 min.)</span></li>
         </ul>
 
