@@ -30,12 +30,12 @@
     <div class="col-md-6">
         <div class="input-group">
             <span class="input-group-text">Presidente</span>
-            <input type="text" name="presidente" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+            <input type="text" name="presidente" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Escribí 2 o más letras del nombre">
             <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
         </div>
         <div class="input-group mt-1">
             <span class="input-group-text">Ayudante Aud. Principal</span>
-            <input type="text" name="presidente_ayudante" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+            <input type="text" name="presidente_ayudante" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Escribí 2 o más letras del nombre">
             <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
 
         </div>
@@ -44,13 +44,13 @@
     <div class="col-md-6">
         <div class="input-group">
             <span class="input-group-text">Consejero Sala Auxiliar</span>
-            <input type="text" name="consejero_auxiliar" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+            <input type="text" name="consejero_auxiliar" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Escribí 2 o más letras del nombre">
             <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
 
         </div>
         <div class="input-group mt-1">
             <span class="input-group-text">Ayudante Sala Aux.</span>
-            <input type="text" name="consejero_ayudante" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+            <input type="text" name="consejero_ayudante" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Escribí 2 o más letras del nombre">
             <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
 
         </div>
@@ -63,7 +63,7 @@
 
         <div class="input-group">
             <span class="input-group-text">Canción de inicio</span>
-            <input type="text" name="cancion_inicio" class="form-control form-control-sm">
+            <input type="text" name="cancion_inicio" class="form-control form-control-sm" placeholder="Ej. 123">
         </div>
         <p class="small text-muted mt-1 mb-0">• Palabras de introducción (1 min.)</p>
     </div>
@@ -71,7 +71,7 @@
        
         <div class="input-group">
             <span class="input-group-text">Oración de inicio</span>
-            <input type="text" name="oracion_inicio" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+            <input type="text" name="oracion_inicio" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Escribí 2 o más letras del nombre">
            <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
 
         </div>
@@ -100,7 +100,7 @@
             <div class="col-md-4">
                 <label class="form-label">Disertante</label>
                 <div class="position-relative">
-                    <input type="text" name="tesoro_disertante" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+                    <input type="text" name="tesoro_disertante" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Escribí 2 o más letras del nombre">
                     <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
                 </div>
             </div>
@@ -108,19 +108,22 @@
 
 
         <div class="row g-2 mb-2">
-            <div class="col-md-5">
+           <div class="col-md-5">
                 <label class="form-label">2. Busquemos perlas escondidas – Disertante</label>
-                <input type="text" name="perlas_disertante" class="form-control form-control-sm buscador-nombre" autocomplete="off">
-                <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
+                <div class="position-relative">
+                    <input type="text" name="perlas_disertante" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Escribí 2 o más letras del nombre">
+                    <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
+                </div>
             </div>
+
             <div class="col-md-7">
                 <label class="form-label">3. Lectura de la Biblia – Estudiantes</label>
                 <div class="input-group">
                     <span class="input-group-text">Sala Principal</span>
-                    <input type="text" name="lectura_lector_principal" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+                    <input type="text" name="lectura_lector_principal" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Escribí 2 o más letras del nombre">
                     <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
                     <span class="input-group-text">Sala Auxiliar</span>
-                    <input type="text" name="lectura_lector_auxiliar" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+                    <input type="text" name="lectura_lector_auxiliar" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Escribí 2 o más letras del nombre">
                     <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
                 </div>
             </div>
@@ -140,26 +143,26 @@
             <small class="text-muted">Asignación {{ $i + 4 }}</small>
 
             <div class="mb-2">
-                <label class="form-label">Título (solo si es discurso)</label>
-                <input type="text" name="asignaciones_maestros[{{ $i }}][titulo]" class="form-control form-control-sm">
+                <label class="form-label">TEMA</label>
+                <input type="text" name="asignaciones_maestros[{{ $i }}][titulo]" class="form-control form-control-sm" placeholder="Ej: Empiece conversaciones (2min.), Haga revisitas (4min.) etc. o título del discurso">
             </div>
 
             <div class="row g-2">
                 <div class="col-md-6">
-                    <label class="form-label">Auditorio Principal – Estudiante / Ayudante</label>
+                    <label class="form-label"><b>Auditorio Principal</b> – Estudiante / Ayudante</label>
                     <div class="input-group">
-                        <input type="text" name="asignaciones_maestros[{{ $i }}][principal][estudiante]" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Estudiante">
+                        <input type="text" name="asignaciones_maestros[{{ $i }}][principal][estudiante]" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Escribí 2 o más letras del nombre" placeholder="Estudiante">
                         <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
-                        <input type="text" name="asignaciones_maestros[{{ $i }}][principal][ayudante]" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Ayudante">
+                        <input type="text" name="asignaciones_maestros[{{ $i }}][principal][ayudante]" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Escribí 2 o más letras del nombre" placeholder="Ayudante">
                         <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Sala Auxiliar – Estudiante / Ayudante</label>
                     <div class="input-group">
-                        <input type="text" name="asignaciones_maestros[{{ $i }}][auxiliar][estudiante]" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Estudiante">
+                        <input type="text" name="asignaciones_maestros[{{ $i }}][auxiliar][estudiante]" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Escribí 2 o más letras del nombre" placeholder="Estudiante">
                         <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
-                        <input type="text" name="asignaciones_maestros[{{ $i }}][auxiliar][ayudante]" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Ayudante">
+                        <input type="text" name="asignaciones_maestros[{{ $i }}][auxiliar][ayudante]" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Escribí 2 o más letras del nombre" placeholder="Ayudante">
                         <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
                     </div>
                 </div>
@@ -181,7 +184,7 @@
        
         <div class="input-group">
             <span class="input-group-text">Canción intermedia</span>
-            <input type="text" name="cancion_medio" class="form-control form-control-sm">
+            <input type="text" name="cancion_medio" class="form-control form-control-sm" placeholder="Ej. 123">
         </div>
     </div>
 </div>
@@ -196,7 +199,7 @@
             <div class="col-md-4">
                 <label class="form-label">Disertante</label>
                 <div class="position-relative">
-                    <input type="text" name="vida_cristiana[{{ $i }}][disertante]" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+                    <input type="text" name="vida_cristiana[{{ $i }}][disertante]" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Escribí 2 o más letras del nombre">
                     <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
                 </div>
             </div>
@@ -211,14 +214,14 @@
             <div class="col-md-6">
                 <div class="input-group">
                     <span class="input-group-text">Conductor</span>
-                    <input type="text" name="estudio_conductor" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+                    <input type="text" name="estudio_conductor" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Escribí 2 o más letras del nombre">
                     <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="input-group">
                     <span class="input-group-text">Lector</span>
-                    <input type="text" name="estudio_lector" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+                    <input type="text" name="estudio_lector" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Escribí 2 o más letras del nombre">
                     <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
                 </div>
             </div>
@@ -233,13 +236,13 @@
     <div class="col-md-6">
         <div class="input-group">
             <span class="input-group-text">Canción final</span>
-            <input type="text" name="cancion_final" class="form-control form-control-sm">
+            <input type="text" name="cancion_final" class="form-control form-control-sm" placeholder="Ej. 123">
         </div>
     </div>
     <div class="col-md-6">
         <div class="input-group">
             <span class="input-group-text">Oración final</span>
-            <input type="text" name="oracion_final" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+            <input type="text" name="oracion_final" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Escribí 2 o más letras del nombre">
             <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
         </div>
     </div>
