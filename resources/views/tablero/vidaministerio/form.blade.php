@@ -25,23 +25,38 @@
             </div>
         </div>
 
-       {{-- ENCABEZADO --}}
+{{-- ENCABEZADO --}}
 <div class="row g-2 mb-3">
     <div class="col-md-6">
-       
         <div class="input-group">
             <span class="input-group-text">Presidente</span>
-            <input type="text" name="presidente" class="form-control form-control-sm">
+            <input type="text" name="presidente" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+            <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
+        </div>
+        <div class="input-group mt-1">
+            <span class="input-group-text">Ayudante Aud. Principal</span>
+            <input type="text" name="presidente_ayudante" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+            <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
+
         </div>
     </div>
+
     <div class="col-md-6">
-        
         <div class="input-group">
             <span class="input-group-text">Consejero Sala Auxiliar</span>
-            <input type="text" name="consejero_auxiliar" class="form-control form-control-sm">
+            <input type="text" name="consejero_auxiliar" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+            <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
+
+        </div>
+        <div class="input-group mt-1">
+            <span class="input-group-text">Ayudante Sala Aux.</span>
+            <input type="text" name="consejero_ayudante" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+            <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
+
         </div>
     </div>
 </div>
+
 
 <div class="row g-2 mb-2">
     <div class="col-md-6">
@@ -56,7 +71,9 @@
        
         <div class="input-group">
             <span class="input-group-text">Oración de inicio</span>
-            <input type="text" name="oracion_inicio" class="form-control form-control-sm">
+            <input type="text" name="oracion_inicio" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+           <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
+
         </div>
     </div>
 </div>
@@ -82,22 +99,29 @@
             </div>
             <div class="col-md-4">
                 <label class="form-label">Disertante</label>
-                <input type="text" name="tesoro_disertante" class="form-control form-control-sm">
+                <div class="position-relative">
+                    <input type="text" name="tesoro_disertante" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+                    <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
+                </div>
             </div>
         </div>
+
 
         <div class="row g-2 mb-2">
             <div class="col-md-5">
                 <label class="form-label">2. Busquemos perlas escondidas – Disertante</label>
-                <input type="text" name="perlas_disertante" class="form-control form-control-sm">
+                <input type="text" name="perlas_disertante" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+                <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
             </div>
             <div class="col-md-7">
                 <label class="form-label">3. Lectura de la Biblia – Estudiantes</label>
                 <div class="input-group">
                     <span class="input-group-text">Sala Principal</span>
-                    <input type="text" name="lectura_lector_principal" class="form-control form-control-sm">
+                    <input type="text" name="lectura_lector_principal" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+                    <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
                     <span class="input-group-text">Sala Auxiliar</span>
-                    <input type="text" name="lectura_lector_auxiliar" class="form-control form-control-sm">
+                    <input type="text" name="lectura_lector_auxiliar" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+                    <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
                 </div>
             </div>
         </div>
@@ -124,15 +148,19 @@
                 <div class="col-md-6">
                     <label class="form-label">Auditorio Principal – Estudiante / Ayudante</label>
                     <div class="input-group">
-                        <input type="text" name="asignaciones_maestros[{{ $i }}][principal][estudiante]" class="form-control form-control-sm" placeholder="Estudiante">
-                        <input type="text" name="asignaciones_maestros[{{ $i }}][principal][ayudante]" class="form-control form-control-sm" placeholder="Ayudante">
+                        <input type="text" name="asignaciones_maestros[{{ $i }}][principal][estudiante]" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Estudiante">
+                        <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
+                        <input type="text" name="asignaciones_maestros[{{ $i }}][principal][ayudante]" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Ayudante">
+                        <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Sala Auxiliar – Estudiante / Ayudante</label>
                     <div class="input-group">
-                        <input type="text" name="asignaciones_maestros[{{ $i }}][auxiliar][estudiante]" class="form-control form-control-sm" placeholder="Estudiante">
-                        <input type="text" name="asignaciones_maestros[{{ $i }}][auxiliar][ayudante]" class="form-control form-control-sm" placeholder="Ayudante">
+                        <input type="text" name="asignaciones_maestros[{{ $i }}][auxiliar][estudiante]" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Estudiante">
+                        <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
+                        <input type="text" name="asignaciones_maestros[{{ $i }}][auxiliar][ayudante]" class="form-control form-control-sm buscador-nombre" autocomplete="off" placeholder="Ayudante">
+                        <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
                     </div>
                 </div>
             </div>
@@ -159,7 +187,7 @@
 </div>
 
 
-        @for ($i = 0; $i < 2; $i++)
+       @for ($i = 0; $i < 2; $i++)
         <div class="row g-2 mb-2">
             <div class="col-md-8">
                 <label class="form-label">{{ $i + 8 }}. Tema</label>
@@ -167,10 +195,14 @@
             </div>
             <div class="col-md-4">
                 <label class="form-label">Disertante</label>
-                <input type="text" name="vida_cristiana[{{ $i }}][disertante]" class="form-control form-control-sm">
+                <div class="position-relative">
+                    <input type="text" name="vida_cristiana[{{ $i }}][disertante]" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+                    <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
+                </div>
             </div>
         </div>
         @endfor
+
 
   
         {{-- ESTUDIO --}}
@@ -179,13 +211,15 @@
             <div class="col-md-6">
                 <div class="input-group">
                     <span class="input-group-text">Conductor</span>
-                    <input type="text" name="estudio_conductor" class="form-control form-control-sm">
+                    <input type="text" name="estudio_conductor" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+                    <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="input-group">
                     <span class="input-group-text">Lector</span>
-                    <input type="text" name="estudio_lector" class="form-control form-control-sm">
+                    <input type="text" name="estudio_lector" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+                    <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
                 </div>
             </div>
         </div>
@@ -205,7 +239,8 @@
     <div class="col-md-6">
         <div class="input-group">
             <span class="input-group-text">Oración final</span>
-            <input type="text" name="oracion_final" class="form-control form-control-sm">
+            <input type="text" name="oracion_final" class="form-control form-control-sm buscador-nombre" autocomplete="off">
+            <div class="dropdown-sugerencias border rounded bg-white shadow-sm position-absolute w-100" style="z-index:9999; display:none;"></div>
         </div>
     </div>
 </div>
@@ -216,4 +251,111 @@
         </button>
     </form>
 </div>
+
+<style>
+.dropdown-sugerencias {
+    position: absolute;
+    top: 100%; /* ⬅ Esto lo baja justo debajo del input */
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 0.85rem;
+    border: 1px solid #ccc;
+    background: #fff;
+    z-index: 9999;
+    display: none;
+    box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,0.05);
+
+}
+.dropdown-sugerencias div:hover,
+.dropdown-sugerencias div.activo {
+    background-color: #afd5ff; /* azul claro */
+    color: #000;
+}
+
+
+</style>
+
+
+<script>
+document.querySelectorAll('.buscador-nombre').forEach(input => {
+    const contenedor = input.parentElement.querySelector('.dropdown-sugerencias');
+    let indice = -1;
+
+    input.addEventListener('input', () => {
+        const valor = input.value.trim();
+        if (valor.length < 2) {
+            contenedor.style.display = 'none';
+            return;
+        }
+
+        fetch(`/buscar-publicadores?q=${encodeURIComponent(valor)}`)
+            .then(r => r.json())
+            .then(data => {
+                contenedor.innerHTML = '';
+                indice = -1;
+                if (data.length === 0) {
+                    contenedor.style.display = 'none';
+                    return;
+                }
+
+               data.forEach((nombre, idx) => {
+                    const opcion = document.createElement('div');
+                    opcion.textContent = nombre;
+                    opcion.classList.add('dropdown-item');
+
+                    opcion.onclick = () => {
+                        input.value = nombre;
+                        contenedor.style.display = 'none';
+                    };
+
+                    opcion.onmouseover = () => {
+                        const todas = contenedor.querySelectorAll('div');
+                        todas.forEach(op => op.classList.remove('activo'));
+                        opcion.classList.add('activo');
+                        indice = idx;
+                    };
+
+                    contenedor.appendChild(opcion);
+                });
+
+                contenedor.style.display = 'block';
+            });
+    });
+
+    input.addEventListener('keydown', (e) => {
+        const opciones = contenedor.querySelectorAll('div');
+        if (!opciones.length) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            indice = (indice + 1) % opciones.length;
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            indice = (indice - 1 + opciones.length) % opciones.length;
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (indice >= 0) {
+                input.value = opciones[indice].textContent;
+                contenedor.style.display = 'none';
+                indice = -1;
+            }
+        }
+
+        opciones.forEach((op, i) => {
+            op.classList.toggle('activo', i === indice);
+        });
+    });
+
+    document.addEventListener('click', e => {
+        if (!contenedor.contains(e.target) && e.target !== input) {
+            contenedor.style.display = 'none';
+        }
+    });
+});
+</script>
+
+
+
 @endsection

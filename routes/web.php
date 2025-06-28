@@ -63,6 +63,8 @@ Route::get('/pub/s21/{id}', [PublicadorController::class, 's21'])->name('pub.s21
 
  // PUBLICADORES
  Route::resource('pub', PublicadorController::class);
+ 
+Route::get('/buscar-publicadores', [App\Http\Controllers\PublicadorController::class, 'buscar']);
 
 
 

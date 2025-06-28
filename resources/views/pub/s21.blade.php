@@ -58,7 +58,7 @@
                                 @foreach($registrosAnio as $registro)
                                     <tr>
                                         <td style="text-align: center;">{{ $registro->mes }}</td>
-                                        <td style="text-align: center;"><input class="form-check-input" type="checkbox" {{ $registro->videos == 'PREDICO' ? 'checked' : '' }} disabled></td>
+                                        <td style="text-align: center;"><input class="form-check-input" type="checkbox" {{ $registro->actividad == '1' ? 'checked' : '' }} disabled></td>
                                         <td style="text-align: center;">{{ $registro->cursos }}</td>
                                         <td style="text-align: center;"><input class="form-check-input" type="checkbox" {{ $registro->aux == '(Auxiliar)' ? 'checked' : '' }} disabled></td>
                                         <td style="text-align: center;">{{ $registro->horas }}</td>

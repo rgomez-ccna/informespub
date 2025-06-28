@@ -41,7 +41,9 @@ class ReunionVidaMinisterioController extends Controller
             'fecha' => $request->fecha,
             'lectura_semanal' => $request->lectura_semanal,
             'presidente' => $request->presidente,
+            'presidente_ayudante' => $request->presidente_ayudante, // <-- FALTABA
             'consejero_auxiliar' => $request->consejero_auxiliar,
+            'consejero_ayudante' => $request->consejero_ayudante,   // <-- FALTABA
             'cancion_inicio' => $request->cancion_inicio,
             'oracion_inicio' => $request->oracion_inicio,
 
@@ -79,7 +81,9 @@ class ReunionVidaMinisterioController extends Controller
             'fecha' => $request->fecha,
             'lectura_semanal' => $request->lectura_semanal,
             'presidente' => $request->presidente,
+            'presidente_ayudante' => $request->presidente_ayudante, // <-- FALTABA
             'consejero_auxiliar' => $request->consejero_auxiliar,
+            'consejero_ayudante' => $request->consejero_ayudante,   // <-- FALTABA
             'cancion_inicio' => $request->cancion_inicio,
             'oracion_inicio' => $request->oracion_inicio,
 

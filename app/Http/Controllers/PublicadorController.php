@@ -164,4 +164,18 @@ public function s21($id)
     return view('pub.s21', compact('publicador', 'registros'));
 }
 
+
+//Buscar publicadores por nombre
+public function buscar(Request $request)
+{
+    $termino = $request->get('q');
+
+    $publicadores = Publicador::where('nombre', 'like', '%' . $termino . '%')
+        ->orderBy('nombre')
+        ->limit(10)
+        ->pluck('nombre');
+
+    return response()->json($publicadores);
+}
+
 }

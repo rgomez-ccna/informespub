@@ -20,7 +20,9 @@ return new class extends Migration
             // Encabezado
             $table->string('lectura_semanal')->nullable();
             $table->string('presidente')->nullable();
+            $table->string('presidente_ayudante')->nullable();
             $table->string('consejero_auxiliar')->nullable();
+            $table->string('consejero_ayudante')->nullable();
             $table->string('cancion_inicio')->nullable();
             $table->string('oracion_inicio')->nullable();
 
