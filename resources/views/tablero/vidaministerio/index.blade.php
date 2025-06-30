@@ -194,11 +194,11 @@
                     @endif
 
                     {{-- BOTONES --}}
-                   <a href="{{ route('vidaministerio.edit', $r->id) }}" class="btn btn-outline-primary btn-sm me-2">
+                   <a href="{{ route('vidaministerio.edit', $r->id) }}" class="no-print btn btn-outline-primary btn-sm me-2">
                         <i class="fa-solid fa-pen-to-square"></i> Editar
                     </a>
 
-                    <form action="{{ route('vidaministerio.destroy', $r->id) }}" method="POST" class="d-inline">
+                    <form action="{{ route('vidaministerio.destroy', $r->id) }}" method="POST" class="d-inline no-print">
                         @csrf @method('DELETE')
                         <button type="submit" class="btn btn-outline-danger btn-sm"
                             onclick="return confirm('¿Eliminar este programa?')">
