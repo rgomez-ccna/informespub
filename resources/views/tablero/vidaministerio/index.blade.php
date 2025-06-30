@@ -176,8 +176,10 @@
                         <hr class="mt-0 mb-0">
                         <ul class="small ps-3 list-unstyled mb-0">
                             <li>• Canción <strong>{{ $r->cancion_medio }}</strong></li>
-                            @foreach ($r->vida_cristiana ?? [] as $v)
-                                <li><strong>{{ $nro++ }}.</strong> {{ $v['titulo'] ?? '-' }} <span class="float-end">{{ $v['disertante'] ?? '-' }}</span></li>
+                           @foreach ($r->vida_cristiana ?? [] as $v)
+                                @if (!empty($v['titulo']) || !empty($v['disertante']))
+                                    <li><strong>{{ $nro++ }}.</strong> {{ $v['titulo'] ?? '' }} <span class="float-end">{{ $v['disertante'] ?? '' }}</span></li>
+                                @endif
                             @endforeach
                             <li>
                                 <div class="d-flex justify-content-between align-items-start">
