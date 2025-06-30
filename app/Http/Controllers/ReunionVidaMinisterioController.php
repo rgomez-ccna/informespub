@@ -13,7 +13,7 @@ class ReunionVidaMinisterioController extends Controller
 
     // Filtrado por fechas (con valores por defecto al mes actual)
     $desde = $request->input('desde') ?? now()->startOfMonth()->toDateString();
-    $hasta = $request->input('hasta') ?? now()->endOfMonth()->toDateString();
+    $hasta = $request->input('hasta') ?? now()->copy()->addMonths(2)->endOfMonth()->toDateString();
 
     // Si modo = uno y tiene ID → mostrar solo uno
     if ($request->modo === 'uno' && $request->id) {

@@ -29,9 +29,6 @@
         <div class="col-auto">
             <button class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-filter"></i> Filtrar</button>
         </div>
-        <div class="col-auto">
-            <a href="{{ route('vidaministerio.index') }}" class="btn btn-outline-secondary btn-sm">Mes en curso</a>
-        </div>
     </form>
 
    {{-- CHECKBOX SELECCIÓN --}}
@@ -197,11 +194,18 @@
                     @endif
 
                     {{-- BOTONES --}}
-                    <form action="{{ route('vidaministerio.destroy', $r->id) }}" method="POST" class="no-print" onsubmit="return confirm('¿Eliminar este programa?')">
+                   <a href="{{ route('vidaministerio.edit', $r->id) }}" class="btn btn-outline-primary btn-sm me-2">
+                        <i class="fa-solid fa-pen-to-square"></i> Editar
+                    </a>
+
+                    <form action="{{ route('vidaministerio.destroy', $r->id) }}" method="POST" class="d-inline">
                         @csrf @method('DELETE')
-                        <button class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-trash"></i> Eliminar Semana</button>
-                        
+                        <button type="submit" class="btn btn-outline-danger btn-sm"
+                            onclick="return confirm('¿Eliminar este programa?')">
+                            <i class="fa-solid fa-trash"></i> Eliminar Semana
+                        </button>
                     </form>
+
                 </div>
             </div>
         </div>

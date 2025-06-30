@@ -101,6 +101,8 @@ Route::prefix('tablero/vida-ministerio')->name('vidaministerio.')->group(functio
     Route::get('/', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'index'])->name('index');
     Route::get('/crear', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'create'])->name('create');
     Route::post('/', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'store'])->name('store');
+    Route::get('/{id}/editar', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'update'])->name('update');
     Route::delete('/{id}', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'destroy'])->name('destroy');
 });
 
