@@ -57,10 +57,10 @@
     </h5>
   </div>
 
- @php $nro = 1; @endphp
+
     {{-- PROGRAMAS --}}
     @foreach ($registros as $r)
-     
+      @php $nro = 1; @endphp
 
         <div class="pagina-programa ">
 
