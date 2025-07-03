@@ -251,9 +251,12 @@ ul li:last-child {
 
     /* Ajuste de fuente y márgenes globales */
     body {
-        font-size: 11px;
         margin: 0;
         padding: 0;
+    }
+    
+    .programa-box {
+        font-size: 12px !important;
     }
 
     /* Ocultar todo lo marcado como "no-print" */
@@ -322,7 +325,20 @@ ul li:last-child {
     .float-end {
         float: right;
     }
+
+
+  /* Primera página: reducir altura del primer bloque si hay banner */  
+ .pagina-programa {
+        height: 48vh !important;
+    }
+
+    .pagina-programa.primera-visible {
+        height: 40vh !important;
+    }
+
 }
+
+
 </style>
 
 
@@ -344,15 +360,34 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById('btn-imprimir-seleccionados')?.addEventListener('click', function () {
-        const seleccionados = Array.from(document.querySelectorAll('.check-imprimir'))
-            .map((chk, i) => chk.checked ? i : null)
-            .filter(i => i !== null);
+    const seleccionados = Array.from(document.querySelectorAll('.check-imprimir'))
+        .map((chk, i) => chk.checked ? i : null)
+        .filter(i => i !== null);
 
-        const bloques = document.querySelectorAll('.pagina-programa');
-        bloques.forEach((bloque, i) => bloque.style.display = seleccionados.includes(i) ? 'block' : 'none');
-        window.print();
-        setTimeout(() => bloques.forEach(b => b.style.display = 'block'), 1000);
+    const bloques = document.querySelectorAll('.pagina-programa');
+
+    // Mostrar solo seleccionados y quitar clase previa
+    bloques.forEach((bloque, i) => {
+        bloque.classList.remove('primera-visible');
+        bloque.style.display = seleccionados.includes(i) ? 'block' : 'none';
     });
+
+    // Marcar la primera visible
+    const primero = Array.from(bloques).find(b => b.style.display !== 'none');
+    if (primero) primero.classList.add('primera-visible');
+
+    // Imprimir
+    window.print();
+
+    // Restaurar todos los bloques
+    setTimeout(() => {
+        bloques.forEach(b => {
+            b.style.display = 'block';
+            b.classList.remove('primera-visible');
+        });
+    }, 1000);
+});
+
 
     document.querySelectorAll('.btn-toggle-semana').forEach(btn => {
         btn.addEventListener('click', function () {
@@ -364,5 +399,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+
 </script>
 @endsection
