@@ -73,26 +73,35 @@
 .tabla-programa {
     width: 100%;
     border-collapse: collapse;
-    font-size: 15px;
+    font-size: 14px;
 }
 .tabla-programa thead th {
     background: #6b5b95;
     color: #fff;
-    border: 1px solid #4b3f61;
+    border: 1px solid #3e3351;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 12px;
 }
 .tabla-programa tbody td {
     border: 1px solid #d8d1e6;
     color: #333;
-    padding: 6px 8px;
+    padding: 2px 3px;
 }
 .tabla-programa tbody tr:nth-child(even) {
-    background: #f3f0f7 !important;
+    background: #f5f0fb !important;
 }
 .tabla-programa tbody tr:nth-child(odd) {
     background: #ffffff;
 }
+
+/* Para SALIDAS a ministerio FILAS */
+.fila-violeta {
+    background-color: #f5f0fb !important; /* violeta claro */
+}
+.fila-blanca {
+    background-color: #ffffff !important; /* blanco */
+}
+
 
 /* -------- IMPRESIÓN -------- */
 @media print {
@@ -105,13 +114,15 @@
         color-adjust: exact !important;
     }
     table {
-        font-size: 14px;
+        font-size: 11px !important;
     }
     body {
         margin: 0;
     }
 }
 </style>
+
+
 <style>
 .role-superadmin { background-color: #c380ff !important; }
 .role-admin { background-color: #89a6ff !important; }

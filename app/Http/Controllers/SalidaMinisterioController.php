@@ -9,26 +9,32 @@ use Carbon\Carbon;
 class SalidaMinisterioController extends Controller
 {
     // INDEX: mostrar salidas de la semana activa
-    public function index()
+   public function index()
 {
-    $inicio = SalidaMinisterio::where('es_nueva_semana', true)
-                ->orderByDesc('fecha')
-                ->first();
+    $todas = SalidaMinisterio::orderBy('fecha')->orderBy('hora')->get();
 
-    if (!$inicio) {
-        $registros = collect();
-        $sinAgrupar = collect();
-    } else {
-        $sinAgrupar = SalidaMinisterio::where('fecha', '>=', $inicio->fecha)
-                        ->orderBy('fecha')
-                        ->orderBy('hora')
-                        ->get();
+    $bloques = [];
+    $bloqueActual = [];
+    $contador = 0;
 
-        $registros = $sinAgrupar->groupBy('fecha');
+    foreach ($todas as $registro) {
+        if ($registro->es_nueva_semana) {
+            if (!empty($bloqueActual)) {
+                $bloques[] = collect($bloqueActual)->groupBy('fecha');
+                $bloqueActual = [];
+            }
+        }
+
+        $bloqueActual[] = $registro;
     }
 
-    return view('tablero.ministerio.index', compact('registros', 'sinAgrupar'));
+    if (!empty($bloqueActual)) {
+        $bloques[] = collect($bloqueActual)->groupBy('fecha');
+    }
+
+    return view('tablero.ministerio.index', compact('bloques'));
 }
+
 
 
     // CREAR

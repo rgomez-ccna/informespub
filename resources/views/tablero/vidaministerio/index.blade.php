@@ -217,8 +217,8 @@
 <style>
 /* Estilo general de la tabla (modo vista) */
 .table td, .table th {
-    padding: 0.1rem 0.2rem;
-    font-size: 0.75rem;
+    padding: 0.1rem 0.2rem !important;
+    font-size: 0.75rem !important;
 }
 /* Reseteo de estilos del th especial */
 .th-reset {
@@ -226,6 +226,14 @@
     display: table-cell; /* necesario para que no rompa la tabla */
     vertical-align: top;
 }
+
+table.tabla-programa td,
+table.tabla-programa th {
+    padding: 0.25rem 0.4rem !important;
+    font-size: 0.8rem !important;
+    line-height: 1.1 !important;
+}
+
 
 
 /* Espaciado entre ítems de listas */
@@ -335,6 +343,15 @@ ul li:last-child {
     .pagina-programa.primera-visible {
         height: 40vh !important;
     }
+
+    /* compactar tabla salidas */
+table.tabla-programa td,
+table.tabla-programa th {
+    padding: 0.2rem 0.2rem !important;
+    font-size: 0.8rem !important;
+    line-height: 1.1 !important;
+}
+
 
 }
 
