@@ -20,24 +20,18 @@
     <div class="banner-programa">
         <h1 class="titulo">ACOMODADORES</h1>
 @php
-    $mesMasComun = $registros
-        ->groupBy(fn($r) => \Carbon\Carbon::parse($r->fecha)->format('Y-m'))
-        ->sortByDesc(fn($g) => $g->count())
-        ->keys()
-        ->first();
+    $inicio = $registros->first()?->fecha;
+    $fin    = $registros->last()?->fecha;
 
-    $mesCarbon = $mesMasComun
-        ? \Carbon\Carbon::createFromFormat('Y-m', $mesMasComun)
-        : null;
+    $mesInicio = \Carbon\Carbon::parse($inicio)->translatedFormat('F');
+    $mesFin    = \Carbon\Carbon::parse($fin)->translatedFormat('F');
+    $anio      = \Carbon\Carbon::parse($inicio)->year;
 @endphp
 
 <h5 class="subtitulo">
-    @if($mesCarbon)
-         {{ strtoupper($mesCarbon->translatedFormat('F / Y')) }}
-    @else
-        SIN REGISTROS
-    @endif
+    {{ strtoupper($mesInicio . ($mesInicio !== $mesFin ? ' - ' . $mesFin : '') . ' / ' . $anio) }}
 </h5>
+
 
 
     </div>
@@ -64,10 +58,15 @@
                     <td>{{ $r->acceso_2 }}</td>
                     <td>{{ $r->auditorio }}</td>
                     <td class="no-print">
-                        <form action="{{ route('acomodadores.destroy', $r) }}" method="POST" onsubmit="return confirm('¿Eliminar esta fila?')">
-                            @csrf @method('DELETE')
-                            <button class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
+                       <form action="{{ route('acomodadores.destroy', $r->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('¿Eliminar esta fila?')">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
                         </form>
+
                     </td>
                 </tr>
                 @endforeach
