@@ -76,10 +76,19 @@
 
     {{-- TEXTO FINAL (solo si existe) --}}
     @if($texto)
-    <div class="mt-4 px-3 py-2" style="border: 2px solid #6b5b95; border-radius: 6px;">
+    <div class="mt-4 px-3 py-2 texto-final-imprimir" style="font-size: 13px; border: 2px solid #6b5b95; border-radius: 6px;">
         {!! nl2br(e($texto)) !!}
     </div>
     @endif
 
 </div>
+
+<style>
+@media print {
+    .texto-final-imprimir {
+        font-size: 11px !important;
+    }
+}
+</style>
+
 @endsection
