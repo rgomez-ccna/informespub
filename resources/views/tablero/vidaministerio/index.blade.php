@@ -66,16 +66,23 @@
                 <div class="d-flex align-items-center gap-2">
                     {{-- CHECKBOX POR PROGRAMA --}}
                     <input type="checkbox" class="form-check-input check-imprimir" value="{{ $loop->index }}" id="programa_{{ $loop->index }}">
-                    @php
-                        $fecha = \Carbon\Carbon::parse($r->fecha);
-                        $inicio = $fecha->copy()->startOfWeek(Carbon\Carbon::MONDAY);
-                        $fin = $inicio->copy()->endOfWeek(Carbon\Carbon::SUNDAY);
-                    @endphp
+                   @php
+                    $fecha = \Carbon\Carbon::parse($r->fecha);
+                    $inicio = $fecha->copy()->startOfWeek(Carbon\Carbon::MONDAY);
+                    $fin = $inicio->copy()->endOfWeek(Carbon\Carbon::SUNDAY);
+                    $mesInicio = mb_strtoupper($inicio->locale('es')->translatedFormat('F'));
+                    $mesFin = mb_strtoupper($fin->locale('es')->translatedFormat('F'));
+                @endphp
 
-                    <label class="form-check-label mb-0" for="programa_{{ $loop->index }}">
-                        <strong>{{ $fecha->format('d/m/Y') }}</strong> —
-                        {{ $inicio->format('d') }}–{{ $fin->format('d') }} DE {{ mb_strtoupper($fin->locale('es')->translatedFormat('F')) }}
-                    </label>
+                <label class="form-check-label mb-0" for="programa_{{ $loop->index }}">
+                    <strong>{{ $fecha->format('d/m/Y') }}</strong> —
+                    @if ($mesInicio !== $mesFin)
+                        {{ $inicio->format('d') }} DE {{ $mesInicio }} - {{ $fin->format('d') }} DE {{ $mesFin }}
+                    @else
+                        {{ $inicio->format('d') }}–{{ $fin->format('d') }} DE {{ $mesFin }}
+                    @endif
+                </label>
+
 
                 </div>
 
@@ -90,9 +97,15 @@
                     {{-- ENCABEZADO --}}
                     <div class="d-flex justify-content-between flex-wrap small">
                         <div>
-                            <span style="background-color: #fcff9f; border-radius: 0.25rem;" class="seccion-title fw-bold px-1">
-                                <span class="fw-bold"> {{ $inicio->format('d') }} – {{ $fin->format('d') }} DE {{ mb_strtoupper($fin->locale('es')->translatedFormat('F')) }}</span>
+                          <span style="background-color: #fcff9f; border-radius: 0.25rem;" class="seccion-title fw-bold px-1">
+                            <span class="fw-bold">
+                                @if ($mesInicio !== $mesFin)
+                                    {{ $inicio->format('d') }} DE {{ $mesInicio }} A {{ $fin->format('d') }} DE {{ $mesFin }}
+                                @else
+                                    {{ $inicio->format('d') }} – {{ $fin->format('d') }} DE {{ $mesFin }}
+                                @endif
                             </span>
+                        </span>
 
                             <span style="font-size: 0.8rem;" class="ms-2">
                                 {{ \Carbon\Carbon::parse($r->fecha)->format('d/m/Y') }} — <strong>{{ mb_strtoupper($r->lectura_semanal) }}</strong>
