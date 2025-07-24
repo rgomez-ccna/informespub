@@ -163,6 +163,15 @@
         </div>
         <hr class="mt-1 mb-3">
 
+       <div class="input-group my-1">
+            <span class="input-group-text">Nombre especial de la Sala Auxiliar</span>
+            <input type="text" name="nombre_sala_auxiliar" class="form-control form-control-sm"
+                placeholder="Solo si ese día se usa otro idioma (ej: Sala Auxiliar — RHOMANES)"
+                value="{{ old('nombre_sala_auxiliar', $programa->nombre_sala_auxiliar ?? '') }}">
+        </div>
+
+
+
         @for ($i = 0; $i < 4; $i++)
             @php
                 $asignacion = $programa->asignaciones_maestros[$i] ?? [];

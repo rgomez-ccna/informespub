@@ -53,6 +53,8 @@ class ReunionVidaMinisterioController extends Controller
             'lectura_lector_principal' => $request->lectura_lector_principal,
             'lectura_lector_auxiliar' => $request->lectura_lector_auxiliar,
 
+            'nombre_sala_auxiliar' => $request->nombre_sala_auxiliar,
+
             'asignaciones_maestros' => $request->asignaciones_maestros,
             'cancion_medio' => $request->cancion_medio,
             'vida_cristiana' => $request->vida_cristiana,
@@ -92,6 +94,8 @@ class ReunionVidaMinisterioController extends Controller
             'perlas_disertante' => $request->perlas_disertante,
             'lectura_lector_principal' => $request->lectura_lector_principal,
             'lectura_lector_auxiliar' => $request->lectura_lector_auxiliar,
+
+            'nombre_sala_auxiliar' => $request->nombre_sala_auxiliar,
 
             'asignaciones_maestros' => $request->asignaciones_maestros,
             'cancion_medio' => $request->cancion_medio,

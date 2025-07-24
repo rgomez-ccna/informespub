@@ -66,11 +66,17 @@
                 <div class="d-flex align-items-center gap-2">
                     {{-- CHECKBOX POR PROGRAMA --}}
                     <input type="checkbox" class="form-check-input check-imprimir" value="{{ $loop->index }}" id="programa_{{ $loop->index }}">
+                    @php
+                        $fecha = \Carbon\Carbon::parse($r->fecha);
+                        $inicio = $fecha->copy()->startOfWeek(Carbon\Carbon::MONDAY);
+                        $fin = $inicio->copy()->endOfWeek(Carbon\Carbon::SUNDAY);
+                    @endphp
+
                     <label class="form-check-label mb-0" for="programa_{{ $loop->index }}">
-                        <strong>{{ \Carbon\Carbon::parse($r->fecha)->format('d/m/Y') }}</strong> —
-                        {{ mb_strtoupper(\Carbon\Carbon::parse($r->fecha)->locale('es')->translatedFormat('F Y')) }} —
-                        Semana {{ \Carbon\Carbon::parse($r->fecha)->weekOfMonth }}
+                        <strong>{{ $fecha->format('d/m/Y') }}</strong> —
+                        {{ $inicio->format('d') }}–{{ $fin->format('d') }} DE {{ mb_strtoupper($fin->locale('es')->translatedFormat('F')) }}
                     </label>
+
                 </div>
 
                 <button type="button" class="btn btn-sm btn-outline-secondary btn-toggle-semana">
@@ -82,12 +88,20 @@
             <div class="contenido-semana d-none ">
                 <div class="programa-box border p-3 rounded-3 mb-4 bg-white">
                     {{-- ENCABEZADO --}}
-                    <div class="d-flex justify-content-between flex-wrap small ">
+                    <div class="d-flex justify-content-between flex-wrap small">
                         <div>
-                        <span style="background-color: #fcff9f; border-radius: 0.25rem;" class="seccion-title fw-bold">PROGRAMA <span class="fw-bold">{{ mb_strtoupper(\Carbon\Carbon::parse($r->fecha)->locale('es')->translatedFormat('F Y')) }} (Semana {{ \Carbon\Carbon::parse($r->fecha)->weekOfMonth }}) - </span> 
-                        <strong style="font-size: 0.8rem;">{{ \Carbon\Carbon::parse($r->fecha)->format('d/m/Y') }}</strong></span><br>
-                         Lectura semanal: <strong>{{ $r->lectura_semanal }}</strong>
+                            <span style="background-color: #fcff9f; border-radius: 0.25rem;" class="seccion-title fw-bold px-1">
+                                <span class="fw-bold"> {{ $inicio->format('d') }} – {{ $fin->format('d') }} DE {{ mb_strtoupper($fin->locale('es')->translatedFormat('F')) }}</span>
+                            </span>
+
+                            <span style="font-size: 0.8rem;" class="ms-2">
+                                {{ \Carbon\Carbon::parse($r->fecha)->format('d/m/Y') }} — <strong>{{ mb_strtoupper($r->lectura_semanal) }}</strong>
+                            </span>
+
+                            <div class="mt-1">• Canción <strong>{{ $r->cancion_inicio }}</strong></div>
+                            <div>• Palabras de introducción <span class="text-muted">(1 min.)</span></div>
                         </div>
+
                         <div class="text-end">
                             <div><strong>Presidente:</strong> {{ $r->presidente }}</div>
                             @if ($r->presidente_ayudante)
@@ -97,13 +111,10 @@
                             @if ($r->consejero_ayudante)
                                 <div>Ayudante <small>(Sala Auxiliar)</small>: {{ $r->consejero_ayudante }}</div>
                             @endif
+                            <div class="mt-1"><b>Oración:</b> {{ $r->oracion_inicio }}</div>
                         </div>
                     </div>
 
-                    <ul class="small ps-3 list-unstyled mb-0">
-                        <li>• Canción <strong>{{ $r->cancion_inicio }}</strong> <span class="float-end"><b>Oración:</b> {{ $r->oracion_inicio }}</span></li>
-                        <li>• Palabras de introducción <span class="text-muted">(1 min.)</span></li>
-                    </ul>
 
                     {{-- TESOROS --}}
                     @if ($r->tesoro_titulo || $r->perlas_disertante || $r->lectura_lector_auxiliar || $r->lectura_lector_principal)
@@ -143,7 +154,7 @@
                                             <i class="fa-solid fa-wheat-awn me-2"></i> SEAMOS MEJORES MAESTROS
                                         </div>
                                     </th>
-                                    <th>Sala Auxiliar</th>
+                                    <th>{{ $r->nombre_sala_auxiliar ?? 'Sala Auxiliar' }}</th>
                                     <th>Auditorio Principal</th>
                                     </tr>
                                 </thead>

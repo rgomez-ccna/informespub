@@ -33,6 +33,9 @@ return new class extends Migration
             $table->string('lectura_lector_principal')->nullable();
             $table->string('lectura_lector_auxiliar')->nullable();
 
+            //PARA EL CASO DE IDIOMAS
+            $table->string('nombre_sala_auxiliar')->nullable(); // título personalizado
+
             // Seamos Mejores Maestros (4 asignaciones, con título, estudiante y ayudante por sala)
             $table->json('asignaciones_maestros')->nullable();
 

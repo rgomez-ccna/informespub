@@ -29,6 +29,7 @@ class ReunionVidaMinisterio extends Model
         'estudio_lector',
         'cancion_final',
         'oracion_final',
+        'nombre_sala_auxiliar', // ← este es el nuevo
     ];
 
     protected $casts = [
