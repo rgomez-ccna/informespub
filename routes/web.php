@@ -10,6 +10,7 @@ use App\Http\Controllers\RegistroController;
 
 use App\Http\Controllers\TableroController;
 use App\Http\Controllers\LimpiezaController;
+use App\Http\Controllers\LimpiezaMensualController;
 
 // Ruta raíz
 Route::get('/', function () {
@@ -88,6 +89,7 @@ Route::view('/tablero/territorio', 'tablero.territorio')->name('tablero.territor
 
 // limpieza
 Route::resource('tablero/limpieza', LimpiezaController::class)->names('limpieza');
+Route::resource('limpieza-mensual', LimpiezaMensualController::class)->except(['index']); // porque se muestra en el index de limpieza
 // acomodadores
 Route::resource('tablero/acomodadores', App\Http\Controllers\AcomodadorController::class)->names('acomodadores');
 // Salidas de ministerio
