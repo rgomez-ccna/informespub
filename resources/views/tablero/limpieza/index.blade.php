@@ -177,6 +177,38 @@
     
 
 </div>
+<style>
+    /* no se corte en dos líneas al imprimir, y siempre se mantenga en una sola línea */
+@media print {
+    td.fw-bold {
+        white-space: nowrap !important;
+    }
+}
+</style>
+<style>
+@media print {
+    body {
+        margin: 0 !important;
+    }
+
+    .container {
+        width: 100% !important;
+        max-width: none !important;
+        padding: 0 20px !important;
+    }
+
+    table {
+        width: 100% !important;
+    }
+
+    #bloque-grupo,
+    #bloque-mensual {
+        break-inside: avoid-page;
+    }
+}
+</style>
+
+
 
 <script>
 function imprimirSeleccionadosGrupo() {
