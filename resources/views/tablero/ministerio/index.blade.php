@@ -62,7 +62,7 @@
                                             <th>CONDUCTOR</th>
                                             <th>PUNTO DE ENCUENTRO</th>
                                             <th>TERRITORIO</th>
-                                            <th class="no-print"></th>
+                                            <th class="no-print text-nowrap" style="width:110px"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -86,7 +86,11 @@
                                                             {{ $r->punto_encuentro ?? $r->conductor ?? $r->territorio }}
                                                         </td>
                                                         <td class="no-print">
-                                                            <form action="{{ route('ministerio.destroy', $r) }}" method="POST">
+                                                             <a href="{{ route('ministerio.edit', $r) }}" class="btn btn-sm btn-warning">
+                                                            <i class="fa-solid fa-edit"></i>
+                                                            </a>
+                                                            <form action="{{ route('ministerio.destroy', $r) }}" method="POST" class="d-inline">
+                                                                {{-- CSRF y método DELETE --}}
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-sm btn-outline-danger"
@@ -112,7 +116,11 @@
                                                     <td class="{{ $rowClass }}">{{ $r->punto_encuentro }}</td>
                                                     <td class="{{ $rowClass }}">{{ $r->territorio }}</td>
                                                     <td class="no-print {{ $rowClass }}">
-                                                        <form action="{{ route('ministerio.destroy', $r) }}" method="POST">
+                                                        {{-- Botones de acción --}}
+                                                        <a href="{{ route('ministerio.edit', $r) }}" class="btn btn-sm btn-warning">
+                                                        <i class="fa-solid fa-edit"></i>
+                                                        </a>
+                                                        <form action="{{ route('ministerio.destroy', $r) }}" method="POST" class="d-inline">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="btn btn-sm btn-outline-danger"

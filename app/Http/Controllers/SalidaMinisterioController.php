@@ -43,11 +43,6 @@ class SalidaMinisterioController extends Controller
         return view('tablero.ministerio.form');
     }
 
-    // EDITAR
-    public function edit(SalidaMinisterio $salida)
-    {
-        return view('tablero.ministerio.form', ['registro' => $salida]);
-    }
 
     // GUARDAR
     public function store(Request $request)
@@ -60,16 +55,23 @@ class SalidaMinisterioController extends Controller
         return to_route('ministerio.index');
     }
 
-    // ACTUALIZAR
-    public function update(Request $request, SalidaMinisterio $salida)
-    {
-        $data = $this->validateData($request);
-        $data['es_nueva_semana'] = $request->has('es_nueva_semana');
-        $data['es_fila_info'] = $request->has('es_fila_info');
+ // EDITAR
+public function edit(\App\Models\SalidaMinisterio $ministerio)
+{
+    return view('tablero.ministerio.form', ['registro' => $ministerio]);
+}
 
-        $salida->update($data);
-        return to_route('ministerio.index');
-    }
+// ACTUALIZAR
+public function update(\Illuminate\Http\Request $request, \App\Models\SalidaMinisterio $ministerio)
+{
+    $data = $this->validateData($request);
+    $data['es_nueva_semana'] = $request->has('es_nueva_semana');
+    $data['es_fila_info']    = $request->has('es_fila_info');
+
+    $ministerio->update($data);
+    return to_route('ministerio.index');
+}
+
 
     // ELIMINAR
     public function destroy(SalidaMinisterio $ministerio)
