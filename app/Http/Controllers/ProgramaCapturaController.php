@@ -44,8 +44,10 @@ class ProgramaCapturaController extends Controller
                    // $paths[] = $f->store('public/vidaministerio/capturas');
                    // $paths[] = $f->store('vidaministerio/capturas', 'public');
                     // usá esto:
-                    $f->move(public_path('storage/vidaministerio/capturas'), $f->hashName());
-                    $paths[] = 'storage/vidaministerio/capturas/' . $f->hashName();
+                    $filename = $f->hashName();
+                    $f->storeAs('vidaministerio/capturas', $filename, 'public');
+                    $paths[] = 'storage/vidaministerio/capturas/' . $filename;
+
                 }
             }
         }
