@@ -127,6 +127,12 @@ Route::get('/fix-storage-link', function () {
     return 'Storage link creado OK';
 });
 
+Route::get('/fix-link', function () {
+    Artisan::call('storage:unlink');
+    Artisan::call('storage:link');
+    return readlink(public_path('storage'));
+});
+
 // 📌 Ruta para limpiar la caché y redescubrir paquetes en Laravel (ÚSALA SOLO CUANDO SEA NECESARIO)
 Route::get('/reparar-laravel', function () {
     // 🔄 Borra la caché de configuración para asegurarse de que Laravel lea correctamente los archivos .env y config/*.php
