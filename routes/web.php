@@ -128,10 +128,36 @@ Route::get('/fix-storage-link', function () {
 });
 
 Route::get('/fix-link', function () {
-    Artisan::call('storage:unlink');
+    $link = public_path('storage');
+
+    // 1. Borrar symlink/carpeta si existe
+    if (is_link($link) || file_exists($link)) {
+        unlink($link);
+    }
+
+    // 2. Crear symlink de nuevo
     Artisan::call('storage:link');
-    return readlink(public_path('storage'));
+
+    // 3. Datos de diagnóstico
+    $target = readlink($link);
+    $exists = file_exists($link);
+    $isLink = is_link($link);
+
+    // 4. Probar acceso a una carpeta de capturas
+    $testPath = storage_path('app/public/vidaministerio/capturas');
+    $files = is_dir($testPath) ? array_slice(scandir($testPath), 0, 5) : [];
+
+    return response()->json([
+        'symlink'   => $link,
+        'apunta_a'  => $target ?: '(no apunta)',
+        'existe'    => $exists,
+        'es_link'   => $isLink,
+        'test_path' => $testPath,
+        'archivos'  => $files,
+        'url_ejemplo' => url('storage/vidaministerio/capturas/' . ($files[2] ?? '')),
+    ]);
 });
+
 
 // 📌 Ruta para limpiar la caché y redescubrir paquetes en Laravel (ÚSALA SOLO CUANDO SEA NECESARIO)
 Route::get('/reparar-laravel', function () {
