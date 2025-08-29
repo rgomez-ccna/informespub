@@ -163,6 +163,16 @@ Route::get('/fix-cache', function () {
     Artisan::call('storage:link');     // reintenta link
     return 'OK';
 });
+use Illuminate\Support\Facades\Storage;
+
+Route::get('/test-img', function () {
+    $path = 'NxRn6P7mGU2EUQSoqAtSRrEtJIufvlq7UmadMaw8.png'; // poné un archivo real dentro de storage/app/public
+    return [
+        'exists' => Storage::disk('public')->exists($path),
+        'url'    => Storage::url($path),
+        'direct' => asset('storage/'.$path),
+    ];
+});
 
 
 
