@@ -84,7 +84,7 @@
                     'week' => $idxSemana,
                     't'    => 'img',
                     'v'    => $p,
-                    'url'  => Storage::url($p),
+                    'url'  => asset($p),   // <-- clave
                 ];
             }
             if ($notaTexto) {

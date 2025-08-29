@@ -28,42 +28,40 @@ class ProgramaCapturaController extends Controller
     }
 
     public function store(Request $r)
-    {
-        $r->validate([
-            'fecha'        => 'required|date',
-            'imagenes.*'   => 'nullable|mimes:jpg,jpeg,png,pdf|max:5120',
-            'nota'         => 'nullable|string',
-        ]);
+{
+    $r->validate([
+        'fecha'        => 'required|date',
+        'imagenes.*'   => 'nullable|mimes:jpg,jpeg,png|max:5120', // solo imágenes
+        'nota'         => 'nullable|string',
+    ]);
 
-        $paths = [];
+    $paths = [];
 
-        // archivos
-        if ($r->hasFile('imagenes')) {
-            foreach ($r->file('imagenes') as $f) {
-                if ($f->isValid()) {
-                   // $paths[] = $f->store('public/vidaministerio/capturas');
-                   // $paths[] = $f->store('vidaministerio/capturas', 'public');
-                    // usá esto:
-                    $filename = $f->hashName();
-                    $f->storeAs('vidaministerio/capturas', $filename, 'public');
-                    $paths[] = 'storage/vidaministerio/capturas/' . $filename;
+    // Asegura carpeta pública
+    $dest = public_path('storage/vidaministerio/capturas');
+    if (!is_dir($dest)) mkdir($dest, 0755, true);
 
-                }
-            }
+    // subir archivos directo a public/storage
+    if ($r->hasFile('imagenes')) {
+        foreach ($r->file('imagenes') as $f) {
+            if (!$f->isValid()) continue;
+            $name = $f->hashName();            // nombre único
+            $f->move($dest, $name);            // mueve a /public/storage/...
+            $paths[] = 'storage/vidaministerio/capturas/'.$name; // URL relativa pública
         }
-
-        // nota como pseudo-imagen (sin tocar DB)
-        if (trim($r->input('nota', '')) !== '') {
-            $paths[] = '::text::' . trim($r->input('nota'));
-        }
-
-        ProgramaCaptura::create([
-            'fecha'    => $r->fecha,
-            'imagenes' => $paths,
-        ]);
-
-        return redirect()->route('tablero.programa-capturas.index')->with('ok', 'Capturas guardadas.');
     }
+
+    if (trim($r->input('nota','')) !== '') {
+        $paths[] = '::text::'.trim($r->input('nota'));
+    }
+
+    ProgramaCaptura::create([
+        'fecha'    => $r->fecha,
+        'imagenes' => $paths,
+    ]);
+
+    return redirect()->route('tablero.programa-capturas.index')->with('ok','Capturas guardadas.');
+}
 
     public function edit($id)
     {
@@ -71,40 +69,43 @@ class ProgramaCapturaController extends Controller
         return view('tablero.programa_capturas.form', compact('item'));
     }
 
-    public function update(Request $r, $id)
-    {
-        $r->validate([
-            'fecha'        => 'nullable|date',
-            'imagenes.*'   => 'nullable|mimes:jpg,jpeg,png,pdf|max:5120',
-            'nota'         => 'nullable|string',
-        ]);
+   public function update(Request $r, $id)
+{
+    $r->validate([
+        'fecha'        => 'nullable|date',
+        'imagenes.*'   => 'nullable|mimes:jpg,jpeg,png|max:5120',
+        'nota'         => 'nullable|string',
+    ]);
 
-        $item = ProgramaCaptura::findOrFail($id);
+    $item = ProgramaCaptura::findOrFail($id);
 
-        $nuevas = [];
-        if ($r->hasFile('imagenes')) {
-            foreach ($r->file('imagenes') as $f) {
-                if ($f->isValid()) {
-                    $nuevas[] = $f->store('public/vidaministerio/capturas');
-                }
-            }
+    $dest = public_path('storage/vidaministerio/capturas');
+    if (!is_dir($dest)) mkdir($dest, 0755, true);
+
+    $nuevas = [];
+    if ($r->hasFile('imagenes')) {
+        foreach ($r->file('imagenes') as $f) {
+            if (!$f->isValid()) continue;
+            $name = $f->hashName();
+            $f->move($dest, $name);
+            $nuevas[] = 'storage/vidaministerio/capturas/'.$name;
         }
-
-        // merge con existentes
-        $merged = array_values(array_filter(array_merge($item->imagenes ?? [], $nuevas)));
-
-        // nota (si viene) se agrega al final
-        if (trim($r->input('nota', '')) !== '') {
-            $merged[] = '::text::' . trim($r->input('nota'));
-        }
-
-        $item->update([
-            'fecha'    => $r->filled('fecha') ? $r->fecha : $item->fecha,
-            'imagenes' => $merged,
-        ]);
-
-        return back()->with('ok', 'Actualizado.');
     }
+
+    $merged = array_values(array_filter(array_merge($item->imagenes ?? [], $nuevas)));
+
+    if (trim($r->input('nota','')) !== '') {
+        $merged[] = '::text::'.trim($r->input('nota'));
+    }
+
+    $item->update([
+        'fecha'    => $r->filled('fecha') ? $r->fecha : $item->fecha,
+        'imagenes' => $merged,
+    ]);
+
+    return back()->with('ok','Actualizado.');
+}
+
 
     public function destroy($id)
     {
