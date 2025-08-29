@@ -265,22 +265,14 @@
   background: var(--accent-bg);
   border-radius: .4rem;
   box-sizing: border-box;
-  padding: 8mm;                 /* en impresión luce parejo; si queda justo, bajá a 6mm */
+  padding: 1mm;              /* ← antes 8mm: ahora 1mm para “pegarse” al borde */
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;      /* ← asegura que el hijo use todo el alto */
+  justify-content: stretch;
 }
 
-/* La imagen adentro del marco, sin deformar ni recortar */
-.slot-50 .frame img.print-img{
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;          /* no recorta ni deforma */
-  object-position: center;
-  display: block;
-}
+
+
 
 /* Nota sin su borde propio (usa el marco) */
 .slot-50 .frame .nota-box{
@@ -304,17 +296,18 @@
   }
   .slot-50:last-child{ margin-bottom: 0; }
 
-  .print-img{
-    display: block;
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;            /* no recorta, no deforma */
-    object-position: center;
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
+.print-img{
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;          /* ← antes contain: deforma para llenar */
+  object-position: center;
+  max-width: none;           /* no limites */
+  max-height: none;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
 
   .nota-box{
     text-transform: uppercase;   /* convierte todo a mayúsculas */
