@@ -13,6 +13,7 @@ use App\Http\Controllers\LimpiezaController;
 use App\Http\Controllers\LimpiezaMensualController;
 
 use App\Http\Controllers\ProgramaCapturaController;
+use Illuminate\Support\Facades\Artisan;
 
 // Ruta raíz
 Route::get('/', function () {
@@ -124,6 +125,13 @@ Route::get('/fix-storage-link', function () {
     return 'Storage link creado OK';
 });
 
+
+
+Route::get('/fix-cache', function () {
+    Artisan::call('optimize:clear');   // incluye config/route/view/cache
+    Artisan::call('storage:link');     // reintenta link
+    return 'OK';
+});
 
 
 
