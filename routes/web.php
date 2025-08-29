@@ -14,6 +14,7 @@ use App\Http\Controllers\LimpiezaMensualController;
 
 use App\Http\Controllers\ProgramaCapturaController;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 
 // Ruta raíz
 Route::get('/', function () {
@@ -163,17 +164,16 @@ Route::get('/fix-cache', function () {
     Artisan::call('storage:link');     // reintenta link
     return 'OK';
 });
-use Illuminate\Support\Facades\Storage;
+
 
 Route::get('/test-img', function () {
-    $path = 'NxRn6P7mGU2EUQSoqAtSRrEtJIufvlq7UmadMaw8.png'; // poné un archivo real dentro de storage/app/public
+    $path = 'vidaministerio/capturas/NxRn6P7mGU2EUQSoqAtSRrEtJIufvlq7UmadMaw8.png';
     return [
         'exists' => Storage::disk('public')->exists($path),
-        'url'    => Storage::url($path),
+        'url'    => Storage::url($path),          // -> /storage/vidaministerio/capturas/...
         'direct' => asset('storage/'.$path),
     ];
 });
-
 
 
 });
