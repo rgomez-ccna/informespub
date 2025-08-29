@@ -15,6 +15,7 @@ use App\Http\Controllers\LimpiezaMensualController;
 use App\Http\Controllers\ProgramaCapturaController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 // Ruta raíz
 Route::get('/', function () {
@@ -164,7 +165,30 @@ Route::get('/fix-cache', function () {
     Artisan::call('storage:link');     // reintenta link
     return 'OK';
 });
+Route::get('/storage-perms-fix', function () {
+    $paths = [storage_path('app/public'), public_path('storage')];
+    foreach ($paths as $base) {
+        if (!File::exists($base)) continue;
+        $rii = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($base, FilesystemIterator::SKIP_DOTS));
+        foreach ($rii as $f) {
+            @chmod($f->getPathname(), $f->isDir() ? 0755 : 0644);
+        }
+        @chmod($base, 0755);
+    }
+    return 'Permisos OK';
+});
 
+Route::get('/storage-hardcopy', function () {
+    $src = storage_path('app/public');   // origen real
+    $dst = public_path('storage');       // destino público
+
+    // quita symlink si existe
+    if (is_link($dst)) @unlink($dst);
+    if (!File::exists($dst)) File::makeDirectory($dst, 0755, true);
+
+    File::copyDirectory($src, $dst);
+    return 'Copiado storage/app/public -> public/storage';
+});
 
 Route::get('/test-img', function () {
     $path = 'vidaministerio/capturas/NxRn6P7mGU2EUQSoqAtSRrEtJIufvlq7UmadMaw8.png';
