@@ -50,18 +50,12 @@
         </div>
     </div>
 
-    {{-- ENCABEZADO SOLO 1ra PÁGINA (lo dejo igual) --}}
-    <div class="banner-programa d-none d-print-block">
-        <h1 class="titulo fw-bold">VIDA Y MINISTERIO CRISTIANO</h1>
-        <h5 class="subtitulo">PROGRAMA DE ASIGNACIONES</h5>
-    </div>
-
+ 
     @php
-        // Elementos globales para impresión
         $ALL = [];
     @endphp
 
-    {{-- SEMANAS (vista normal) --}}
+    {{-- SEMANAS --}}
     @foreach ($items as $idxSemana => $r)
         @php
             $fecha = Carbon::parse($r->fecha);
@@ -78,13 +72,12 @@
 
             $imgPaths  = array_values(array_filter($r->imagenes ?? [], fn($v)=>!Str::startsWith($v,'::text::')));
 
-            // Cargar elementos con URL completa (evita “cuadrados”)
             foreach ($imgPaths as $p) {
                 $ALL[] = [
                     'week' => $idxSemana,
                     't'    => 'img',
                     'v'    => $p,
-                    'url'  => asset($p),   // <-- clave
+                    'url'  => asset($p),
                 ];
             }
             if ($notaTexto) {
@@ -99,7 +92,7 @@
         @endphp
 
         <div class="semana-wrapper">
-            {{-- Encabezado semana (vista) --}}
+            {{-- Encabezado semana --}}
             <div class="d-flex justify-content-between align-items-center border rounded-3 p-2 mb-2 bg-light no-print">
                 <div class="d-flex align-items-center gap-2">
                     <input type="checkbox" class="form-check-input check-imprimir" value="{{ $loop->index }}" id="semana_{{ $loop->index }}">
@@ -130,7 +123,7 @@
                 </div>
             </div>
 
-            {{-- Vista previa (no imprime) --}}
+            {{-- Vista previa --}}
             <div class="contenido-semana d-none">
                 <div class="border rounded-3 p-3 bg-white">
                     @if($notaTexto)
@@ -146,20 +139,9 @@
 
                     <div class="row g-2">
                         @foreach($imgPaths as $p)
-                            @php 
-                          //  $url = Storage::url($p); 
-                            $url = asset($p); // sin stotrage link
-
-                            $isPdf = Str::endsWith($p,['.pdf','.PDF']); 
-                            @endphp
+                            @php $url = asset($p); @endphp
                             <div class="col-12 col-md-6">
-                                @if(!$isPdf)
-                                    <img src="{{ $url }}" class="img-fluid w-100 rounded border" alt="">
-                                @else
-                                    <a href="{{ $url }}" target="_blank" class="btn btn-outline-secondary btn-sm w-100">
-                                        <i class="fa-solid fa-file-pdf"></i> Abrir PDF
-                                    </a>
-                                @endif
+                                <img src="{{ $url }}" class="img-fluid w-100 rounded border" alt="">
                             </div>
                         @endforeach
                     </div>
@@ -169,48 +151,50 @@
     @endforeach
 
     @php
-        // Paginado global: 2 por página
         $PAGINAS_ALL = [];
         if (!empty($ALL)) $PAGINAS_ALL = array_chunk($ALL, 2);
     @endphp
 
-    {{-- CONTENEDOR IMPRESIÓN "TODO" --}}
+    {{-- IMPRESIÓN --}}
     <div id="print-global" class="d-none d-print-block">
         @foreach($PAGINAS_ALL as $pares)
-            <div class="pagina-programa">
-                <div class="slots-vertical">
-                    @foreach($pares as $el)
-                        <div class="slot-50">
-  <div class="frame">
-    @if(($el['t'] ?? null) === 'img')
-      @php $isPdf = isset($el['v']) ? Str::endsWith($el['v'],['.pdf','.PDF']) : false; @endphp
-      @if(!$isPdf)
-        <img src="{{ $el['url'] ?? '' }}" class="print-img" alt="">
-      @else
-        <a href="{{ $el['url'] ?? '#' }}" target="_blank" class="btn btn-outline-secondary btn-sm w-100">
-          <i class="fa-solid fa-file-pdf"></i> Abrir PDF
-        </a>
-      @endif
-    @else
-      <div class="nota-box">
-        <div class="fw-semibold mb-1"><i class="fa-regular fa-note-sticky"></i> {{ $el['label'] ?? 'Nota' }}</div>
-        @if(!empty($el['fecha']))<div class="small text-muted mb-1">{{ $el['fecha'] }}</div>@endif
-        <div class="small" style="white-space:pre-line;">{{ $el['v'] ?? '' }}</div>
-      </div>
-    @endif
-  </div>
-</div>
+            <div class="pagina-programa {{ $loop->first ? 'con-header' : '' }}">
+                @if($loop->first)
+                    <div class="banner-programa-print">
+                        <h1 class="titulo fw-bold">VIDA Y MINISTERIO CRISTIANO</h1>
+                        <h5 class="subtitulo">PROGRAMA DE ASIGNACIONES</h5>
+                    </div>
+                @endif
 
-                    @endforeach
-                    @if(count($pares)===1)
-                        <div class="slot-50"></div>
-                    @endif
+             <div class="slots-vertical">
+                @foreach($pares as $el)
+                    <div class="slot-50">
+                    <div class="frame">
+                        @if($el['t']==='img')
+                        <img src="{{ $el['url'] }}" class="print-img" alt="">
+                        @elseif($el['t']==='nota')
+                        <div class="nota-box">
+                            <div class="fw-semibold mb-1">{{ $el['label'] }} ({{ $el['fecha'] }})</div>
+                            <div class="small" style="white-space:pre-line;">{{ $el['v'] }}</div>
+                        </div>
+                        @endif
+                    </div>
+                    </div>
+                @endforeach
+
+                @if(count($pares)===1)
+                    <div class="slot-50">
+                    <div class="frame"></div>
+                    </div>
+                @endif
                 </div>
             </div>
         @endforeach
     </div>
 
 </div>
+
+
 
 {{-- DATA para impresión seleccionada: con URL lista --}}
 <script class="no-print">
@@ -222,104 +206,134 @@
 .table td, .table th { padding: .1rem .2rem !important; font-size: .75rem !important; }
 
 @media print {
+  /* ===== Vars ===== */
+  :root{
+    --page-h: 277mm;     /* A4 útil ≈ (márgenes ya considerados) */
+    --gap: 6mm;          /* separación entre slots */
+    --header-h: 22mm;    /* alto real del header en impresión */
+    --accent: #41345a;
+    --accent-bg: #ffffff;
+  }
+
+  /* ===== Reset ===== */
+  
   /* @page { size: A4 portrait; margin: 10mm; } */
-
   .no-print{ display: none !important; }
-  body { margin:0; padding:0; }
+  body { margin:0; padding:0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
-  /* oculto vistas sueltas en impresión; uso los contenedores armados */
   .semana-wrapper { display: none !important; }
 
   #print-global { display:block !important; }
   body.printing-selection #print-global { display: none !important; }
   body.printing-selection #print-selected { display: block !important; }
 
-  /* Por página */
+  /* ===== Página ===== */
   .pagina-programa{
     break-after: page;
     -webkit-break-after: page;
     box-sizing: border-box;
     padding: 0;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: var(--page-h);
+
+    /* slot height por defecto: página SIN header (2 slots + 1 gap) */
+    --slot-h-current: calc((var(--page-h) - var(--gap)) / 2);
   }
   .pagina-programa:last-child{
     break-after: auto;
     -webkit-break-after: auto;
   }
 
-  /* Alturas cerradas para 2 elementos exactos:
-     útil ≈ 297 - 20 = 277mm; gap 6mm → 271/2 ≈ 135.5 → usamos 133mm + 6mm gap = margen más seguro
-  */
+  /* Cuando hay header: 2 slots + 1 gap + header = page-h */
+  .pagina-programa.con-header{
+    --slot-h-current: calc((var(--page-h) - var(--header-h) - var(--gap)) / 2);
+  }
 
-/* Colores del encabezado (ajustá a tu tono) */
-:root{
-  --accent: #49355c;      /* mismo color que el encabezado */
-  --accent-bg: #ffffff;   /* fondo suave del contenedor */
-}
+  /* Header (sin margen adicional porque ya lo contamos en --header-h) */
+.banner-programa-print {
+    border: 3px solid #5c498b;
+    padding: 10px 6px;
+    text-align: center;
+    border-radius: 6px;
+    margin-bottom: 10px;
+  }
+  .banner-programa-print .titulo {
+    margin: 0;
+    font-weight: 700;
+    color: #41345a;
+    letter-spacing: 1px;
+  }
+  .banner-programa-print .subtitulo {
+     margin: 0 !important;
+    color: #3d3154;
+    font-weight: 600;
+  }
 
-/* Marco uniforme para imagen y nota (vista e impresión) */
-.slot-50 { padding: 0; }
-.slot-50 .frame{
-  height: 100%;
-  border: 2px solid var(--accent);
-  background: var(--accent-bg);
-  border-radius: .4rem;
-  box-sizing: border-box;
-  padding: 1mm;              /* ← antes 8mm: ahora 1mm para “pegarse” al borde */
-  display: flex;
-  align-items: stretch;      /* ← asegura que el hijo use todo el alto */
-  justify-content: stretch;
-}
-
-
-
-
-/* Nota sin su borde propio (usa el marco) */
-.slot-50 .frame .nota-box{
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  border: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-
+  /* Contenedor de slots */
   .slots-vertical{ display: block; }
+
+  /* Centrado vertical solo cuando NO hay header */
+  .pagina-programa:not(.con-header) .slots-vertical{ margin: auto 0; }
+  .pagina-programa.con-header .slots-vertical{ margin: 0; }
+
+  /* ===== Slots ===== */
   .slot-50{
-    height: 133mm;                 /* más seguro, evita empujes */
-    margin: 0 0 6mm 0;
-    overflow: hidden;               /* evita que empuje al siguiente */
+    height: var(--slot-h-current);
+    margin: 0 0 var(--gap) 0;
+    overflow: hidden;
     box-sizing: border-box;
     page-break-inside: avoid;
     break-inside: avoid;
+    padding: 0;
   }
   .slot-50:last-child{ margin-bottom: 0; }
 
-.print-img{
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: fill;          /* ← antes contain: deforma para llenar */
-  object-position: center;
-  max-width: none;           /* no limites */
-  max-height: none;
-  page-break-inside: avoid;
-  break-inside: avoid;
-}
+  /* Marco */
+  .slot-50 .frame{
+    height: 100%;
+    border: 2px solid var(--accent);
+    background: var(--accent-bg);
+    border-radius: .4rem;
+    box-sizing: border-box;
+    padding: 1mm;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+  }
 
+  /* Imagen */
+  .print-img{
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;      /* usar 'contain' si no querés deformar */
+    object-position: center;
+    max-width: none;
+    max-height: none;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
 
+  /* Nota */
   .nota-box{
-    text-transform: uppercase;   /* convierte todo a mayúsculas */
-    font-size: 1.1rem;             /* más grande, probá con 1.1rem si querés más */
-    text-align: center;          /* centrado */
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    text-align: center;
     line-height: 1.4;
     width: 100%;
     height: 100%;
     box-sizing: border-box;
-    border: 1px solid #ddd;
-    background: #f8f9fa;
+    background: transparent;
+    border: 0;
     padding: 8mm;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
     overflow: hidden;
     page-break-inside: avoid;
     break-inside: avoid;
@@ -370,35 +384,40 @@ document.addEventListener('DOMContentLoaded', function () {
         cont.className = 'd-none d-print-block';
 
         let html = '';
-        pages.forEach(par => {
-            html += `<div class="pagina-programa"><div class="slots-vertical">`;
-            par.forEach(el => {
-                html += `<div class="slot-50">` + `<div class="frame">`;
-                if (el.t === 'img') {
-                    const isPdf = /\.pdf$/i.test(el.v || '');
-                    if (!isPdf) {
-                        html += `<img src="${(el.url || '')}" class="print-img" alt="">`;
-                    } else {
-                        html += `<a href="${(el.url || '#')}" target="_blank" class="btn btn-outline-secondary btn-sm w-100"><i class="fa-solid fa-file-pdf"></i> Abrir PDF</a>`;
-                    }
-                } else {
-                    const label = (el.label || 'Nota');
-                    const fecha = (el.fecha || '');
-                    html += `<div class="nota-box">
-                        <div class="fw-semibold mb-1">
-                            <i class="fa-regular fa-note-sticky"></i> ${label}
-                        </div>
-                        <div class="small" style="white-space:pre-line;">
-                            ${(el.v || '').replace(/</g,'&lt;')}
-                        </div>
-                        </div>`;
+        pages.forEach((par, idx) => {
+  html += `<div class="pagina-programa ${idx===0 ? 'con-header' : ''}">`;
 
-                }
-                html += `</div>` + `</div>`;
-            });
-            if (par.length === 1) html += `<div class="slot-50"></div>`;
+  // Header solo en la primera página seleccionada
+  if (idx === 0) {
+    html += `
+      <div class="banner-programa-print">
+        <h1 class="titulo fw-bold">VIDA Y MINISTERIO CRISTIANO</h1>
+        <h5 class="subtitulo">PROGRAMA DE ASIGNACIONES</h5>
+      </div>
+    `;
+  }
+
+        html += `<div class="slots-vertical">`;
+        par.forEach(el => {
+            html += `<div class="slot-50"><div class="frame">`;
+            if (el.t === 'img') {
+            const isPdf = /\.pdf$/i.test(el.v || '');
+            html += !isPdf
+                ? `<img src="${(el.url || '')}" class="print-img" alt="">`
+                : `<a href="${(el.url || '#')}" target="_blank" class="btn btn-outline-secondary btn-sm w-100"><i class="fa-solid fa-file-pdf"></i> Abrir PDF</a>`;
+            } else {
+            const label = (el.label || 'Nota');
+            html += `<div class="nota-box">
+                <div class="fw-semibold mb-1"><i class="fa-regular fa-note-sticky"></i> ${label}</div>
+                <div class="small" style="white-space:pre-line;">${(el.v || '').replace(/</g,'&lt;')}</div>
+            </div>`;
+            }
             html += `</div></div>`;
         });
+        if (par.length === 1) html += `<div class="slot-50"><div class="frame"></div></div>`;
+        html += `</div></div>`;
+        });
+
 
         cont.innerHTML = html;
         document.body.appendChild(cont);
