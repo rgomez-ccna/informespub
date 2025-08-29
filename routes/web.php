@@ -12,6 +12,8 @@ use App\Http\Controllers\TableroController;
 use App\Http\Controllers\LimpiezaController;
 use App\Http\Controllers\LimpiezaMensualController;
 
+use App\Http\Controllers\ProgramaCapturaController;
+
 // Ruta raíz
 Route::get('/', function () {
     if (!Auth::check()) {
@@ -107,6 +109,22 @@ Route::prefix('tablero/vida-ministerio')->name('vidaministerio.')->group(functio
     Route::put('/{id}', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'update'])->name('update');
     Route::delete('/{id}', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'destroy'])->name('destroy');
 });
+
+Route::prefix('tablero')->name('tablero.')->group(function () {
+    Route::resource('programa-capturas', ProgramaCapturaController::class)
+        ->only(['index','create','store','edit','update','destroy']);
+
+    Route::delete('programa-capturas/{id}/imagen/{idx}', [ProgramaCapturaController::class,'destroyImagen'])
+        ->name('programa-capturas.imagen.destroy');
+});
+
+
+Route::get('/fix-storage-link', function () {
+    Artisan::call('storage:link');
+    return 'Storage link creado OK';
+});
+
+
 
 
 });

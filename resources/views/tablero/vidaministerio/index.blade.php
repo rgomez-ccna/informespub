@@ -29,7 +29,18 @@
         <div class="col-auto">
             <button class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-filter"></i> Filtrar</button>
         </div>
-    </form>
+    </form> 
+
+
+<div class="text-end mb-3">
+  <a href="{{ route('tablero.programa-capturas.index') }}" 
+     class="btn btn-dark btn-sm d-inline-flex align-items-center justify-content-between">
+     <span>VIDA Y MINISTERIO c/ IMÁGENES</span>
+     <i class="fa-solid fa-arrow-right ms-2"></i>
+  </a>
+</div>
+
+  
 
    {{-- CHECKBOX SELECCIÓN --}}
 <div class="no-print mb-3">

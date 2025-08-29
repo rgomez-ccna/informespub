@@ -51,7 +51,7 @@
 
 /* -------- ENCABEZADO DE CADA PROGRAMA -------- */
 .banner-programa {
-    border: 3px solid #6b5b95;
+    border: 3px solid #5c498b;
     padding: 10px 6px;
     text-align: center;
     border-radius: 6px;
@@ -60,12 +60,12 @@
 .banner-programa .titulo {
     margin: 0;
     font-weight: 700;
-    color: #4b3f61;
+    color: #41345a;
     letter-spacing: 1px;
 }
 .banner-programa .subtitulo {
     margin: 0;
-    color: #4b3f61;
+    color: #3d3154;
     font-weight: 600;
 }
 
