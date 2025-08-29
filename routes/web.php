@@ -178,7 +178,33 @@ Route::get('/storage-perms-fix', function () {
     return 'Permisos OK';
 });
 
-Route::get('/storage-hardcopy', function () {
+Route::get('/storage-restore', function () {
+    $link   = public_path('storage');
+    $target = storage_path('app/public');
+
+    // Si public/storage es una carpeta real, borrarla
+    if (File::exists($link) && !is_link($link)) {
+        File::deleteDirectory($link);
+    }
+    // Si hay symlink viejo, quitarlo
+    if (is_link($link)) {
+        @unlink($link);
+    }
+
+    // Crear symlink (artisan o nativo)
+    try { Artisan::call('storage:link'); } catch (\Throwable $e) {}
+    if (!is_link($link)) { @symlink($target, $link); }
+
+    Artisan::call('optimize:clear');
+
+    return [
+        'is_symlink'    => is_link($link) ? 'OK' : 'FAIL',
+        'points_to'     => is_link($link) ? readlink($link) : null,
+        'target_exists' => File::exists($target),
+    ];
+});
+
+Route::get('/storage-hardcopy', function () {  /// ******* ESTE RESLVIO EL STORGE LINK
     $src = storage_path('app/public');   // origen real
     $dst = public_path('storage');       // destino público
 
