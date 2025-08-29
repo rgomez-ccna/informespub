@@ -144,7 +144,19 @@ Route::get('/clear-config', function () {
         Artisan::call('config:clear');
         return 'Cache de configuración limpiada!';
     });
-
+   // Utilidades
+        Route::get('/reparar-cache', function () {
+            Artisan::call('config:clear');
+            Artisan::call('cache:clear');
+            Artisan::call('route:clear');
+            Artisan::call('view:clear');
+            Artisan::call('optimize:clear');
+            Artisan::call('config:cache');
+            Artisan::call('event:clear');
+            Artisan::call('event:cache');
+            Artisan::call('clear-compiled');
+            return '✔️ Todo limpio y optimizado.';
+        });
 
 Route::get('/fix-cache', function () {
     Artisan::call('optimize:clear');   // incluye config/route/view/cache
