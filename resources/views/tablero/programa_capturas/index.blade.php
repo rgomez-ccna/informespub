@@ -146,7 +146,12 @@
 
                     <div class="row g-2">
                         @foreach($imgPaths as $p)
-                            @php $url = Storage::url($p); $isPdf = Str::endsWith($p,['.pdf','.PDF']); @endphp
+                            @php 
+                          //  $url = Storage::url($p); 
+                            $url = asset($p); // sin stotrage link
+
+                            $isPdf = Str::endsWith($p,['.pdf','.PDF']); 
+                            @endphp
                             <div class="col-12 col-md-6">
                                 @if(!$isPdf)
                                     <img src="{{ $url }}" class="img-fluid w-100 rounded border" alt="">
