@@ -177,7 +177,22 @@ Route::get('/storage-perms-fix', function () {
     }
     return 'Permisos OK';
 });
+Route::get('/fix-storage2', function () {
+    $link = public_path('storage');
+    $target = storage_path('app/public');
 
+    // Si es carpeta real o link viejo, borralo
+    if (File::exists($link)) File::delete($link);
+    if (is_link($link)) @unlink($link);
+
+    // Crear symlink limpio
+    Artisan::call('storage:link');
+
+    // Limpiar caché por si acaso
+    Artisan::call('optimize:clear');
+
+    return '✅ Symlink restaurado correctamente.';
+});
 Route::get('/storage-restore', function () {
     $link   = public_path('storage');
     $target = storage_path('app/public');

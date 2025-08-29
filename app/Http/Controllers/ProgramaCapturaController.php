@@ -41,7 +41,8 @@ class ProgramaCapturaController extends Controller
         if ($r->hasFile('imagenes')) {
             foreach ($r->file('imagenes') as $f) {
                 if ($f->isValid()) {
-                    $paths[] = $f->store('public/vidaministerio/capturas');
+                   // $paths[] = $f->store('public/vidaministerio/capturas');
+                    $paths[] = $f->store('vidaministerio/capturas', 'public');
                 }
             }
         }
