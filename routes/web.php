@@ -140,6 +140,11 @@ Route::get('/reparar-laravel', function () {
 
 }); //Fin del grupo de rutas protegidas con autenticación y tenant
 
+Route::get('/clear-config', function () {
+        Artisan::call('config:clear');
+        return 'Cache de configuración limpiada!';
+    });
+
 
 Route::get('/fix-cache', function () {
     Artisan::call('optimize:clear');   // incluye config/route/view/cache
