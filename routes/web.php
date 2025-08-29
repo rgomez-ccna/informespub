@@ -127,36 +127,39 @@ Route::get('/fix-storage-link', function () {
     return 'Storage link creado OK';
 });
 
+
+
 Route::get('/fix-link', function () {
     $link = public_path('storage');
 
-    // 1. Borrar symlink/carpeta si existe
-    if (is_link($link) || file_exists($link)) {
+    // 1. Si existe y es carpeta (local), borramos con File::deleteDirectory
+    if (is_dir($link) && !is_link($link)) {
+        File::deleteDirectory($link);
+    }
+    // 2. Si existe como symlink, borramos con unlink
+    elseif (is_link($link) || file_exists($link)) {
         unlink($link);
     }
 
-    // 2. Crear symlink de nuevo
+    // 3. Crear symlink
     Artisan::call('storage:link');
 
-    // 3. Datos de diagnóstico
-    $target = readlink($link);
-    $exists = file_exists($link);
-    $isLink = is_link($link);
-
-    // 4. Probar acceso a una carpeta de capturas
+    // 4. Info de depuración
+    $target = is_link($link) ? readlink($link) : '(no es link)';
     $testPath = storage_path('app/public/vidaministerio/capturas');
-    $files = is_dir($testPath) ? array_slice(scandir($testPath), 0, 5) : [];
+    $files = is_dir($testPath) ? array_slice(scandir($testPath), 0, 10) : [];
 
     return response()->json([
-        'symlink'   => $link,
-        'apunta_a'  => $target ?: '(no apunta)',
-        'existe'    => $exists,
-        'es_link'   => $isLink,
-        'test_path' => $testPath,
-        'archivos'  => $files,
-        'url_ejemplo' => url('storage/vidaministerio/capturas/' . ($files[2] ?? '')),
+        'symlink'    => $link,
+        'apunta_a'   => $target,
+        'existe'     => file_exists($link),
+        'es_link'    => is_link($link),
+        'test_path'  => $testPath,
+        'archivos'   => $files,
+        'url_sample' => count($files) > 2 ? url('storage/vidaministerio/capturas/'.$files[2]) : null,
     ]);
 });
+
 
 
 // 📌 Ruta para limpiar la caché y redescubrir paquetes en Laravel (ÚSALA SOLO CUANDO SEA NECESARIO)
