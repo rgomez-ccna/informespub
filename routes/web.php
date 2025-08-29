@@ -125,6 +125,20 @@ Route::get('/fix-storage-link', function () {
     return 'Storage link creado OK';
 });
 
+// 📌 Ruta para limpiar la caché y redescubrir paquetes en Laravel (ÚSALA SOLO CUANDO SEA NECESARIO)
+Route::get('/reparar-laravel', function () {
+    // 🔄 Borra la caché de configuración para asegurarse de que Laravel lea correctamente los archivos .env y config/*.php
+    Artisan::call('config:clear');
+    // 🗑️ Limpia la caché general de Laravel (incluye sesiones, rutas, etc.)
+    Artisan::call('cache:clear');
+    // 🔄 Regenera la caché de configuración para optimizar el rendimiento
+   // Artisan::call('config:cache');
+    // 🔍 Redescubre y registra los paquetes instalados en Laravel (IMPORTANTE para Socialite y otros paquetes nuevos)
+    Artisan::call('package:discover --ansi');
+    return '✔ Laravel ha limpiado la caché y detectado paquetes nuevamente.';
+
+
+}); //Fin del grupo de rutas protegidas con autenticación y tenant
 
 
 Route::get('/fix-cache', function () {
