@@ -27,14 +27,22 @@
     <input type="hidden" name="id_publicador" value="{{ $publicador->id }}">
 
     {{-- Año --}}
-    <div class="mb-2">
-        <label>Año de Servicio</label>
-        <select name="a_servicio" class="form-select form-select-sm" required>
-            @for($year = now()->year; $year >= 2023; $year--)
-                <option value="{{ $year }}" {{ (old('a_servicio', $registro->a_servicio ?? '') == $year) ? 'selected' : '' }}> {{ $year }} </option>
-            @endfor
-        </select>
-    </div>
+ @php
+$mesActual = now()->month;
+$añoServicio = ($mesActual >= 9) ? now()->year + 1 : now()->year;
+@endphp
+
+<div class="mb-2">
+    <label>Año de Servicio</label>
+    <select name="a_servicio" class="form-select form-select-sm" required>
+        @for($year = $añoServicio; $year >= 2024; $year--)
+            <option value="{{ $year }}" {{ (old('a_servicio', $registro->a_servicio ?? $añoServicio) == $year) ? 'selected' : '' }}>
+                {{ $year }}
+            </option>
+        @endfor
+    </select>
+</div>
+
 
     {{-- Mes --}}
     @php

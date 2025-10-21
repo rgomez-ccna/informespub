@@ -6,29 +6,43 @@
     <h5>Enviar Informes Mensuales</h5>
 
     {{-- Filtro --}}
-    <form class="row g-2 mb-3" method="get" action="{{ route('reg.enviar-informes') }}">
-        <div class="col-12 col-lg-3">
-            <select name="mes" class="form-select form-select-sm" required>
-                @foreach(['Septiembre','Octubre','Noviembre','Diciembre','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto'] as $m)
-                    <option value="{{ $m }}" {{ request('mes') == $m ? 'selected' : '' }}>{{ $m }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="col-12 col-lg-3">
-            <select name="anho" class="form-select form-select-sm" required>
-                @for($y = date('Y') - 1; $y <= date('Y') + 1; $y++)
-                    <option value="{{ $y }}" {{ request('anho') == $y ? 'selected' : '' }}>{{ $y }}</option>
-                @endfor
-            </select>
-        </div>
-        <div class="col-12 col-lg-2">
-            <button class="btn btn-secondary btn-sm w-100" type="submit">Calcular</button>
-        </div>
-    </form>
+@php
+$mesActual = now()->month;
+$añoServicioActual = ($mesActual >= 9) ? now()->year + 1 : now()->year;
+@endphp
+
+<form class="row g-2 mb-3" method="get" action="{{ route('reg.enviar-informes') }}">
+    <div class="col-12 col-lg-3">
+        <select name="mes" class="form-select form-select-sm" required>
+            @foreach(['Septiembre','Octubre','Noviembre','Diciembre','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto'] as $m)
+                <option value="{{ $m }}" {{ request('mes') == $m ? 'selected' : '' }}>{{ $m }}</option>
+            @endforeach
+        </select>
+    </div>
+
+    <div class="col-12 col-lg-3">
+        <select name="anho" class="form-select form-select-sm" required>
+            @for($y = $añoServicioActual; $y >= 2024; $y--)
+                <option value="{{ $y }}" {{ request('anho', $añoServicioActual) == $y ? 'selected' : '' }}>
+                    {{ $y }} (Año de Servicio)
+                </option>
+            @endfor
+        </select>
+    </div>
+
+    <div class="col-12 col-lg-2">
+        <button class="btn btn-secondary btn-sm w-100" type="submit">Calcular</button>
+    </div>
+</form>
+
 
     @if(request('mes') && request('anho'))
 
-    <div class="alert alert-info">Informe de: <strong>{{ request('mes') }} {{ request('anho') }}</strong></div>
+   <div class="alert alert-info">
+    <i class="fa-solid fa-calendar-check me-1"></i>
+    <strong>Informe del mes de {{ request('mes') }}</strong>
+    — Año de Servicio <strong>{{ request('anho') }}</strong>
+</div>
 
     {{-- ======================= --}}
 {{-- ===== PUBLICADORES ==== --}}
