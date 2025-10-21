@@ -65,13 +65,13 @@
                     
                                     <td class="p-0">
                                         <p class="text-{{ $lastReportStatuses[$pub->id] }} m-0 d-block text-center" style="width: 100%; height: 100%;">
-                                            {{ $lastReportStatuses[$pub->id] == 'success' ? 'Informó' : 'No informó' }}
+                                            {{ $lastReportStatuses[$pub->id] == 'success' ? 'Registro cargado' : 'Registro pendiente' }}
                                         </p>
                                     </td>
                     
                                     <td>
                                         <a href="{{ route('reg.s21', ['id_publicador' => $pub->id]) }}" class="btn btn-primary btn-sm">
-                                            <i class="fa fa-id-card"></i> Agregar Informe
+                                            <i class="fa fa-id-card"></i> Agregar Registro
                                         </a>
                                     </td>
                     

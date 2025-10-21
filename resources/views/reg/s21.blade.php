@@ -20,7 +20,7 @@
                     <i class="fas fa-arrow-left"></i> Volver
                 </a>
                 <a href="{{ route('reg.create', $publicador->id) }}" class="text-white btn bg-primary bg-gradient float-right mx-2">
-                    <i class="fas fa-plus"></i> Agregar Informe
+                    <i class="fas fa-plus"></i> Registrar el Mes
                 </a>
                 <a href="{{ route('pub.listado') }}" class="text-white btn bg-dark bg-gradient float-right mx-2">
                     <i class="fas fa-id-card"></i> Ver Tarjetas [ S-21 ]
