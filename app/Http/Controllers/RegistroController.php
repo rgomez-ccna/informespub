@@ -68,12 +68,20 @@ class RegistroController extends Controller
             $data['horas'] = null; // los publicadores comunes no informan horas
         }
 
-    // 🟢 Nota automática solo si no hay otra
-if (isset($data['actividad']) && $data['actividad'] === 0) {
-    if (empty($data['notas'])) {
-        $data['notas'] = 'No participó';
+// 🟢 Nota automática o limpieza según participación
+if (isset($data['actividad'])) {
+    if ($data['actividad'] === 0) {
+        if (empty($data['notas'])) {
+            $data['notas'] = 'No participó';
+        }
+    } elseif ($data['actividad'] === 1) {
+        // 🔹 Si ahora marcó que predicó, limpiar nota automática anterior
+        if ($registro->notas === 'No participó' || trim($data['notas']) === '') {
+            $data['notas'] = null;
+        }
     }
 }
+
 
         Registro::create($data);
     
@@ -122,6 +130,21 @@ if ($publicador->precursor) {
     }
     $data['horas'] = null; // los publicadores comunes no informan horas
 }
+
+// 🟢 Nota automática o limpieza según participación
+if (isset($data['actividad'])) {
+    if ($data['actividad'] === 0) {
+        if (empty($data['notas'])) {
+            $data['notas'] = 'No participó';
+        }
+    } elseif ($data['actividad'] === 1) {
+        // 🔹 Si ahora marcó que predicó, limpiar nota automática anterior
+        if ($registro->notas === 'No participó' || trim($data['notas']) === '') {
+            $data['notas'] = null;
+        }
+    }
+}
+
 
 
     $registro->update($data);
