@@ -50,19 +50,31 @@ class RegistroController extends Controller
         $publicador = Publicador::findOrFail($id);
     
         // Detectar tipo
-        if (!$request->has('aux') || $request->input('aux') == "") {
-            // No es auxiliar
-            $data['actividad'] = $request->has('actividad') ? 1 : 0;
-    
-            // SOLO borra horas si no es precursor regular
-            if (!$publicador->precursor) {
-                $data['horas'] = null;
-            }
-        } else {
-            // Es auxiliar
+        // Detectar tipo
+        if ($publicador->precursor) {
+            // 🔹 Precursor regular: siempre horas, nunca actividad
             $data['actividad'] = null;
+            $data['aux'] = null; // nunca es auxiliar
+        } elseif ($request->input('aux') === '(Auxiliar)') {
+            // 🔹 Precursor auxiliar del mes
+            $data['actividad'] = null;
+        } else {
+            // 🔹 Publicador común
+            if ($request->has('actividad')) {
+                $data['actividad'] = (int) $request->input('actividad');
+            } else {
+                $data['actividad'] = null; // si no marcó nada
+            }
+            $data['horas'] = null; // los publicadores comunes no informan horas
         }
-    
+
+    // 🟢 Nota automática solo si no hay otra
+if (isset($data['actividad']) && $data['actividad'] === 0) {
+    if (empty($data['notas'])) {
+        $data['notas'] = 'No participó';
+    }
+}
+
         Registro::create($data);
     
         return redirect()->route('reg.s21', $id)->with('success', 'Informe cargado correctamente.');
@@ -93,18 +105,24 @@ class RegistroController extends Controller
     $data = $request->all();
 
     // Detectar si es auxiliar o no
-    if (!$request->has('aux') || $request->input('aux') == "") {
-        // NO es auxiliar, pero puede ser precursor regular
-        $data['actividad'] = $request->has('actividad') ? 1 : 0;
-
-        // Solo borra horas si no es precursor regular
-        if (!$publicador->precursor) {
-            $data['horas'] = null;
-        }
+  // Detectar tipo
+if ($publicador->precursor) {
+    // 🔹 Precursor regular: siempre horas, nunca actividad
+    $data['actividad'] = null;
+    $data['aux'] = null; // nunca es auxiliar
+} elseif ($request->input('aux') === '(Auxiliar)') {
+    // 🔹 Precursor auxiliar del mes
+    $data['actividad'] = null;
+} else {
+    // 🔹 Publicador común
+    if ($request->has('actividad')) {
+        $data['actividad'] = (int) $request->input('actividad');
     } else {
-        // Es auxiliar, horas obligatorias
-        $data['actividad'] = null;
+        $data['actividad'] = null; // si no marcó nada
     }
+    $data['horas'] = null; // los publicadores comunes no informan horas
+}
+
 
     $registro->update($data);
 
@@ -124,16 +142,38 @@ class RegistroController extends Controller
 
 
 
-    public function enviarInformes(Request $request)
+//     public function enviarInformes(Request $request)
+// {
+//     // Obtener publicadores con sus registros
+//     $publicadores = Publicador::with(['registros' => function($q) use ($request) {
+//         if ($request->filled('mes') && $request->filled('anho')) {
+//             $q->where('mes', $request->mes)->where('a_servicio', $request->anho);
+//         }
+//     }])->orderBy('nombre')->get();
+
+//     return view('reg.enviar-informes', compact('publicadores'));
+// }
+
+public function enviarInformes(Request $request)
 {
-    // Obtener publicadores con sus registros
+    // Obtener publicadores con sus registros filtrados por mes y año
     $publicadores = Publicador::with(['registros' => function($q) use ($request) {
         if ($request->filled('mes') && $request->filled('anho')) {
-            $q->where('mes', $request->mes)->where('a_servicio', $request->anho);
+            $q->where('mes', $request->mes)
+              ->where('a_servicio', $request->anho)
+              ->where(function($q2) {
+                  // 🔹 Solo cuenta informes válidos
+                  $q2->where('actividad', 1)          // Publicadores que predicaron
+                     ->orWhere('aux', '(Auxiliar)')   // Auxiliares del mes
+                     ->orWhereNotNull('horas');       // Precursores regulares
+              });
         }
-    }])->orderBy('nombre')->get();
+    }])
+    ->orderBy('nombre')
+    ->get();
 
     return view('reg.enviar-informes', compact('publicadores'));
 }
+
 
 }

@@ -55,11 +55,16 @@
                                     <td>{{ $publicador->nombre }}</td>
                                     <td>{{ $registro->mes }}</td>
                                     <td class="text-center">
-                                        @if($registro->aux == '(Auxiliar)' || $publicador->precursor)
-                                            {{-- vacío --}}
-                                        @else
+                                     
+
+                                        @if($registro->aux == '(Auxiliar)')
+                                            {{-- Auxiliar, sin ícono --}}
+                                        @elseif(!is_null($registro->actividad))
                                             {!! $registro->actividad ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-times text-danger"></i>' !!}
+                                        @else
+                                            {{-- Precursor o caso sin actividad → vacío --}}
                                         @endif
+
                                     </td>
                                     
                                     <td>{{ $registro->horas }}</td>

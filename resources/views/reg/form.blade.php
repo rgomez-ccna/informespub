@@ -55,11 +55,12 @@
     @if($showAux)
     <div class="mb-2">
         <label>¿Hizo auxiliar este mes?</label>
-        <select name="aux" class="form-select form-select-sm" id="selectAux" required>
-            <option value="">Seleccione</option>
-            <option value="">No</option>
-            <option value="(Auxiliar)">Sí</option>
+        <select name="aux" class="form-select form-select-sm" id="selectAux">
+        <option value="">No</option>
+        <option value="(Auxiliar)" {{ old('aux', $registro->aux ?? '') === '(Auxiliar)' ? 'selected' : '' }}>Sí</option>
         </select>
+
+
     </div>
     @endif
 
@@ -68,12 +69,14 @@
     <div id="predicacionContainer" class="mb-2" style="display: none;">
         <label><b>Participación en predicación *</b></label><br>
         <div class="form-check form-check-inline" style="font-size: 1.2em;">
-            <input class="form-check-input" style="width:22px; height:22px;" type="radio" name="actividad" id="predico_si" value="1">
-            <label class="form-check-label" for="predico_si"> Predicó</label>
+           <input class="form-check-input" type="radio" name="actividad" id="predico_si" value="1"
+  {{ old('actividad', $registro->actividad ?? null) == '1' ? 'checked' : '' }}>
+<label for="predico_si">Predicó</label>
         </div>
         <div class="form-check form-check-inline" style="font-size: 1.2em;">
-            <input class="form-check-input" style="width:22px; height:22px;" type="radio" name="actividad" id="predico_no" value="0">
-            <label class="form-check-label" for="predico_no"> No predicó</label>
+           <input class="form-check-input" type="radio" name="actividad" id="predico_no" value="0"
+  {{ old('actividad', $registro->actividad ?? null) == '0' ? 'checked' : '' }}>
+<label for="predico_no">No predicó</label>
         </div>
     </div>
     @endif
@@ -121,37 +124,31 @@
         const esPrecursor = {{ $publicador->precursor ? 'true' : 'false' }};
     
         function toggleFields() {
-            if (selectAux && selectAux.value === '(Auxiliar)') {
-                // Auxiliar informa horas
-                horasContainer.style.display = 'block';
-                inputHoras.required = true;
-                predicacionContainer.style.display = 'none';
-                radios.forEach(r => { r.checked = false; r.required = false; });
-    
-            } else if (selectAux && selectAux.value === '') {
-                // Publicador común informa participación
-                predicacionContainer.style.display = 'block';
-                radios.forEach(r => { r.required = true; });
-                horasContainer.style.display = 'none';
-                inputHoras.value = '';
-                inputHoras.required = false;
-    
-            } else if (!selectAux && esPrecursor) {
-                // Precursor Regular informa horas
-                horasContainer.style.display = 'block';
-                inputHoras.required = true;
-                predicacionContainer.style.display = 'none';
-                radios.forEach(r => { r.checked = false; r.required = false; });
-    
-            } else {
-                // Otros casos (no deberían ocurrir)
-                predicacionContainer.style.display = 'none';
-                horasContainer.style.display = 'none';
-                radios.forEach(r => { r.checked = false; r.required = false; });
-                inputHoras.value = '';
-                inputHoras.required = false;
+                if (esPrecursor) {
+                    // Precursor Regular informa horas
+                    horasContainer.style.display = 'block';
+                    inputHoras.required = true;
+                    predicacionContainer.style.display = 'none';
+                    radios.forEach(r => { r.checked = false; r.required = false; });
+                    return;
+                }
+
+                if (selectAux && selectAux.value === '(Auxiliar)') {
+                    // Auxiliar informa horas
+                    horasContainer.style.display = 'block';
+                    inputHoras.required = true;
+                    predicacionContainer.style.display = 'none';
+                    radios.forEach(r => { r.checked = false; r.required = false; });
+                } else {
+                    // Publicador común informa participación
+                    predicacionContainer.style.display = 'block';
+                    radios.forEach(r => { r.required = true; });
+                    horasContainer.style.display = 'none';
+                    inputHoras.value = '';
+                    inputHoras.required = false;
+                }
             }
-        }
+
     
         if (selectAux) {
             selectAux.addEventListener('change', toggleFields);
