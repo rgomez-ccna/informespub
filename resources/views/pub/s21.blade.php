@@ -5,9 +5,10 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-10">
-            <a href="{{ route('pub.listado') }}" class="btn btn-secondary btn-sm mb-2">
+           <a href="{{ session('free_access') ? route('pub.listado.free') : route('pub.listado') }}" class="btn btn-secondary btn-sm mb-2">
                 <i class="fa fa-arrow-left"></i> Volver a la Lista de PUB
             </a>
+
             
 
             @foreach($registros as $anio => $registrosAnio)

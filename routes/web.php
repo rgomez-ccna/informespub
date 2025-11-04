@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 
+use App\Http\Controllers\LinkAccesoController;
+
+
 // Ruta raíz
 Route::get('/', function () {
     if (!Auth::check()) {
@@ -73,6 +76,9 @@ Route::get('/pub/s21/{id}', [PublicadorController::class, 's21'])->name('pub.s21
 Route::get('/buscar-publicadores', [App\Http\Controllers\PublicadorController::class, 'buscar']);
 
 
+// crear link (solo logueado)
+Route::post('/acceso/generar', [LinkAccesoController::class,'store'])
+    ->middleware('auth')->name('acceso.store');
 
 
 // REGISTROS
@@ -279,6 +285,9 @@ Route::get('/test-img', function () {
 });
 
 
+
+
+
 // Rutas de autenticación (solo login y logout, sin registro ni recuperación)
 Auth::routes([
     'register' => false,
@@ -290,3 +299,18 @@ Auth::routes([
 Route::get('/register', function () {
     abort(403); // o redirect()->route('login')
 });
+
+
+
+// ingreso por link
+Route::get('/acceso/{token}', [LinkAccesoController::class,'enter'])->name('acceso.enter');
+Route::post('/acceso/{token}', [LinkAccesoController::class,'verify'])->name('acceso.verify');
+
+
+// ⬇️ fuera del grupo auth, y SIN borrar nada viejo
+Route::middleware('auth.or.free')->group(function () {
+    Route::get('/free/listado', [PublicadorController::class, 'listado'])->name('pub.listado.free');
+    Route::get('/free/s21/{id}', [PublicadorController::class, 's21'])->name('pub.s21.free');
+});
+
+

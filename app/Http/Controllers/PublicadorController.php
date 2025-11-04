@@ -147,7 +147,13 @@ private function publisherActivityStatus($publicadorId)
 public function listado()
 {
     $publicadores = Publicador::orderBy('grupo')->get()->groupBy('grupo');
-    return view('pub.listado', compact('publicadores'));
+
+$linkActual = null;
+if(session('free_token')){
+    $linkActual = \App\Models\LinkAcceso::where('token',session('free_token'))->first();
+}
+
+    return view('pub.listado', compact('publicadores','linkActual'));
 }
 
 // Vista tipo tarjeta S-21 (detalles)
