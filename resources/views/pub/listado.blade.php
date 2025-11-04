@@ -54,7 +54,7 @@
 
       <div class="d-flex align-items-center gap-1">
         <label for="link_pass" class="mb-0 text-muted small">Contraseña:</label>
-        <input id="link_pass" name="password" type="password" placeholder="ej. 2414" required
+        <input id="link_pass" name="password" type="password" placeholder="Ejemplo: 2414" required
                class="form-control form-control-sm" style="width:160px">
       </div>
 
