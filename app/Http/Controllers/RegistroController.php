@@ -70,17 +70,24 @@ class RegistroController extends Controller
 
 // 🟢 Nota automática o limpieza según participación
 if (isset($data['actividad'])) {
+
     if ($data['actividad'] === 0) {
+
         if (empty($data['notas'])) {
             $data['notas'] = 'No participó';
         }
+
     } elseif ($data['actividad'] === 1) {
-        // 🔹 Si ahora marcó que predicó, limpiar nota automática anterior
-        if ($registro->notas === 'No participó' || trim($data['notas']) === '') {
+
+        // en store NO existe $registro aún
+        if (empty($data['notas']) || $data['notas'] === 'No participó') {
             $data['notas'] = null;
         }
+
     }
+
 }
+
 
 
         Registro::create($data);
