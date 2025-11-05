@@ -60,7 +60,7 @@
                                             <th>DÍA</th>
                                             <th>FECHA</th>
                                             <th>HORA</th>
-                                            <th>CONDUCTOR /<br> Voluntarios de EXHIVIDORES</th>
+                                            <th>CONDUCTOR /<br> Voluntarios de EXHIBIDORES</th>
                                             <th>PUNTO DE ENCUENTRO</th>
                                             <th>TERRITORIO</th>
                                             <th class="no-print text-nowrap" style="width:110px"></th>
