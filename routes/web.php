@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 
 use App\Http\Controllers\LinkAccesoController;
+use App\Http\Controllers\AsistenciaController;
 
 
 // Ruta raíz
@@ -87,6 +88,14 @@ Route::get('/reg/create/{id}', [RegistroController::class, 'create'])->name('reg
 Route::post('/reg/create/{id}', [RegistroController::class, 'store'])->name('reg.store');
 Route::get('/reg/s21/{id_publicador}', [RegistroController::class, 's21'])->name('reg.s21');
 Route::get('reg/enviar-informes', [RegistroController::class, 'enviarInformes'])->name('reg.enviar-informes');
+
+// ASISTENCIA S-88
+Route::get('asistencia',[AsistenciaController::class,'index'])->name('asist.index');
+Route::get('asistencia/create',[AsistenciaController::class,'create'])->name('asist.create'); // llama form
+Route::post('asistencia',[AsistenciaController::class,'store'])->name('asist.store');
+Route::get('asistencia/{asistencia}/edit',[AsistenciaController::class,'edit'])->name('asist.edit');
+Route::put('asistencia/{asistencia}',[AsistenciaController::class,'update'])->name('asist.update');
+
 
 
 Route::get('/tablero', [TableroController::class, 'index'])->name('tablero.index');

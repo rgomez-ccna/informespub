@@ -161,6 +161,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->is('asistencia') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('asist.index') }}">
+                                Asistencia
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
                             <a class="nav-link text-white {{ request()->is('reg/enviar-informes') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('reg.enviar-informes') }}">
                                 Enviar Informes
                             </a>
