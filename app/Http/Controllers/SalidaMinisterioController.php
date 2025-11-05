@@ -32,6 +32,9 @@ class SalidaMinisterioController extends Controller
         $bloques[] = collect($bloqueActual)->groupBy('fecha');
     }
 
+      // *** AGREGAR ESTA LINEA ***
+    $bloques = array_reverse($bloques);
+
     return view('tablero.ministerio.index', compact('bloques'));
 }
 

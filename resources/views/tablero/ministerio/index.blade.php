@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container" style="max-width: 850px;">
+<div class="container" style="max-width: 1000px;">
 
     {{-- BOTONES SUPERIORES --}}
     <div class="d-flex justify-content-end gap-2 mb-3 no-print">
