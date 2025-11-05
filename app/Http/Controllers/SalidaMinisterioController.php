@@ -37,48 +37,74 @@ class SalidaMinisterioController extends Controller
 
 
 
-    // CREAR
-    public function create()
-    {
-        return view('tablero.ministerio.form');
-    }
-
-
-    // GUARDAR
-    public function store(Request $request)
-    {
-        $data = $this->validateData($request);
-        $data['es_nueva_semana'] = $request->has('es_nueva_semana');
-        $data['es_fila_info'] = $request->has('es_fila_info');
-
-        SalidaMinisterio::create($data);
-        return to_route('ministerio.index');
-    }
-
- // EDITAR
-public function edit(\App\Models\SalidaMinisterio $ministerio)
+   // CREAR
+public function create()
 {
-    return view('tablero.ministerio.form', ['registro' => $ministerio]);
+    return view('tablero.ministerio.form');
 }
 
+// GUARDAR
+public function store(Request $request)
+{
+    $data = $this->validateData($request);
+    $data['es_nueva_semana'] = $request->has('es_nueva_semana');
+    $data['es_fila_info']    = $request->has('es_fila_info');
+
+    $reg = SalidaMinisterio::create($data);
+
+    if($request->ajax()){
+        return response()->json([
+            'ok'         => true,
+            'fecha'      => $reg->fecha,
+            'full_reload'=> $request->has('es_nueva_semana')
+        ]);
+    }
+
+    return to_route('ministerio.index');
+}
+
+
+
 // ACTUALIZAR
-public function update(\Illuminate\Http\Request $request, \App\Models\SalidaMinisterio $ministerio)
+public function update(Request $request, SalidaMinisterio $ministerio)
 {
     $data = $this->validateData($request);
     $data['es_nueva_semana'] = $request->has('es_nueva_semana');
     $data['es_fila_info']    = $request->has('es_fila_info');
 
     $ministerio->update($data);
+
+    if($request->ajax()){
+        return response()->json([
+            'ok'         => true,
+            'fecha'      => $ministerio->fecha,
+            'full_reload'=> $request->has('es_nueva_semana')
+        ]);
+    }
+
     return to_route('ministerio.index');
 }
 
 
-    // ELIMINAR
-    public function destroy(SalidaMinisterio $ministerio)
-    {
-        $ministerio->delete();
-        return to_route('ministerio.index');
+// ELIMINAR
+public function destroy(\App\Models\SalidaMinisterio $ministerio)
+{
+    $fecha = $ministerio->fecha;
+    $ministerio->delete();
+
+    if (request()->ajax()) {
+        return response()->json(['ok'=>true, 'fecha'=>$fecha]);
     }
+    return to_route('ministerio.index');
+}
+
+// EDITAR
+public function edit(SalidaMinisterio $ministerio)
+{
+    return view('tablero.ministerio.form', ['registro' => $ministerio]);
+}
+
+
 
 
     // VALIDACIÓN

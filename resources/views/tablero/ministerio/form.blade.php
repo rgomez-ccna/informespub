@@ -1,24 +1,21 @@
-@extends('layouts.app')
 
-@section('content')
-<div class="container" style="max-width: 640px;">
+<div class="container p-2" style="max-width: 640px;">
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0 fw-bold text-secondary">
-            {{ isset($registro) ? 'Editar salida' : 'Nueva salida' }}
+            {{ isset($registro) ? 'Editar salida / Exhividor' : 'Nueva salida / Exhividor' }}
         </h5>
-        <a href="{{ route('ministerio.index') }}" class="btn btn-outline-secondary btn-sm">
-            <i class="fa-solid fa-arrow-left"></i> Volver
-        </a>
+        
     </div>
 
-    <form action="{{ isset($registro) ? route('ministerio.update', $registro) : route('ministerio.store') }}"
-          method="POST" >
+   <form action="{{ isset($registro) ? route('ministerio.update', $registro) : route('ministerio.store') }}"
+      method="POST" class="ajaxForm">
+
         @csrf
         @isset($registro) @method('PUT') @endisset
 
         {{-- Fecha y hora --}}
-        <div class="row g-2 mb-2">
+        <div class="row g-2 mb-3">
             <div class="col-md-6">
                 <label class="form-label mb-0">Fecha</label>
                 <input type="date" name="fecha" class="form-control form-control-sm"
@@ -32,20 +29,28 @@
         </div>
 
         {{-- Detalles --}}
-        <div class="mb-2" style="position: relative; "> {{-- max-width opcional --}}
-            <label class="form-label mb-0">Conductor</label>
+       {{-- Detalles --}}
+        <div class="mb-3" style="position: relative;"> {{-- max-width opcional --}}
+            <label class="form-label mb-0">Conductor / Voluntarios de EXHIVIDORES</label>
+            <small class="text-primary d-block">
+                Para el autocompletado separá con <b>/</b> (barra). Ej: JUAN / PEDRO / MARCOS
+            </small>
             <input type="text" name="conductor"
                 class="form-control form-control-sm buscador-nombre"
                 autocomplete="off"
                 placeholder="Escribí 2 o más letras del nombre"
                 value="{{ old('conductor', $registro->conductor ?? '') }}">
+
+            
+
             <div class="dropdown-sugerencias border rounded bg-white shadow-sm"
                 style="z-index:9999; display:none; position:absolute; top:100%; left:0; width:100%; max-height:200px; overflow-y:auto;"></div>
         </div>
 
 
 
-        <div class="mb-2">
+
+        <div class="mb-3">
             <label class="form-label mb-0">Punto de encuentro / Zoom</label>
             <input type="text" name="punto_encuentro" class="form-control form-control-sm"
                    value="{{ old('punto_encuentro', $registro->punto_encuentro ?? '') }}">
@@ -82,6 +87,9 @@
         </div>
 
         <div class="text-end">
+             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+        <i class="fa-solid fa-xmark"></i> Cerrar
+    </button>
             <button class="btn btn-primary btn-sm">
                 <i class="fa-solid fa-check"></i> Guardar
             </button>
@@ -101,81 +109,4 @@
 
 </style>
 
-<script>
-document.querySelectorAll('.buscador-nombre').forEach(input => {
-    const contenedor = input.parentElement.querySelector('.dropdown-sugerencias');
-    let indice = -1;
 
-    input.addEventListener('input', () => {
-        const valor = input.value.trim();
-        if (valor.length < 2) {
-            contenedor.style.display = 'none';
-            return;
-        }
-
-        fetch(`/buscar-publicadores?q=${encodeURIComponent(valor)}`)
-            .then(r => r.json())
-            .then(data => {
-                contenedor.innerHTML = '';
-                indice = -1;
-                if (data.length === 0) {
-                    contenedor.style.display = 'none';
-                    return;
-                }
-
-               data.forEach((nombre, idx) => {
-                    const opcion = document.createElement('div');
-                    opcion.textContent = nombre;
-                    opcion.classList.add('dropdown-item');
-
-                    opcion.onclick = () => {
-                        input.value = nombre;
-                        contenedor.style.display = 'none';
-                    };
-
-                    opcion.onmouseover = () => {
-                        const todas = contenedor.querySelectorAll('div');
-                        todas.forEach(op => op.classList.remove('activo'));
-                        opcion.classList.add('activo');
-                        indice = idx;
-                    };
-
-                    contenedor.appendChild(opcion);
-                });
-
-                contenedor.style.display = 'block';
-            });
-    });
-
-    input.addEventListener('keydown', (e) => {
-        const opciones = contenedor.querySelectorAll('div');
-        if (!opciones.length) return;
-
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            indice = (indice + 1) % opciones.length;
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            indice = (indice - 1 + opciones.length) % opciones.length;
-        } else if (e.key === 'Enter') {
-            e.preventDefault();
-            if (indice >= 0) {
-                input.value = opciones[indice].textContent;
-                contenedor.style.display = 'none';
-                indice = -1;
-            }
-        }
-
-        opciones.forEach((op, i) => {
-            op.classList.toggle('activo', i === indice);
-        });
-    });
-
-    document.addEventListener('click', e => {
-        if (!contenedor.contains(e.target) && e.target !== input) {
-            contenedor.style.display = 'none';
-        }
-    });
-});
-</script>
-@endsection

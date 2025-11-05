@@ -8,15 +8,16 @@
         <a href="{{ route('tablero.index') }}" class="btn btn-secondary btn-sm">
             <i class="fa-solid fa-arrow-left"></i> Volver al Tablero
         </a>
-        <a href="{{ route('ministerio.create') }}" class="btn btn-primary btn-sm">
-            <i class="fa-solid fa-plus"></i> Agregar salida
-        </a>
+        <button class="btn btn-primary btn-sm" onclick="openFormModal('{{ route('ministerio.create') }}')">
+            <i class="fa-solid fa-plus"></i> Agregar salida / Exhividor
+        </button>
     </div>
 
     <div class=" text-center mb-3">
         <h4 class="titulo">PROGRAMAS - SALIDAS AL MINISTERIO</h4>
     </div>
 
+    <div id="contenedorMinisterio"><!-- CONTENIDO -->
     {{-- ACORDEÓN --}}
     <div class="accordion" id="accordionProgramas">
         @foreach($bloques as $i => $registros)
@@ -41,7 +42,7 @@
                     <div class="accordion-body">
                         {{-- CONTENIDO DE LA SEMANA --}}
                         <div id="{{ $idUnico }}">
-                            {{-- BANNER INTERNO (VISIBLE EN IMPRESIÓN) --}}
+                            {{-- BANNER INTERNO --}}
                             <div class="banner-programa text-center mb-3">
                                 <h4 class="titulo">SALIDAS AL MINISTERIO</h4>
                                 <h6 class="subtitulo">
@@ -51,7 +52,7 @@
                                 </h6>
                             </div>
 
-                            {{-- TABLA DE LA SEMANA --}}
+                            {{-- TABLA --}}
                             <div class="table-responsive">
                                 <table class="tabla-programa text-center align-middle">
                                     <thead>
@@ -59,7 +60,7 @@
                                             <th>DÍA</th>
                                             <th>FECHA</th>
                                             <th>HORA</th>
-                                            <th>CONDUCTOR</th>
+                                            <th>CONDUCTOR /<br> Voluntarios de EXHIVIDORES</th>
                                             <th>PUNTO DE ENCUENTRO</th>
                                             <th>TERRITORIO</th>
                                             <th class="no-print text-nowrap" style="width:110px"></th>
@@ -76,61 +77,42 @@
                                                 $rowClass = $colorIndex % 2 === 0 ? 'fila-blanca' : 'fila-violeta';
                                             @endphp
 
-                                            {{-- Fila informativa --}}
-                                            @foreach($items as $i => $r)
-                                                @if($r->es_fila_info)
-                                                    <tr class="{{ $rowClass }}">
-                                                        <td>{{ strtoupper($dia) }}</td>
-                                                        <td><strong>{{ $fechaForm }}</strong></td>
-                                                        <td colspan="4" class="fw-bold text-center">
-                                                            {{ $r->punto_encuentro ?? $r->conductor ?? $r->territorio }}
-                                                        </td>
-                                                        <td class="no-print">
-                                                             <a href="{{ route('ministerio.edit', $r) }}" class="btn btn-sm btn-warning">
-                                                            <i class="fa-solid fa-edit"></i>
-                                                            </a>
-                                                            <form action="{{ route('ministerio.destroy', $r) }}" method="POST" class="d-inline">
-                                                                {{-- CSRF y método DELETE --}}
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                                    onclick="return confirm('¿Eliminar esta fila?')">
-                                                                    <i class="fa-solid fa-trash"></i>
-                                                                </button>
-                                                            </form>
-                                                        </td>
-                                                    </tr>
-                                                @endif
-                                            @endforeach
-
-                                            {{-- Resto de salidas --}}
-                                            @foreach($items->where('es_fila_info', false)->values() as $i => $r)
+                                            {{-- Fila informativa + normal salida--}}
+                                           @foreach($items->values() as $i => $r)
                                                 <tr>
                                                     @if($i === 0)
-                                                        <td rowspan="{{ $rowspan }}" class="{{ $rowClass }}">{{ strtoupper($dia) }}</td>
-                                                        <td rowspan="{{ $rowspan }}" class="{{ $rowClass }}"><strong>{{ $fechaForm }}</strong></td>
+                                                        <td rowspan="{{ count($items) }}" class="{{ $rowClass }}">{{ strtoupper($dia) }}</td>
+                                                        <td rowspan="{{ count($items) }}" class="{{ $rowClass }}"><strong>{{ $fechaForm }}</strong></td>
                                                     @endif
 
-                                                    <td class="{{ $rowClass }}">{{ $r->hora }}</td>
-                                                    <td class="{{ $rowClass }}">{{ $r->conductor }}</td>
-                                                    <td class="{{ $rowClass }}">{{ $r->punto_encuentro }}</td>
-                                                    <td class="{{ $rowClass }}">{{ $r->territorio }}</td>
+                                                    @if($r->es_fila_info)
+                                                        <td colspan="4" class="{{ $rowClass }} fw-bold text-center">
+                                                                {{ strtoupper($r->territorio) }}
+                                                            </td>
+
+                                                    @else
+                                                        <td class="{{ $rowClass }}">{{ $r->hora }}</td>
+                                                        <td class="{{ $rowClass }}">{{ $r->conductor }}</td>
+                                                        <td class="{{ $rowClass }}">{{ $r->punto_encuentro }}</td>
+                                                        <td class="{{ $rowClass }}">{{ $r->territorio }}</td>
+                                                    @endif
+
                                                     <td class="no-print {{ $rowClass }}">
-                                                        {{-- Botones de acción --}}
-                                                        <a href="{{ route('ministerio.edit', $r) }}" class="btn btn-sm btn-warning">
-                                                        <i class="fa-solid fa-edit"></i>
-                                                        </a>
-                                                        <form action="{{ route('ministerio.destroy', $r) }}" method="POST" class="d-inline">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                                onclick="return confirm('¿Eliminar esta fila?')">
+                                                        <button class="btn btn-sm btn-warning"
+                                                                onclick="openFormModal('{{ route('ministerio.edit',$r) }}')">
+                                                            <i class="fa-solid fa-edit"></i>
+                                                        </button>
+
+                                                        <form action="{{ route('ministerio.destroy', $r) }}" method="POST" class="d-inline ajaxDel">
+                                                            @csrf @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
                                                                 <i class="fa-solid fa-trash"></i>
                                                             </button>
                                                         </form>
                                                     </td>
                                                 </tr>
-                                            @endforeach
+                                                @endforeach
+
 
                                             @php $colorIndex++; @endphp
                                         @endforeach
@@ -139,8 +121,7 @@
                             </div>
                         
 
-                        </div> {{-- FIN BLOQUE SEMANA --}}
-                         {{-- BOTÓN DE IMPRIMIR ESTA SEMANA --}}
+                        </div>
                         <div class="text-end no-print mb-2">
                             <button onclick="imprimirBloque('{{ $idUnico }}')" class="btn btn-outline-secondary btn-sm">
                                 <i class="fa-solid fa-print"></i> Imprimir esta semana
@@ -151,17 +132,204 @@
             </div>
         @endforeach
     </div>
+    </div><!-- FIN CONTENEDOR -->
 </div>
 
-{{-- JS PARA IMPRIMIR SOLO UN BLOQUE --}}
+
+{{-- MODAL --}}
+<div class="modal fade" id="modalForm" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content">
+        <div class="modal-body p-0" id="bodyModalForm"></div>
+    </div>
+  </div>
+</div>
+
+{{-- JS --}}
 <script>
-    function imprimirBloque(id) {
-        let original = document.body.innerHTML;
-        let contenido = document.getElementById(id).innerHTML;
-        document.body.innerHTML = contenido;
-        window.print();
-        document.body.innerHTML = original;
-        location.reload(); // para recargar después de imprimir
+function imprimirBloque(id) {
+    const original = document.body.innerHTML;
+    const contenido = document.getElementById(id).innerHTML;
+    document.body.innerHTML = contenido;
+    window.print();
+    document.body.innerHTML = original;
+}
+
+// ID del panel abierto (ej: "collapse3")
+let accordionOpen = null;
+
+// guardar qué panel quedó abierto
+document.addEventListener('shown.bs.collapse', e => {
+    accordionOpen = e.target.id; // ej: collapse2
+});
+
+// RECARGA SOLO EL PANEL ABIERTO (sin cerrar/abrir = sin "pestañeo")
+async function recargarPanelAbierto(){
+    // si nunca abriste un panel, fallback a recarga parcial segura
+    if(!accordionOpen){
+        return recargarFallback();
     }
+
+    // capto el body actual y congelo altura para evitar salto visual
+    const panelActual = document.getElementById(accordionOpen);
+    if(!panelActual) return recargarFallback();
+
+    const bodyActual = panelActual.querySelector('.accordion-body');
+    if(!bodyActual) return recargarFallback();
+
+    const alto = bodyActual.offsetHeight;
+    bodyActual.style.minHeight = alto + 'px'; // congela
+
+    // traigo HTML del index y extraigo SOLO el body del mismo panel
+    const res = await fetch("{{ route('ministerio.index') }}", {
+        headers: {'X-Requested-With':'XMLHttpRequest'}
+    });
+    const html = await res.text();
+    const dom = new DOMParser().parseFromString(html, 'text/html');
+    const panelNuevo = dom.getElementById(accordionOpen);
+    const bodyNuevo  = panelNuevo?.querySelector('.accordion-body');
+
+    if(bodyNuevo){
+        bodyActual.innerHTML = bodyNuevo.innerHTML; // swap limpio
+    }else{
+        // si no lo encuentra, fallback suave
+        await recargarFallback();
+    }
+
+    // libero el lock visual
+    bodyActual.style.minHeight = '';
+}
+
+// Fallback: reinyecta sólo #contenedorMinisterio (lo mínimo)
+async function recargarFallback(){
+    const res = await fetch("{{ route('ministerio.index') }}", {
+        headers: {'X-Requested-With':'XMLHttpRequest'}
+    });
+    const html = await res.text();
+    const dom = new DOMParser().parseFromString(html,'text/html');
+    const nuevo = dom.querySelector('#contenedorMinisterio');
+    if(nuevo){
+        document.querySelector('#contenedorMinisterio').innerHTML = nuevo.innerHTML;
+        // si había panel abierto, volvemos a mostrarlo, pero SIN toggle (evita flash)
+        if(accordionOpen){
+            const el = document.getElementById(accordionOpen);
+            if(el && !el.classList.contains('show')){
+                el.classList.add('show');
+            }
+        }
+    }
+}
+
+
+// --- AUTOCOMPLETAR GLOBAL ---
+window.initBuscadorNombres = function(){
+    const root = document.getElementById('bodyModalForm');
+    if(!root) return;
+
+    root.querySelectorAll('.buscador-nombre').forEach(input => {
+        const contenedor = input.parentElement.querySelector('.dropdown-sugerencias');
+        let indice = -1;
+
+       input.addEventListener('input', () => {
+    let raw = input.value;
+    let partes = raw.split('/');
+    let ultima = partes[partes.length-1].trim(); // <-- BUSCAR SOBRE ESTA PARTE SOLAMENTE
+
+    if (ultima.length < 2) {
+        contenedor.style.display = 'none';
+        return;
+    }
+
+    fetch(`/buscar-publicadores?q=${encodeURIComponent(ultima)}`)
+        .then(r => r.json())
+        .then(data => {
+            contenedor.innerHTML = '';
+            indice = -1;
+            if (!data.length) { contenedor.style.display = 'none'; return; }
+
+            data.forEach((nombre, idx) => {
+                const opcion = document.createElement('div');
+                opcion.textContent = nombre;
+                opcion.classList.add('dropdown-item');
+
+                opcion.onclick = () => {
+                    partes[partes.length-1] = " "+nombre; // reemplaza SOLO la última parte
+                    input.value = partes.join(' / ').trim();
+                    contenedor.style.display = 'none';
+                };
+
+                contenedor.appendChild(opcion);
+            });
+
+            contenedor.style.display = 'block';
+        });
+});
+
+
+        input.addEventListener('keydown', (e) => {
+            const opciones = contenedor.querySelectorAll('div');
+            if (!opciones.length) return;
+            if (e.key === 'ArrowDown') { e.preventDefault(); indice = (indice + 1) % opciones.length; }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); indice = (indice - 1 + opciones.length) % opciones.length; }
+            else if (e.key === 'Enter') { e.preventDefault(); if (indice >= 0) { input.value = opciones[indice].textContent; contenedor.style.display = 'none'; indice = -1; } }
+            opciones.forEach((op, i) => op.classList.toggle('activo', i === indice));
+        });
+
+        document.addEventListener('click', e => {
+            if (!contenedor.contains(e.target) && e.target !== input) {
+                contenedor.style.display = 'none';
+            }
+        });
+    });
+};
+
+// MODAL
+async function openFormModal(url){
+    const r = await fetch(url, {headers:{'X-Requested-With':'XMLHttpRequest'}});
+    const h = await r.text();
+    document.querySelector('#bodyModalForm').innerHTML = h;
+
+    window.initBuscadorNombres(); // <- ahora sí existe
+
+    new bootstrap.Modal(document.getElementById('modalForm')).show();
+}
+
+
+// SUBMIT AJAX (crear/editar/eliminar)
+// SUBMIT AJAX (crear/editar/eliminar)
+document.addEventListener('submit', async(e)=>{
+    e.preventDefault();
+
+    let form = e.target;
+    let fd = new FormData(form);
+
+    let r = await fetch(form.action,{
+        method: form.method,
+        body: fd,
+        headers:{
+            'X-Requested-With':'XMLHttpRequest',
+            'Accept':'application/json'
+        }
+    });
+
+    let j = { ok:false };
+    try{ j = await r.json(); }catch(_){}
+
+    if(j.ok){
+
+        if(j.full_reload){
+            await recargarFallback();   // <--- acá hay full
+        }else{
+            await recargarPanelAbierto(); // <--- acá suave
+        }
+
+        const modal = document.getElementById('modalForm');
+        if (modal) bootstrap.Modal.getInstance(modal)?.hide();
+    }
+});
+
+
 </script>
+
+
 @endsection
