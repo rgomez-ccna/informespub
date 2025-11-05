@@ -4,14 +4,16 @@
 <div class="container" style="max-width: 1000px;">
 
     {{-- BOTONES SUPERIORES --}}
-    <div class="d-flex justify-content-end gap-2 mb-3 no-print">
-        <a href="{{ route('tablero.index') }}" class="btn btn-secondary btn-sm">
-            <i class="fa-solid fa-arrow-left"></i> Volver al Tablero
-        </a>
-        <button class="btn btn-primary btn-sm" onclick="openFormModal('{{ route('ministerio.create') }}')">
-            <i class="fa-solid fa-plus"></i> Agregar salida / Exhibidor
-        </button>
-    </div>
+  {{-- BOTONES SUPERIORES --}}
+<div class="d-flex justify-content-end gap-2 mb-3 no-print sticky-top bg-white pt-2 pb-2" style="z-index:20;">
+    <a href="{{ route('tablero.index') }}" class="btn btn-secondary btn-sm">
+        <i class="fa-solid fa-arrow-left"></i> Volver al Tablero
+    </a>
+    <button class="btn btn-primary btn-sm" onclick="openFormModal('{{ route('ministerio.create') }}')">
+        <i class="fa-solid fa-plus"></i> Agregar salida / Exhibidor
+    </button>
+</div>
+
 
     <div class=" text-center mb-3">
         <h4 class="titulo">PROGRAMAS - SALIDAS AL MINISTERIO</h4>
