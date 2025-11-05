@@ -31,7 +31,7 @@
         {{-- Detalles --}}
        {{-- Detalles --}}
         <div class="mb-3" style="position: relative;"> {{-- max-width opcional --}}
-            <label class="form-label mb-0">Conductor / Voluntarios de EXHIVIDORES</label>
+            <label class="form-label mb-0">Conductor / Voluntarios de EXHIBIDORES</label>
             <small class="text-primary d-block">
                 Para el autocompletado separá con <b>/</b> (barra). Ej: JUAN / PEDRO / MARCOS
             </small>

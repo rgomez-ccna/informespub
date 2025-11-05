@@ -9,7 +9,7 @@
             <i class="fa-solid fa-arrow-left"></i> Volver al Tablero
         </a>
         <button class="btn btn-primary btn-sm" onclick="openFormModal('{{ route('ministerio.create') }}')">
-            <i class="fa-solid fa-plus"></i> Agregar salida / Exhividor
+            <i class="fa-solid fa-plus"></i> Agregar salida / Exhibidor
         </button>
     </div>
 
