@@ -27,7 +27,7 @@
         <div class="col-12 col-md-6">
 
             <div class="alert alert-primary text-center fw-bold py-2 mb-2">
-                FIN DE SEMANA
+               FIN DE SEMANA
             </div>
 
             {{-- scroll SOLO en md+ --}}
@@ -37,7 +37,7 @@
                 <div class="card mb-3">
                     <div class="card-header py-2">
                         <h6 class="text-center mb-0">
-                            Asistencia Reuniones – Año {{ $year }}
+                            Fin de semana – Año de Serv. <b>{{ $year }}</b>
                         </h6>
                     </div>
 
@@ -82,7 +82,7 @@
         <div class="col-12 col-md-6">
 
             <div class="alert alert-info text-center fw-bold py-2 mb-2">
-                ENTRE SEMANA
+              ENTRE SEMANA
             </div>
 
             {{-- scroll SOLO en md+ --}}
@@ -92,7 +92,7 @@
                 <div class="card mb-3">
                     <div class="card-header py-2">
                         <h6 class="text-center mb-0">
-                            Asistencia Reuniones – Año {{ $year }}
+                            Entre semana – Año de Serv. <b>{{ $year }}</b>
                         </h6>
                     </div>
 
