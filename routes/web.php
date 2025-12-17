@@ -322,4 +322,9 @@ Route::middleware('auth.or.free')->group(function () {
     Route::get('/free/s21/{id}', [PublicadorController::class, 's21'])->name('pub.s21.free');
 });
 
+// ASISTENCIA – vista mínima para modal (FREE)
+Route::get('/asistencia/modal', [AsistenciaController::class, 'modal'])
+    ->name('asist.modal');
+
+
 

@@ -99,12 +99,22 @@
 @endif
 
 
-
+ <div class="d-flex justify-content-between align-items-center mb-2">
     <form class="row g-3 my-0" id="form-busqueda">
         <div class="col-auto">
             <input placeholder="Buscar Publicador" type="text" class="form-control" id="buscador" autofocus>
         </div>
     </form>
+
+   @if(session('free_access'))
+<button class="btn btn-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#modalAsistencia">
+    <i class="fa-solid fa-calendar-alt"></i> Asistencia <i class="fa-solid fa-arrow-right"></i> S-88
+</button>
+@endif
+
+</div>
 
     @foreach($publicadores as $grupo => $grupo_publicadores)
     <div class="card my-3">
@@ -168,4 +178,25 @@
     <br>
     @endforeach
 </div>
+
+
+<div class="modal fade" id="modalAsistencia" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header py-2">
+        <h6 class="modal-title">
+            <i class="fa-solid fa-calendar-check"></i> Asistencia S-88
+        </h6>
+        <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body p-0">
+        <iframe src="{{ route('asist.modal') }}"
+        style="width:100%;height:75vh;border:0"></iframe>
+
+      </div>
+    </div>
+  </div>
+</div>
+
 @endsection

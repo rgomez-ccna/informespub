@@ -72,4 +72,17 @@ public function create()
         return redirect()->route('asist.index')->with('success','Actualizado');
     }
 
+    public function modal()
+{
+    abort_unless(session('free_access'), 403);
+    $asistencias = Asistencia::orderBy('a_servicio','desc')
+        ->orderByRaw("FIELD(mes, 'Septiembre','Octubre','Noviembre','Diciembre','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto')")
+        ->get()
+        ->groupBy('tipo')
+        ->map(fn($tipo) => $tipo->groupBy('a_servicio'));
+
+    return view('asistencia.modal', compact('asistencias'));
+}
+
+
 }
