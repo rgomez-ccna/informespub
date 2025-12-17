@@ -10,27 +10,28 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* asegura uso total del alto */
         html, body {
-            height: 100%;
+            height: auto;
+            min-height: 100%;
         }
     </style>
 </head>
 
 <body class="bg-light">
 
-<div class="container-fluid py-2 vh-100">
+<div class="container-fluid py-2 min-vh-100">
 
-    <div class="row g-3 h-100">
+    <div class="row g-3">
 
         {{-- ================= FIN DE SEMANA ================= --}}
-        <div class="col-12 col-md-6 h-100">
+        <div class="col-12 col-md-6">
 
             <div class="alert alert-primary text-center fw-bold py-2 mb-2">
                 FIN DE SEMANA
             </div>
 
-            <div class="h-100 overflow-auto pe-1">
+            {{-- scroll SOLO en md+ --}}
+            <div class="h-md-100 overflow-md-auto pe-md-1">
 
                 @foreach($asistencias['FS'] ?? [] as $year => $data)
                 <div class="card mb-3">
@@ -78,13 +79,14 @@
         </div>
 
         {{-- ================= ENTRE SEMANA ================= --}}
-        <div class="col-12 col-md-6 h-100">
+        <div class="col-12 col-md-6">
 
             <div class="alert alert-info text-center fw-bold py-2 mb-2">
                 ENTRE SEMANA
             </div>
 
-            <div class="h-100 overflow-auto pe-1">
+            {{-- scroll SOLO en md+ --}}
+            <div class="h-md-100 overflow-md-auto pe-md-1">
 
                 @foreach($asistencias['ES'] ?? [] as $year => $data)
                 <div class="card mb-3">
