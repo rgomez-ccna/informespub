@@ -30,6 +30,7 @@
         </div>
 
         <div class="form-check mb-3">
+            <input type="hidden" name="es_nuevo_programa" value="0">
             <input class="form-check-input" type="checkbox" name="es_nuevo_programa" value="1"
                    {{ old('es_nuevo_programa', $registro->es_nuevo_programa ?? false) ? 'checked' : '' }}>
             <label class="form-check-label fw-semibold text-dark">

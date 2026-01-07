@@ -44,9 +44,12 @@ class ReunionPublicaController extends Controller
         return to_route('publica.index');
     }
 
-    public function destroy(ReunionPublica $reunion)
-    {
-        $reunion->delete();
-        return to_route('publica.index');
-    }
+   public function destroy($id)
+{
+    $registro = ReunionPublica::findOrFail($id);
+    $registro->delete();
+
+    return back()->with('ok', 'Eliminado correctamente.');
+}
+
 }

@@ -39,14 +39,26 @@
                     <td>{{ \Carbon\Carbon::parse($r->fecha)->format('d-m-Y') }}</td>
                     <td>{{ $r->presidente }}</td>
                     <td>{{ $r->lector }}</td>
-                    <td class="no-print">
-                        <form action="{{ route('publica.destroy', $r) }}" method="POST" onsubmit="return confirm('¿Eliminar esta fila?')">
-                            @csrf @method('DELETE')
+                    <td class="no-print d-flex gap-2 justify-content-center align-items-center">
+
+                        @if($r->es_nuevo_programa)
+                            <span class="badge bg-success">
+                                <i class="fa-solid fa-flag"></i> Inicio de programa
+                            </span>
+                        @endif
+
+                        <form action="{{ route('publica.destroy', $r->id) }}"
+                            method="POST"
+                            onclick="return confirm('¿Eliminar esta fila?')">
+                            @csrf
+                            @method('DELETE')
                             <button class="btn btn-sm btn-outline-danger">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </form>
                     </td>
+
+
                 </tr>
                 @endforeach
             </tbody>
