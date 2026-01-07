@@ -32,10 +32,12 @@ class ReunionPublicaController extends Controller
 }
 
 
-    public function edit(ReunionPublica $reunion)
-    {
-        return view('tablero.publica.form', ['registro' => $reunion]);
-    }
+ public function edit($id)
+{
+    $registro = ReunionPublica::findOrFail($id);
+    return view('tablero.publica.form', compact('registro'));
+}
+
 
    public function update(Request $request, $id)
 {
