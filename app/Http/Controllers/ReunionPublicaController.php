@@ -17,32 +17,41 @@ class ReunionPublicaController extends Controller
         return view('tablero.publica.form');
     }
 
-    public function store(Request $request)
-    {
-        $data = $request->validate([
-            'fecha' => ['required', 'date'],
-            'presidente' => ['required', 'string'],
-            'lector' => ['required', 'string'],
-        ]);
-        ReunionPublica::create($data);
-        return to_route('publica.index');
-    }
+   public function store(Request $request)
+{
+    $data = $request->validate([
+        'fecha' => 'required|date',
+        'presidente' => 'required|string',
+        'lector' => 'required|string',
+        'es_nuevo_programa' => 'boolean',
+    ]);
+
+    ReunionPublica::create($data);
+
+    return back()->with('ok', 'Programa guardado correctamente.');
+}
+
 
     public function edit(ReunionPublica $reunion)
     {
         return view('tablero.publica.form', ['registro' => $reunion]);
     }
 
-    public function update(Request $request, ReunionPublica $reunion)
-    {
-        $data = $request->validate([
-            'fecha' => ['required', 'date'],
-            'presidente' => ['required', 'string'],
-            'lector' => ['required', 'string'],
-        ]);
-        $reunion->update($data);
-        return to_route('publica.index');
-    }
+   public function update(Request $request, $id)
+{
+    $data = $request->validate([
+        'fecha' => 'required|date',
+        'presidente' => 'required|string',
+        'lector' => 'required|string',
+        'es_nuevo_programa' => 'boolean',
+    ]);
+
+    $registro = ReunionPublica::findOrFail($id);
+    $registro->update($data);
+
+    return back()->with('ok', 'Programa actualizado correctamente.');
+}
+
 
    public function destroy($id)
 {

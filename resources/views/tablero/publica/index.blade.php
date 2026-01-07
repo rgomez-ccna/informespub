@@ -46,7 +46,10 @@
                                 <i class="fa-solid fa-flag"></i> Inicio de programa
                             </span>
                         @endif
-
+                       <a href="{{ route('publica.edit', $r->id) }}"
+                        class="btn btn-sm btn-outline-secondary">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
                         <form action="{{ route('publica.destroy', $r->id) }}"
                             method="POST"
                             onclick="return confirm('¿Eliminar esta fila?')">
@@ -56,6 +59,7 @@
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </form>
+  
                     </td>
 
 
