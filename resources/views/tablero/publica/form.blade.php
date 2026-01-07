@@ -10,7 +10,8 @@
         </a>
     </div>
 
-    <form action="{{ isset($registro) ? route('publica.update', $registro) : route('publica.store') }}" method="POST">
+    <form action="{{ isset($registro) ? route('publica.update', $registro->id) : route('publica.store') }}" method="POST">
+
         @csrf
         @if(isset($registro)) @method('PUT') @endif
 
