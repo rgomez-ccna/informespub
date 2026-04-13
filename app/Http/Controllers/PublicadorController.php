@@ -11,26 +11,36 @@ class PublicadorController extends Controller
 {
    
 
-    public function index(Request $request)
-    {
-        $nombre = $request->get('nombre');
-    
-        $publicadors = Publicador::with('registros')
-            ->where('nombre', 'like', '%'.$nombre.'%')
-            ->orderBy('grupo','ASC')
-            ->get();
-    
-        // Calcular estados
-        $lastReportStatuses = [];
-        $publisherActivityStatuses = [];
-    
-        foreach ($publicadors as $pub) {
-            $lastReportStatuses[$pub->id] = $this->lastReportStatus($pub->id);
-            $publisherActivityStatuses[$pub->id] = $this->publisherActivityStatus($pub->id);
-        }
-    
-        return view('pub.index', compact('publicadors', 'lastReportStatuses', 'publisherActivityStatuses'));
+   public function index(Request $request)
+{
+    $nombre = $request->get('nombre');
+
+    $publicadors = Publicador::with('registros')
+        ->where('nombre', 'like', '%'.$nombre.'%')
+        ->orderBy('grupo','ASC')
+        ->get();
+
+    $lastReportStatuses = [];
+    $publisherActivityStatuses = [];
+
+    foreach ($publicadors as $pub) {
+        $lastReportStatuses[$pub->id] = $this->lastReportStatus($pub->id);
+        $publisherActivityStatuses[$pub->id] = $this->publisherActivityStatus($pub->id);
     }
+
+    $gruposDisponibles = Publicador::whereNotNull('grupo')
+        ->where('grupo', '!=', '')
+        ->distinct()
+        ->orderBy('grupo')
+        ->pluck('grupo');
+
+    return view('pub.index', compact(
+        'publicadors',
+        'lastReportStatuses',
+        'publisherActivityStatuses',
+        'gruposDisponibles'
+    ));
+}
 
     public function create()
 {
@@ -182,6 +192,53 @@ public function buscar(Request $request)
         ->pluck('nombre');
 
     return response()->json($publicadores);
+}
+
+
+// FUNCIONES MASIVAS
+public function renombrarGrupo(Request $request)
+{
+    $request->validate([
+        'grupo_actual' => 'required|string|max:100',
+        'grupo_nuevo'  => 'required|string|max:100',
+    ]);
+
+    Publicador::where('grupo', $request->grupo_actual)
+        ->update(['grupo' => $request->grupo_nuevo]);
+
+    return redirect()->route('pub.index')->with('success', 'Grupo renombrado correctamente.');
+}
+
+public function fusionarGrupo(Request $request)
+{
+    $request->validate([
+        'grupo_actual'  => 'required|string|max:100',
+        'grupo_destino' => 'required|string|max:100',
+    ]);
+
+    if ($request->grupo_actual === $request->grupo_destino) {
+        return redirect()->route('pub.index')->with('success', 'No hubo cambios.');
+    }
+
+    Publicador::where('grupo', $request->grupo_actual)
+        ->update(['grupo' => $request->grupo_destino]);
+
+    return redirect()->route('pub.index')->with('success', 'Grupo fusionado correctamente.');
+}
+
+public function cambiarGrupoMasivo(Request $request)
+{
+    $request->validate([
+        'publicadores'   => 'required|array|min:1',
+        'publicadores.*' => 'exists:publicadors,id',
+        'grupo_destino'  => 'required|string|max:100',
+    ]);
+
+    Publicador::whereIn('id', $request->publicadores)
+        ->update(['grupo' => $request->grupo_destino]);
+
+    return redirect()->route('pub.index')
+        ->with('success', 'Publicadores movidos correctamente.');
 }
 
 }

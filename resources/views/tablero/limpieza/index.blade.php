@@ -135,7 +135,8 @@
                         @foreach ($mensual as $m)
                         <tr class="fila-imprimible-mensual">
                             <td class="no-print"><input type="checkbox" class="form-check-input check-fila-mensual"></td>
-                            <td>{{ \Carbon\Carbon::parse($m->fecha)->format('d/m/Y') }}</td>
+                            {{-- <td>{{ \Carbon\Carbon::parse($m->fecha)->format('d/m/Y') }}</td> --}}
+                            <td>{{ ucfirst(\Carbon\Carbon::parse($m->fecha)->locale('es')->translatedFormat('F / Y')) }}</td>
                             <td>{{ $m->congregacion }}</td>
                             <td>{{ $m->observaciones }}</td>
                             <td class="no-print">

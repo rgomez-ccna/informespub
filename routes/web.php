@@ -76,6 +76,9 @@ Route::get('/pub/s21/{id}', [PublicadorController::class, 's21'])->name('pub.s21
  
 Route::get('/buscar-publicadores', [App\Http\Controllers\PublicadorController::class, 'buscar']);
 
+Route::post('/pub/renombrar-grupo', [PublicadorController::class, 'renombrarGrupo'])->name('pub.renombrarGrupo');
+Route::post('/pub/fusionar-grupo', [PublicadorController::class, 'fusionarGrupo'])->name('pub.fusionarGrupo');
+Route::post('/pub/cambiar-grupo-masivo', [PublicadorController::class, 'cambiarGrupoMasivo'])->name('pub.cambiarGrupoMasivo');
 
 // crear link (solo logueado)
 Route::post('/acceso/generar', [LinkAccesoController::class,'store'])
