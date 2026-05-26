@@ -242,7 +242,7 @@ public function cambiarGrupoMasivo(Request $request)
 }
 
 
-//totales x mes regualres y auxiliares
+// Totales por mes: precursores regulares y auxiliares
 public function s21Totales()
 {
     $ordenMeses = [
@@ -250,13 +250,19 @@ public function s21Totales()
         'Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto'
     ];
 
-    $registros = Registro::with('publicador')
-        ->orderBy('a_servicio', 'desc')
+    $registros = Registro::orderBy('a_servicio', 'desc')
         ->orderByRaw("FIELD(mes, 'Septiembre','Octubre','Noviembre','Diciembre','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto')")
         ->get();
 
+    // Precursor regular:
+    // Se detecta por el informe mensual, no por el estado actual del publicador.
+    // En tu sistema: regular = tiene horas, no es auxiliar, no usa actividad.
     $precursoresRegulares = $registros
-        ->filter(fn ($r) => optional($r->publicador)->precursor)
+        ->filter(function ($r) {
+            return is_null($r->aux)
+                && is_null($r->actividad)
+                && !is_null($r->horas);
+        })
         ->groupBy('a_servicio')
         ->map(function ($registrosAnio) use ($ordenMeses) {
             return collect($ordenMeses)->map(function ($mes) use ($registrosAnio) {
@@ -264,17 +270,19 @@ public function s21Totales()
 
                 return (object) [
                     'mes' => $mes,
-                    'actividad' => $items->where('actividad', '1')->count() > 0 ? '1' : '0',
                     'cursos' => $items->sum('cursos'),
-                    'aux' => '',
                     'horas' => $items->sum('horas'),
                     'notas_cantidad' => $items->pluck('id_publicador')->unique()->count(),
                 ];
             });
         });
 
+    // Precursor auxiliar:
+    // Se detecta por el campo aux del informe mensual.
     $precursoresAuxiliares = $registros
-        ->filter(fn ($r) => $r->aux === '(Auxiliar)')
+        ->filter(function ($r) {
+            return $r->aux === '(Auxiliar)';
+        })
         ->groupBy('a_servicio')
         ->map(function ($registrosAnio) use ($ordenMeses) {
             return collect($ordenMeses)->map(function ($mes) use ($registrosAnio) {
@@ -282,9 +290,7 @@ public function s21Totales()
 
                 return (object) [
                     'mes' => $mes,
-                    'actividad' => $items->where('actividad', '1')->count() > 0 ? '1' : '0',
                     'cursos' => $items->sum('cursos'),
-                    'aux' => $items->count() > 0 ? '(Auxiliar)' : '',
                     'horas' => $items->sum('horas'),
                     'notas_cantidad' => $items->pluck('id_publicador')->unique()->count(),
                 ];
