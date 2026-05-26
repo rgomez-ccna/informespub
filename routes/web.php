@@ -67,6 +67,9 @@ Route::middleware(['auth'])->group(function () {
 // Publicadores agrupados por grupo (como lista tipo reporte)
 Route::get('/pub/listado', [PublicadorController::class, 'listado'])->name('pub.listado');
 
+//S-21 totales (resumen por mes)
+Route::get('/pub/s21/totales', [PublicadorController::class, 's21Totales'])->name('pub.s21.totales');
+
 // Tarjeta S-21 (detalle de registros por publicador)
 Route::get('/pub/s21/{id}', [PublicadorController::class, 's21'])->name('pub.s21');
 
@@ -322,7 +325,9 @@ Route::post('/acceso/{token}', [LinkAccesoController::class,'verify'])->name('ac
 // ⬇️ fuera del grupo auth, y SIN borrar nada viejo
 Route::middleware('auth.or.free')->group(function () {
     Route::get('/free/listado', [PublicadorController::class, 'listado'])->name('pub.listado.free');
+     Route::get('/pub/free/s21/totales', [PublicadorController::class, 's21Totales'])->name('pub.s21.totales.free');
     Route::get('/free/s21/{id}', [PublicadorController::class, 's21'])->name('pub.s21.free');
+   
 });
 
 // ASISTENCIA – vista mínima para modal (FREE)

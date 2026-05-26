@@ -99,20 +99,28 @@
 @endif
 
 
- <div class="d-flex justify-content-between align-items-center mb-2">
+<div class="d-flex justify-content-between align-items-center mb-2 gap-2">
     <form class="row g-3 my-0" id="form-busqueda">
         <div class="col-auto">
             <input placeholder="Buscar Publicador" type="text" class="form-control" id="buscador" autofocus>
         </div>
     </form>
 
+<div class="d-flex gap-2">
    @if(session('free_access'))
-<button class="btn btn-primary"
+    <button class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#modalAsistencia">
+        <i class="fa-solid fa-calendar-alt"></i> Asistencia <i class="fa-solid fa-arrow-right"></i> S-88
+    </button>
+    @endif
+
+   <button class="btn btn-outline-primary"
         data-bs-toggle="modal"
-        data-bs-target="#modalAsistencia">
-    <i class="fa-solid fa-calendar-alt"></i> Asistencia <i class="fa-solid fa-arrow-right"></i> S-88
+        data-bs-target="#modalS21Totales">
+    <i class="fa-solid fa-chart-column"></i> Totales regulares y auxiliares
 </button>
-@endif
+ </div>
 
 </div>
 
@@ -179,7 +187,7 @@
     @endforeach
 </div>
 
-
+{{-- Modal de Asistencia --}}
 <div class="modal fade" id="modalAsistencia" tabindex="-1">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
@@ -194,6 +202,29 @@
         <iframe src="{{ route('asist.modal') }}"
         style="width:100%;height:75vh;border:0"></iframe>
 
+      </div>
+    </div>
+  </div>
+</div>
+
+{{-- Modal de Totales por mes --}}
+<div class="modal fade" id="modalS21Totales" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header py-2">
+        <div>
+            <h6 class="modal-title mb-0">
+                <i class="fa-solid fa-chart-column"></i> Totales por mes
+            </h6>
+            {{-- <small class="text-muted">Precursores regulares y auxiliares</small> --}}
+        </div>
+
+        <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body p-0">
+        <iframe src="{{ session('free_access') ? route('pub.s21.totales.free') : route('pub.s21.totales') }}"
+                style="width:100%;height:78vh;border:0"></iframe>
       </div>
     </div>
   </div>

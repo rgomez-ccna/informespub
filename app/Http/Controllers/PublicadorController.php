@@ -241,4 +241,60 @@ public function cambiarGrupoMasivo(Request $request)
         ->with('success', 'Publicadores movidos correctamente.');
 }
 
+
+//totales x mes regualres y auxiliares
+public function s21Totales()
+{
+    $ordenMeses = [
+        'Septiembre','Octubre','Noviembre','Diciembre',
+        'Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto'
+    ];
+
+    $registros = Registro::with('publicador')
+        ->orderBy('a_servicio', 'desc')
+        ->orderByRaw("FIELD(mes, 'Septiembre','Octubre','Noviembre','Diciembre','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto')")
+        ->get();
+
+    $precursoresRegulares = $registros
+        ->filter(fn ($r) => optional($r->publicador)->precursor)
+        ->groupBy('a_servicio')
+        ->map(function ($registrosAnio) use ($ordenMeses) {
+            return collect($ordenMeses)->map(function ($mes) use ($registrosAnio) {
+                $items = $registrosAnio->where('mes', $mes);
+
+                return (object) [
+                    'mes' => $mes,
+                    'actividad' => $items->where('actividad', '1')->count() > 0 ? '1' : '0',
+                    'cursos' => $items->sum('cursos'),
+                    'aux' => '',
+                    'horas' => $items->sum('horas'),
+                    'notas_cantidad' => $items->pluck('id_publicador')->unique()->count(),
+                ];
+            });
+        });
+
+    $precursoresAuxiliares = $registros
+        ->filter(fn ($r) => $r->aux === '(Auxiliar)')
+        ->groupBy('a_servicio')
+        ->map(function ($registrosAnio) use ($ordenMeses) {
+            return collect($ordenMeses)->map(function ($mes) use ($registrosAnio) {
+                $items = $registrosAnio->where('mes', $mes);
+
+                return (object) [
+                    'mes' => $mes,
+                    'actividad' => $items->where('actividad', '1')->count() > 0 ? '1' : '0',
+                    'cursos' => $items->sum('cursos'),
+                    'aux' => $items->count() > 0 ? '(Auxiliar)' : '',
+                    'horas' => $items->sum('horas'),
+                    'notas_cantidad' => $items->pluck('id_publicador')->unique()->count(),
+                ];
+            });
+        });
+
+    return view('pub.s21_totales', compact(
+        'precursoresRegulares',
+        'precursoresAuxiliares'
+    ));
+}
+
 }
