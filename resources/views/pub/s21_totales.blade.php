@@ -60,7 +60,7 @@
     <div class="row g-3">
 
         {{-- ================= PRECURSORES REGULARES ================= --}}
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-4">
 
             @foreach($precursoresRegulares as $anio => $registrosAnio)
                 <div class="card mb-3">
@@ -116,7 +116,7 @@
         </div>
 
         {{-- ================= PRECURSORES AUXILIARES ================= --}}
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-4">
 
             @foreach($precursoresAuxiliares as $anio => $registrosAnio)
                 <div class="card mb-3">
@@ -170,6 +170,59 @@
             @endforeach
 
         </div>
+
+        {{-- ================= PUBLICADORES ================= --}}
+<div class="col-12 col-md-4">
+
+    @foreach($publicadoresActivos as $anio => $registrosAnio)
+        <div class="card mb-3">
+            <div class="card-header py-2 px-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="titulo-s21">Publicadores</div>
+                        <div class="subtitulo-s21">Resumen mensual de totales</div>
+                    </div>
+
+                    <div class="text-end">
+                        <div class="fw-semibold">Año de servicio</div>
+                        <div class="h5 fw-bold">{{ $anio }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body table-responsive py-1 px-1">
+                <table class="table table-sm table-bordered table-hover tabla-s21 mb-0">
+                    <thead>
+                        <tr class="text-center">
+                            <th style="width: 34%;">Mes</th>
+                            <th style="width: 28%;">Cursos bíblicos</th>
+                            <th>Publicadores</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach($registrosAnio as $registro)
+                            <tr class="text-center">
+                                <td class="text-start">{{ $registro->mes }}</td>
+                                <td>{{ $registro->cursos > 0 ? $registro->cursos : '—' }}</td>
+                                <td>  {{ $registro->cantidad > 0 ? $registro->cantidad . ' Pub.' : '—' }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+
+                    <tfoot>
+                        <tr class="fw-bold text-center">
+                            <td class="text-end">Total</td>
+                            <td>{{ $registrosAnio->sum('cursos') > 0 ? $registrosAnio->sum('cursos') : '—' }}</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    @endforeach
+
+</div>
 
     </div>
 </div>

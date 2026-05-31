@@ -9,16 +9,28 @@ use App\Models\Registro;
 
 class PublicadorController extends Controller
 {
-   
+
+   private function ordenRolGrupo($publicador): int
+{
+    return match ($publicador->rol) {
+        'Sup. de Grupo' => 1,
+        'Sup. Auxiliar' => 2,
+        default => 3,
+    };
+}
 
    public function index(Request $request)
 {
     $nombre = $request->get('nombre');
 
     $publicadors = Publicador::with('registros')
-        ->where('nombre', 'like', '%'.$nombre.'%')
-        ->orderBy('grupo','ASC')
-        ->get();
+    ->where('nombre', 'like', '%'.$nombre.'%')
+    ->get()
+    ->sortBy([
+        fn ($a, $b) => strnatcasecmp($a->grupo ?? '', $b->grupo ?? ''),
+        fn ($a, $b) => $this->ordenRolGrupo($a) <=> $this->ordenRolGrupo($b),
+        fn ($a, $b) => strcasecmp($a->nombre, $b->nombre),
+    ]);
 
     $lastReportStatuses = [];
     $publisherActivityStatuses = [];
@@ -156,7 +168,13 @@ private function publisherActivityStatus($publicadorId)
     // Vista tipo listado agrupado por grupo
 public function listado()
 {
-    $publicadores = Publicador::orderBy('grupo')->get()->groupBy('grupo');
+    $publicadores = Publicador::get()
+    ->sortBy([
+        fn ($a, $b) => strnatcasecmp($a->grupo ?? '', $b->grupo ?? ''),
+        fn ($a, $b) => $this->ordenRolGrupo($a) <=> $this->ordenRolGrupo($b),
+        fn ($a, $b) => strcasecmp($a->nombre, $b->nombre),
+    ])
+    ->groupBy('grupo');
 
 $linkActual = null;
 if(session('free_token')){
@@ -297,9 +315,34 @@ public function s21Totales()
             });
         });
 
+
+        // Publicadores:
+// Se cuentan solo los que informaron actividad ese mes.
+// No incluye auxiliares ni regulares, porque esos ya están separados.
+$publicadoresActivos = $registros
+    ->filter(function ($r) {
+        return (int) $r->actividad === 1
+            && is_null($r->aux)
+            && is_null($r->horas);
+    })
+    ->groupBy('a_servicio')
+    ->map(function ($registrosAnio) use ($ordenMeses) {
+        return collect($ordenMeses)->map(function ($mes) use ($registrosAnio) {
+            $items = $registrosAnio->where('mes', $mes);
+
+            return (object) [
+                'mes' => $mes,
+                'cursos' => $items->sum('cursos'),
+                'cantidad' => $items->pluck('id_publicador')->unique()->count(),
+            ];
+        });
+    });
+
+
     return view('pub.s21_totales', compact(
         'precursoresRegulares',
-        'precursoresAuxiliares'
+        'precursoresAuxiliares',
+        'publicadoresActivos',
     ));
 }
 
