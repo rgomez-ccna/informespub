@@ -18,10 +18,22 @@ class PublicadorController extends Controller
     }
 
     // Secretario y colaborador administran datos de su congregación
-    private function puedeGestionarDatos()
-    {
-        abort_if(!in_array(auth()->user()->role, ['secretario', 'colaborador']), 403);
+private function puedeVerDatos()
+{
+    if (auth()->check()) {
+        abort_if(!in_array(auth()->user()->role, ['secretario', 'colaborador', 'tablero']), 403);
+        return;
     }
+
+    abort_unless(session('free_access') && session('free_congregacion_id'), 403);
+}
+
+private function puedeGestionarDatos()
+{
+    abort_if(!auth()->check(), 403);
+    abort_if(!in_array(auth()->user()->role, ['secretario', 'colaborador']), 403);
+}
+
 
     // Consulta base protegida por congregación
     private function publicadoresQuery()
@@ -224,7 +236,7 @@ class PublicadorController extends Controller
     // Vista tipo listado agrupado por grupo
     public function listado()
     {
-        $this->puedeGestionarDatos();
+        $this->puedeVerDatos();
 
         $publicadores = $this->publicadoresQuery()
             ->get()
@@ -247,12 +259,12 @@ class PublicadorController extends Controller
     // Vista tipo tarjeta S-21 (detalles)
     public function s21($id)
     {
-        $this->puedeGestionarDatos();
+        $this->puedeVerDatos();
 
         $publicador = $this->buscarPublicadorSeguro($id);
 
         $registros = $publicador->registros()
-            ->where('congregacion_id', auth()->user()->congregacion_id)
+            ->where('congregacion_id', $this->congregacionActualId())
             ->orderBy('a_servicio', 'desc')
             ->orderByRaw("FIELD(mes, 'Septiembre','Octubre','Noviembre','Diciembre','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto')")
             ->get()
@@ -335,7 +347,7 @@ class PublicadorController extends Controller
     // Totales por mes: precursores regulares y auxiliares
     public function s21Totales()
     {
-        $this->puedeGestionarDatos();
+        $this->puedeVerDatos();
 
         $ordenMeses = [
             'Septiembre','Octubre','Noviembre','Diciembre',

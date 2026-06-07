@@ -8,6 +8,24 @@ use App\Models\Asistencia;
 class AsistenciaController extends Controller
 {
 
+
+private function puedeVerDatos()
+{
+    if (auth()->check()) {
+        abort_if(!in_array(auth()->user()->role, ['secretario', 'colaborador', 'tablero']), 403);
+        return;
+    }
+
+    abort_unless(session('free_access') && session('free_congregacion_id'), 403);
+}
+
+private function puedeGestionarDatos()
+{
+    abort_if(!auth()->check(), 403);
+    abort_if(!in_array(auth()->user()->role, ['secretario', 'colaborador']), 403);
+}
+
+
 private function congregacionActualId()
 {
     return auth()->check()
@@ -16,11 +34,6 @@ private function congregacionActualId()
 }
 
 
-
-    private function puedeGestionarDatos()
-    {
-        abort_if(!in_array(auth()->user()->role, ['secretario', 'colaborador']), 403);
-    }
 
   private function asistenciasQuery()
 {
@@ -116,9 +129,9 @@ private function congregacionActualId()
         return redirect()->route('asist.index')->with('success', 'Actualizado');
     }
 
-   public function modal()
+public function modal()
 {
-    abort_unless(session('free_access'), 403);
+    $this->puedeVerDatos();
 
     $asistencias = $this->asistenciasQuery()
         ->orderBy('a_servicio', 'desc')
