@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Publicador extends Model
 {
     protected $fillable = [
+        'congregacion_id',
         'nombre',
         'fnacimiento',
         'fbautismo',
@@ -26,9 +27,14 @@ class Publicador extends Model
         'estado'
     ];
 
-    public function registros()
+public function registros()
 {
     return $this->hasMany(Registro::class, 'id_publicador');
+}
+
+public function congregacion()
+{
+    return $this->belongsTo(Congregacion::class);
 }
 
 }

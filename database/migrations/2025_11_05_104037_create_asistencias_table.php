@@ -15,11 +15,20 @@ return new class extends Migration
     {
         Schema::create('asistencias', function (Blueprint $table) {
         $table->id();
+
+         $table->foreignId('congregacion_id')
+        ->nullable()
+        ->constrained('congregacions')
+        ->cascadeOnDelete();
+
         $table->integer('a_servicio'); // año servicio
         $table->string('mes');
         $table->enum('tipo',['FS','ES']); // FIN DE SEMANA / ENTRE SEMANA
         $table->integer('reuniones')->default(0);
         $table->integer('total')->default(0);
+        
+         $table->index(['congregacion_id', 'a_servicio', 'mes']);
+
         $table->timestamps();
     });
     

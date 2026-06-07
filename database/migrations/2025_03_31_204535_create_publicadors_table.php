@@ -10,6 +10,13 @@ return new class extends Migration
     {
         Schema::create('publicadors', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('congregacion_id')
+            ->nullable()
+            ->constrained('congregacions')
+            ->cascadeOnDelete();
+
+
             $table->string('nombre')->nullable();
             $table->date('fnacimiento')->nullable();
             $table->date('fbautismo')->nullable();
@@ -29,6 +36,9 @@ return new class extends Migration
             $table->string('grupo')->nullable();
             $table->string('rol')->nullable(); // ✅ NUEVO campo para cargo, función o nota interna
             $table->string('estado')->nullable(); // ya lo usabas en tus filtros (censurado, expulsado, etc.)
+
+
+            $table->index(['congregacion_id', 'grupo']);
 
             $table->timestamps();
         });

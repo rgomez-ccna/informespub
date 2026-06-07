@@ -2,12 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Asistencia extends Model
 {
     protected $fillable = [
-        'a_servicio','mes','tipo','reuniones','total'
+        'congregacion_id',
+        'a_servicio',
+        'mes',
+        'tipo',
+        'reuniones',
+        'total',
     ];
+
+    public function congregacion()
+    {
+        return $this->belongsTo(Congregacion::class);
+    }
 }

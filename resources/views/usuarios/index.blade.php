@@ -21,9 +21,12 @@
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
+                        
                         <th>Email</th>
                         <th>Rol</th>
+                        <th>Congregación</th>
                         <th>Fecha de Creación</th>
+                        
                         <th>Acciones</th> <!-- Columna para acciones -->
                     </tr>
                 </thead>
@@ -32,12 +35,21 @@
                         <tr>
                             <td>{{ $usuario->id }}</td>
                             <td>{{ $usuario->name }}</td>
+                            
                             <td>{{ $usuario->email }}</td>
                             <td>
                                 <span class="badge text-dark role-{{ $usuario->role }}">{{ $usuario->role }}</span>
                             </td>
+                            <td>
+                                @if($usuario->congregacion)
+                                    {{ $usuario->congregacion->nombre }}
+                                @else
+                                    No asignada
+                                @endif
+                            </td>
 
-                            <td>{{ $usuario->created_at->format('d-m-Y') }}</td>
+                            <td>{{ $usuario->created_at }}</td>
+                            
                             <td>
                                 <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
 

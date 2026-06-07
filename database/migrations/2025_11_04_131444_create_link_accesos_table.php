@@ -15,12 +15,26 @@ return new class extends Migration
     {
         Schema::create('link_accesos', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('congregacion_id')
+                ->nullable()
+                ->constrained('congregacions')
+                ->cascadeOnDelete();
+
             $table->string('token', 80)->unique();
             $table->dateTime('expires_at')->index();
             $table->string('password_hash')->nullable();
-            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+
+            $table->foreignId('created_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+            $table->index(['congregacion_id', 'expires_at']);
+
             $table->timestamps();
         });
+
     }
 
     /**

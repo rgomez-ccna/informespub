@@ -3,98 +3,181 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Congregacion;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class UsuarioController extends Controller
 {
-   
+    // Solo superadmin y secretario pueden administrar usuarios
+    private function puedeAdministrarUsuarios()
+    {
+        abort_if(!in_array(auth()->user()->role, ['superadmin', 'secretario']), 403);
+    }
+
+    // Buscar usuario respetando la congregación
+    private function buscarUsuarioSeguro($id)
+    {
+        $query = User::query();
+
+        if (auth()->user()->role !== 'superadmin') {
+            $query->where('congregacion_id', auth()->user()->congregacion_id);
+        }
+
+        return $query->findOrFail($id);
+    }
+
     public function index()
     {
-        $usuarios = User::all();
-    
+        $this->puedeAdministrarUsuarios();
+
+        $query = User::query();
+
+        if (auth()->user()->role !== 'superadmin') {
+            $query->where('congregacion_id', auth()->user()->congregacion_id);
+        }
+
+        $usuarios = $query->get();
+
         // Ordenar manualmente los usuarios
         $usuariosOrdenados = $usuarios->sort(function ($a, $b) {
-            $orden = ['superadmin'=>1,'admin'=>2,'usuario'=>3,'visita'=>4,'disabled'=>5];
+            $orden = [
+                'superadmin' => 1,
+                'secretario' => 2,
+                'colaborador' => 3,
+                'tablero' => 4,
+                'disabled' => 5,
+            ];
 
-    
-            return $orden[$a->role] <=> $orden[$b->role];
+            return ($orden[$a->role] ?? 99) <=> ($orden[$b->role] ?? 99);
         });
-    
+
         return view('usuarios.index', compact('usuariosOrdenados'));
     }
-    
 
     public function create()
-{
-    return view('usuarios.create');
-}
+    {
+        $this->puedeAdministrarUsuarios();
 
+        $congregaciones = auth()->user()->role === 'superadmin'
+            ? Congregacion::orderBy('nombre')->get()
+            : collect();
 
-public function store(Request $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:8|confirmed',
-        'role' => 'required|string', 
-    ]);
+        return view('usuarios.create', compact('congregaciones'));
+    }
 
-    $user = new User;
-    $user->name = $request->name;
-    $user->email = $request->email;
-    $user->password = bcrypt($request->password);
-    $user->role = $request->role; // Asigna el valor del formulario al campo 'role'.
-    $user->save();
+    public function store(Request $request)
+    {
+        $this->puedeAdministrarUsuarios();
 
-    return redirect()->route('usuarios.index');
-}
+        $rolesPermitidos = auth()->user()->role === 'superadmin'
+            ? ['superadmin', 'secretario', 'colaborador', 'tablero', 'disabled']
+            : ['secretario', 'colaborador', 'tablero', 'disabled'];
 
-
-
-   // Método para mostrar el formulario de edición
-   public function edit($id)
-   {
-       $usuario = User::findOrFail($id);
-       return view('usuarios.create', compact('usuario')); 
-   }
-   
-
-// Método para actualizar un recurso en la base de datos
-public function update(Request $request, $id)
-{
-    $user = User::findOrFail($id);
-
-    // Actualización de datos básicos
-    $user->name = $request->name;
-    $user->email = $request->email;
-    $user->role = $request->role; // Suponiendo que también estás actualizando el rol
-
-    // Actualización de contraseña (solo si se proporciona una nueva)
-    if ($request->filled('password')) {
         $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
+            'role' => ['required', Rule::in($rolesPermitidos)],
+            'congregacion_id' => auth()->user()->role === 'superadmin'
+                ? ['required', 'exists:congregacions,id']
+                : ['nullable'],
         ]);
+
+        $user = new User;
+        $user->congregacion_id = auth()->user()->role === 'superadmin'
+            ? $request->congregacion_id
+            : auth()->user()->congregacion_id;
+
+        $user->name = $request->name;
+        $user->email = $request->email;
         $user->password = bcrypt($request->password);
+        $user->role = $request->role;
+        $user->save();
+
+        return redirect()->route('usuarios.index')
+            ->with('success', 'Usuario creado con éxito');
     }
 
-    $user->save();
+    // Método para mostrar el formulario de edición
+    public function edit($id)
+    {
+        $this->puedeAdministrarUsuarios();
 
-    return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado con éxito');
-}
+        $usuario = $this->buscarUsuarioSeguro($id);
 
+        $congregaciones = auth()->user()->role === 'superadmin'
+            ? Congregacion::orderBy('nombre')->get()
+            : collect();
 
-public function destroy($id)
-{
-    $Usuario = User::with('ventas')->findOrFail($id);
-
-    if ($Usuario->ventas->count() > 0) {
-        return redirect()->route('usuarios.index')->with('error', 'No se puede eliminar el Usuario porque tiene ventas asociadas');
+        return view('usuarios.create', compact('usuario', 'congregaciones'));
     }
 
-    $Usuario->delete();
+    // Método para actualizar un recurso en la base de datos
+    public function update(Request $request, $id)
+    {
+        $this->puedeAdministrarUsuarios();
 
-    return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado con éxito');
-}
+        $user = $this->buscarUsuarioSeguro($id);
+
+        $rolesPermitidos = auth()->user()->role === 'superadmin'
+            ? ['superadmin', 'secretario', 'colaborador', 'tablero', 'disabled']
+            : ['secretario', 'colaborador', 'tablero', 'disabled'];
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($user->id),
+            ],
+            'role' => ['required', Rule::in($rolesPermitidos)],
+            'congregacion_id' => auth()->user()->role === 'superadmin'
+                ? ['required', 'exists:congregacions,id']
+                : ['nullable'],
+        ]);
+
+        // Actualización de datos básicos
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->role = $request->role;
+
+        if (auth()->user()->role === 'superadmin') {
+            $user->congregacion_id = $request->congregacion_id;
+        }
+
+        // Actualización de contraseña solo si se proporciona una nueva
+        if ($request->filled('password')) {
+            $request->validate([
+                'password' => 'required|string|min:8|confirmed',
+            ]);
+
+            $user->password = bcrypt($request->password);
+        }
+
+        $user->save();
+
+        return redirect()->route('usuarios.index')
+            ->with('success', 'Usuario actualizado con éxito');
+    }
+
+    public function destroy($id)
+    {
+        $this->puedeAdministrarUsuarios();
+
+        $usuario = $this->buscarUsuarioSeguro($id);
+
+        if ($usuario->id === auth()->id()) {
+            return redirect()->route('usuarios.index')
+                ->with('error', 'No podés eliminar tu propio usuario.');
+        }
 
 
+        $usuario->delete();
+
+        return redirect()->route('usuarios.index')
+            ->with('success', 'Usuario eliminado con éxito');
+    }
 }

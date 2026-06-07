@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\File;
 use App\Http\Controllers\LinkAccesoController;
 use App\Http\Controllers\AsistenciaController;
 
+use App\Http\Controllers\CongregacionController;
+
 
 // Ruta raíz
 Route::get('/', function () {
@@ -147,6 +149,10 @@ Route::get('/fix-storage-link', function () {
     Artisan::call('storage:link');
     return 'Storage link creado OK';
 });
+
+
+//CONGREGACIONES
+Route::resource('congregaciones', CongregacionController::class)->parameters(['congregaciones' => 'congregacion']);
 
 
 

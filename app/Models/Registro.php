@@ -9,6 +9,7 @@ class Registro extends Model
 {
 
     protected $fillable = [
+        'congregacion_id',
         'id_publicador',
         'a_servicio',
         'mes',
@@ -21,9 +22,14 @@ class Registro extends Model
     
 
 
-    public function publicador()
+public function publicador()
 {
     return $this->belongsTo(Publicador::class, 'id_publicador');
+}
+
+public function congregacion()
+{
+    return $this->belongsTo(Congregacion::class);
 }
 
 }

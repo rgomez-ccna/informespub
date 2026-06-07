@@ -16,6 +16,11 @@ return new class extends Migration
         Schema::create('registros', function (Blueprint $table) {
             $table->id();
 
+             $table->foreignId('congregacion_id')
+            ->nullable()
+            ->constrained('congregacions')
+            ->cascadeOnDelete();
+
             $table->foreignId('id_publicador')
                 ->constrained('publicadors')
                 ->onUpdate('cascade')
@@ -31,6 +36,8 @@ return new class extends Migration
             $table->string('notas')->nullable();
             $table->string('aux')->nullable();       // <-- si fue auxiliar ese mes
 
+            $table->index(['congregacion_id', 'id_publicador']);
+
             $table->timestamps();
         });
     }
@@ -45,3 +52,6 @@ return new class extends Migration
         Schema::dropIfExists('registros');
     }
 };
+
+
+

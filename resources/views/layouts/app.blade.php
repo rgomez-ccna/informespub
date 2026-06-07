@@ -134,95 +134,118 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light" style="background: linear-gradient(135deg, #1a1a1a 0%, #878787 100%);">
+       <nav class="navbar navbar-expand-md navbar-light" style="background: linear-gradient(135deg, #1a1a1a 0%, #878787 100%);">
             <div class="container">
                 <a class="navbar-brand text-white" href="{{ url('/') }}">
                     {{ config('app.name', 'Sis360') }}
                 </a>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-        
+
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
+
                     @auth
-                    <ul class="navbar-nav me-auto gap-3">
-                       
-                        {{-- Para admin y superadmin --}}
-                        @if(in_array(Auth::user()->role, ['admin', 'superadmin']))
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->is('pub') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('pub.index') }}">
-                                 Agregar Informes
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->is('pub/listado') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('pub.listado') }}">
-                                Publicadores
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->is('asistencia') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('asist.index') }}">
-                                Asistencia
-                            </a>
-                        </li>
+                        @php
+                            $rol = Auth::user()->role;
 
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->is('reg/enviar-informes') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('reg.enviar-informes') }}">
-                                Enviar Informes
-                            </a>
-                        </li>
-                         @endif
+                            $puedeGestionarDatos = in_array($rol, ['secretario', 'colaborador']);
+                            $puedeVerTablero = in_array($rol, ['secretario', 'colaborador', 'tablero']);
+                            $puedeGestionarUsuarios = $rol === 'secretario';
+                            $puedeGestionarCongregaciones = $rol === 'superadmin';
+                        @endphp
 
-                       <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->is('tablero') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('tablero.index') }}">
-                                Tablero de Anuncios
-                            </a>
-                        </li>
+                        <ul class="navbar-nav me-auto gap-3">
 
-                        @if(Auth::user()->role === 'superadmin')
-                            <li class="nav-item">
-                                <a class="nav-link text-white {{ request()->is('usuarios') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('usuarios.index') }}">
-                                     Usuarios
-                                </a>
-                            </li> 
-                        @endif
-                    </ul>
-                                       
+                            @if($puedeGestionarDatos)
+                                <li class="nav-item">
+                                    <a class="nav-link text-white {{ request()->is('pub') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('pub.index') }}">
+                                        Agregar Informes
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-white {{ request()->is('pub/listado') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('pub.listado') }}">
+                                        Publicadores
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-white {{ request()->is('asistencia') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('asist.index') }}">
+                                        Asistencia
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-white {{ request()->is('reg/enviar-informes') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('reg.enviar-informes') }}">
+                                        Enviar Informes
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if($puedeVerTablero)
+                                <li class="nav-item">
+                                    <a class="nav-link text-white {{ request()->is('tablero') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('tablero.index') }}">
+                                        Tablero de Anuncios
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if($puedeGestionarUsuarios)
+                                <li class="nav-item">
+                                    <a class="nav-link text-white {{ request()->is('usuarios') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('usuarios.index') }}">
+                                        Usuarios
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if($puedeGestionarCongregaciones)
+                                <li class="nav-item">
+                                    <a class="nav-link text-white {{ request()->is('congregaciones*') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('congregaciones.index') }}">
+                                        Congregaciones
+                                    </a>
+                                </li>
+                            @endif
+
+                        </ul>
                     @endauth
-        
-                    <!-- Right Side Of Navbar -->
+
                     <ul class="navbar-nav ms-auto">
-                        <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
-                                   <a class="nav-link text-white rounded-2" href="{{ route('login') }}"> <i class="fa-solid fa-right-from-bracket"></i> {{ __('Iniciar sesión') }}</a>
+                                    <a class="nav-link text-white rounded-2" href="{{ route('login') }}">
+                                        <i class="fa-solid fa-right-from-bracket"></i> {{ __('Iniciar sesión') }}
+                                    </a>
                                 </li>
-                            @endif
-                            @if (Route::has('register'))
-                                {{-- <li class="nav-item">
-                                    <a class="nav-link text-white rounded-2" href="{{ route('register') }}">{{ __('Registro') }}</a>
-                                </li> --}}
                             @endif
                         @else
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle text-white rounded-2 d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a id="navbarDropdown"
+                                class="nav-link dropdown-toggle text-white rounded-2 d-flex align-items-center gap-2"
+                                href="#"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false">
                                     <i class="fa-solid fa-circle-user fa-lg"></i> {{ Auth::user()->name }}
                                 </a>
+
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                         <i class="fa-solid fa-right-from-bracket me-2"></i> Cerrar sesión
                                     </a>
+
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>
                                 </div>
                             </li>
-
-
                         @endguest
                     </ul>
+
                 </div>
             </div>
         </nav>
