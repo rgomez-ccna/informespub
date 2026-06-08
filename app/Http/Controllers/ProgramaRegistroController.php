@@ -55,7 +55,7 @@ class ProgramaRegistroController extends Controller
         }]);
 
         $rules = [
-            'tipo_fila' => ['required', 'in:normal,evento,nota,separador'],
+            'tipo_fila' => ['required', 'in:normal,especial'],
             'fecha_especial' => ['nullable', 'date'],
             'texto_especial' => ['nullable', 'string'],
             'orden' => ['nullable', 'integer'],
@@ -137,7 +137,7 @@ class ProgramaRegistroController extends Controller
         }]);
 
         $rules = [
-            'tipo_fila' => ['required', 'in:normal,evento,nota,separador'],
+            'tipo_fila' => ['required', 'in:normal,especial'],
             'fecha_especial' => ['nullable', 'date'],
             'texto_especial' => ['nullable', 'string'],
             'orden' => ['nullable', 'integer'],

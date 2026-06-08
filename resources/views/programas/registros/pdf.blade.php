@@ -19,14 +19,14 @@ body {
 .banner-programa {
     border: 2px solid #6b5b95;
     border-radius: 6px;
-    padding: 10px 14px;
+    padding: 5px 14px;
     background: #ffffff;
     text-align: center;
     margin-bottom: 12px;
 }
 
 .titulo {
-    font-size: 19px;
+    font-size: 25px;
     font-weight: bold;
     margin: 0;
     color: #3d315b;
@@ -34,9 +34,9 @@ body {
 }
 
 .subtitulo {
-    font-size: 11px;
+    font-size: 15px;
     margin: 4px 0 0;
-    color: #5f527f;
+    color: #5b4b85;
     font-weight: bold;
 }
 
@@ -54,19 +54,19 @@ thead {
 th {
     background: #6b5b95;
     color: white;
-    padding: 7px 5px;
+    padding: 3px 5px;
     border: 1px solid #5b4b85;
-    font-size: 9px;
+    font-size: 12px;
     text-align: center;
     font-weight: bold;
     line-height: 1.25;
 }
 
 td {
-    padding: 6px 5px;
+    padding: 3px 5px;
     border: 1px solid #d4d0df;
     text-align: center;
-    font-size: 9.5px;
+    font-size: 13px;
     line-height: 1.35;
     vertical-align: middle;
     word-wrap: break-word;
@@ -99,7 +99,7 @@ td {
     padding: 8px 10px;
     border: 2px solid #6b5b95;
     border-radius: 5px;
-    font-size: 9.5px;
+    font-size: 12px;
     line-height: 1.45;
     background: #ffffff;
 }
