@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container py-4" style="max-width: 900px;">
+<div class="container py-4" style="max-width: 850px;">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -32,74 +32,40 @@
                            name="nombre"
                            class="form-control @error('nombre') is-invalid @enderror"
                            value="{{ old('nombre') }}"
-                           placeholder="Ej: Junio 2026 / Semana del 10 al 16 / Campaña especial"
+                           placeholder="Ej: Junio 2026, Semana del 10 al 16, Campaña especial"
                            required>
 
                     @error('nombre')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
+
+                    <div class="form-text">
+                        Este nombre aparece como título del bloque y en el PDF.
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Descripción / subtítulo</label>
+                {{-- <div class="mb-3">
+                    <label class="form-label">Subtítulo / descripción</label>
                     <input type="text"
                            name="descripcion"
                            class="form-control @error('descripcion') is-invalid @enderror"
                            value="{{ old('descripcion') }}"
-                           placeholder="Opcional. Ej: Programa mensual / Semana especial">
+                           placeholder="Opcional. Ej: Programa mensual, Semana especial, Salón principal">
 
                     @error('descripcion')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                </div>
-
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Fecha inicio</label>
-                        <input type="date"
-                               name="fecha_inicio"
-                               class="form-control @error('fecha_inicio') is-invalid @enderror"
-                               value="{{ old('fecha_inicio') }}">
-
-                        @error('fecha_inicio')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Fecha fin</label>
-                        <input type="date"
-                               name="fecha_fin"
-                               class="form-control @error('fecha_fin') is-invalid @enderror"
-                               value="{{ old('fecha_fin') }}">
-
-                        @error('fecha_fin')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Orden</label>
-                        <input type="number"
-                               name="orden"
-                               class="form-control @error('orden') is-invalid @enderror"
-                               value="{{ old('orden', 0) }}">
-
-                        @error('orden')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
+                </div> --}}
 
                 <div class="mb-3">
                     <label class="form-label">Observaciones finales</label>
                     <textarea name="observaciones"
                               class="form-control @error('observaciones') is-invalid @enderror"
                               rows="4"
-                              placeholder="Texto que saldrá debajo de la tabla en el PDF.">{{ old('observaciones', $ultimoBloque?->observaciones) }}</textarea>
+                              placeholder="Opcional. Este texto sale debajo de la tabla en el PDF.">{{ old('observaciones', $ultimoBloque?->observaciones) }}</textarea>
 
                     <div class="form-text">
-                        Se copia automáticamente la última observación usada. Editala solo si cambió.
+                        Si ya existía un bloque anterior, se copia su última observación para no escribirla de nuevo.
                     </div>
 
                     @error('observaciones')

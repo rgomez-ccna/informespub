@@ -11,25 +11,25 @@ use Illuminate\Support\Str;
 class ProgramaController extends Controller
 {
     public function tablero()
-    {
-        $programas = Programa::where('congregacion_id', Auth::user()->congregacion_id)
-            ->where('activo', true)
-            ->orderBy('orden')
-            ->orderBy('nombre')
-            ->get();
+{
+    $programas = Programa::where('congregacion_id', Auth::user()->congregacion_id)
+        ->where('activo', true)
+        ->orderBy('orden')
+        ->orderBy('id')
+        ->get();
 
-        return view('tablero.index', compact('programas'));
-    }
+    return view('tablero.index', compact('programas'));
+}
 
     public function index()
-    {
-        $programas = Programa::where('congregacion_id', Auth::user()->congregacion_id)
-            ->orderBy('orden')
-            ->orderBy('nombre')
-            ->paginate(20);
+{
+    $programas = Programa::where('congregacion_id', Auth::user()->congregacion_id)
+        ->orderBy('orden')
+        ->orderBy('id')
+        ->paginate(50);
 
-        return view('programas.index', compact('programas'));
-    }
+    return view('programas.index', compact('programas'));
+}
 
     public function create()
     {
@@ -44,13 +44,15 @@ class ProgramaController extends Controller
             'orden' => ['nullable', 'integer'],
         ]);
 
+        $ordenSiguiente = Programa::where('congregacion_id', Auth::user()->congregacion_id)->max('orden') + 1;
+
         Programa::create([
             'congregacion_id' => Auth::user()->congregacion_id,
             'nombre' => $request->nombre,
             'slug' => Str::slug($request->nombre),
             'descripcion' => $request->descripcion,
             'activo' => $request->boolean('activo', true),
-            'orden' => $request->orden ?? 0,
+            'orden' => $ordenSiguiente,
         ]);
 
         return redirect()
@@ -174,4 +176,28 @@ class ProgramaController extends Controller
             abort(403);
         }
     }
+
+
+
+    public function ordenar(Request $request)
+{
+    $request->validate([
+        'programas' => ['required', 'array'],
+        'programas.*' => ['integer'],
+    ]);
+
+    foreach ($request->programas as $index => $programaId) {
+        Programa::where('id', $programaId)
+            ->where('congregacion_id', Auth::user()->congregacion_id)
+            ->update([
+                'orden' => $index + 1,
+            ]);
+    }
+
+    return response()->json([
+        'ok' => true,
+    ]);
+}
+
+
 }

@@ -1,135 +1,335 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container py-4">
+<div class="container" style="max-width: 1000px;">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h3 class="mb-1 fw-bold text-secondary">{{ $programa->nombre }}</h3>
-            <p class="text-muted mb-0">
-                Bloques imprimibles del programa
-            </p>
-        </div>
+    {{-- BOTONES SUPERIORES --}}
+    <div class="d-flex justify-content-end gap-2 mb-3 no-print sticky-top bg-white pt-2 pb-2" style="z-index:20;">
+        <a href="{{ route('tablero.index') }}" class="btn btn-secondary btn-sm">
+            <i class="fa-solid fa-arrow-left"></i> Volver al Tablero
+        </a>
 
-        <div class="d-flex gap-2">
-            <a href="{{ route('tablero.index') }}" class="btn btn-secondary btn-sm">
-                <i class="fa-solid fa-arrow-left"></i> Tablero
-            </a>
+        <a href="{{ route('programas.edit', $programa) }}" class="btn btn-outline-warning btn-sm">
+            <i class="fa-solid fa-gear"></i> Configurar
+        </a>
 
-            <a href="{{ route('programas.edit', $programa) }}" class="btn btn-outline-warning btn-sm">
-                <i class="fa-solid fa-gear"></i> Configurar
-            </a>
+        <a href="{{ route('programas.bloques.create', $programa) }}" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-plus"></i> Nuevo bloque
+        </a>
+    </div>
 
-            <a href="{{ route('programas.bloques.create', $programa) }}" class="btn btn-primary btn-sm">
-                <i class="fa-solid fa-plus"></i> Nuevo bloque
-            </a>
-        </div>
+    <div class="text-center mb-3">
+        <h4 class="titulo">PROGRAMAS - {{ strtoupper($programa->nombre) }}</h4>
     </div>
 
     @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+        <div class="alert alert-success no-print">{{ session('success') }}</div>
     @endif
 
-    @if($bloques->isEmpty())
+    @if($programa->campos->isEmpty())
+        <div class="alert alert-warning">
+            Este programa todavía no tiene campos configurados.
+            <a href="{{ route('programas.edit', $programa) }}">Configurar campos</a>
+        </div>
+    @elseif($bloques->isEmpty())
         <div class="alert alert-light border text-center">
-            Todavía no hay bloques creados para este programa.
+            Todavía no hay bloques creados.
             <br>
             <a href="{{ route('programas.bloques.create', $programa) }}" class="btn btn-primary btn-sm mt-3">
                 <i class="fa-solid fa-plus"></i> Crear primer bloque
             </a>
         </div>
     @else
-        <div class="row g-3">
-            @foreach($bloques as $bloque)
-                <div class="col-md-6 col-lg-4">
-                    <div class="card shadow-sm border-0 bloque-card h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-                                <h5 class="fw-bold mb-0 text-dark">
+
+        <div class="accordion" id="accordionProgramas">
+            @foreach($bloques as $i => $bloque)
+                @php
+                    $idUnico = 'bloque_' . $bloque->id;
+                    $collapseId = 'collapse_' . $bloque->id;
+                    $abierto = $loop->first;
+
+                    $camposVisibles = $programa->campos->where('visible_en_listado', true);
+
+                    $registrosOrdenados = $bloque->registros
+                        ->sortBy([
+                            ['fecha', 'asc'],
+                            ['orden', 'asc'],
+                            ['id', 'asc'],
+                        ]);
+
+                    $registrosPorFecha = $registrosOrdenados->groupBy(function ($registro) {
+                        return $registro->fecha ? $registro->fecha->format('Y-m-d') : 'sin_fecha';
+                    });
+                @endphp
+
+                <div class="accordion-item mb-3">
+                    <h2 class="accordion-header" id="heading{{ $bloque->id }}">
+                        <button class="accordion-button {{ $abierto ? '' : 'collapsed' }}"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#{{ $collapseId }}"
+                                aria-expanded="{{ $abierto ? 'true' : 'false' }}"
+                                aria-controls="{{ $collapseId }}">
+                            <div class="w-100 d-flex justify-content-between align-items-center pe-3">
+                                <span>
                                     {{ $bloque->nombre }}
-                                </h5>
+                                </span>
 
-                                @if($bloque->activo)
-                                    <span class="badge bg-success">Activo</span>
-                                @else
-                                    <span class="badge bg-secondary">Inactivo</span>
-                                @endif
+                                <small class="text-muted">
+                                    {{ $registrosOrdenados->count() }} filas
+                                </small>
                             </div>
+                        </button>
+                    </h2>
 
-                            @if($bloque->descripcion)
-                                <p class="text-muted small mb-2">
-                                    {{ $bloque->descripcion }}
-                                </p>
-                            @endif
+                    <div id="{{ $collapseId }}"
+                         class="accordion-collapse collapse {{ $abierto ? 'show' : '' }}"
+                         aria-labelledby="heading{{ $bloque->id }}"
+                         data-bs-parent="#accordionProgramas">
 
-                            <div class="small text-muted mb-3">
-                                @if($bloque->fecha_inicio || $bloque->fecha_fin)
-                                    <i class="fa-solid fa-calendar-days"></i>
+                        <div class="accordion-body">
 
-                                    @if($bloque->fecha_inicio)
-                                        {{ $bloque->fecha_inicio->format('d/m/Y') }}
-                                    @endif
-
-                                    @if($bloque->fecha_fin)
-                                        al {{ $bloque->fecha_fin->format('d/m/Y') }}
-                                    @endif
-                                @else
-                                    Sin rango de fechas
-                                @endif
-                            </div>
-
-                            @if($bloque->observaciones)
-                                <div class="small text-muted border rounded p-2 bg-light mb-3">
-                                    <strong>Observación:</strong><br>
-                                    {{ \Illuminate\Support\Str::limit($bloque->observaciones, 90) }}
-                                </div>
-                            @endif
-
-                            <div class="d-flex justify-content-end gap-1">
-                                <a href="{{ route('programas.bloques.registros.index', [$programa, $bloque]) }}"
-                                   class="btn btn-sm btn-primary">
-                                    <i class="fa-solid fa-table"></i> Entrar
+                            <div class="d-flex justify-content-end gap-2 mb-3 no-print">
+                                <a href="{{ route('programas.bloques.registros.create', [$programa, $bloque]) }}"
+                                class="btn btn-primary btn-sm">
+                                    <i class="fa-solid fa-plus"></i> Agregar fila
                                 </a>
 
                                 <a href="{{ route('programas.bloques.edit', [$programa, $bloque]) }}"
-                                   class="btn btn-sm btn-outline-warning">
-                                    <i class="fa-solid fa-edit"></i>
+                                class="btn btn-outline-warning btn-sm">
+                                    <i class="fa-solid fa-edit"></i> Editar bloque
+                                </a>
+
+                                <a href="{{ route('programas.bloques.registros.pdf', [$programa, $bloque]) }}"
+                                class="btn btn-outline-danger btn-sm"
+                                target="_blank">
+                                    <i class="fa-solid fa-file-pdf"></i> PDF
                                 </a>
 
                                 <form action="{{ route('programas.bloques.destroy', [$programa, $bloque]) }}"
-                                      method="POST"
-                                      class="d-inline"
-                                      onsubmit="return confirm('¿Eliminar este bloque y todas sus filas?')">
+                                    method="POST"
+                                    class="d-inline"
+                                    onsubmit="return confirm('¿Eliminar este bloque y todas sus filas cargadas?')">
                                     @csrf
                                     @method('DELETE')
 
-                                    <button class="btn btn-sm btn-outline-danger">
-                                        <i class="fa-solid fa-trash"></i>
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        <i class="fa-solid fa-trash"></i> Eliminar bloque
                                     </button>
                                 </form>
                             </div>
+
+                            <div id="{{ $idUnico }}">
+
+                                {{-- ENCABEZADO --}}
+                                <div class="banner-programa text-center mb-3">
+                                    <h4 class="titulo">{{ strtoupper($programa->nombre) }}</h4>
+
+                                    <h6 class="subtitulo">
+                                        {{ strtoupper($bloque->nombre) }}
+
+                                        @if($bloque->descripcion)
+                                            · {{ strtoupper($bloque->descripcion) }}
+                                        @endif
+                                    </h6>
+                                </div>
+
+                                {{-- TABLA --}}
+                                <div class="table-responsive">
+                                    <table class="tabla-programa text-center align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>DÍA</th>
+                                                <th>FECHA</th>
+
+                                                @foreach($camposVisibles as $campo)
+                                                    @if($campo->tipo !== 'fecha')
+                                                        <th>{{ strtoupper($campo->nombre) }}</th>
+                                                    @endif
+                                                @endforeach
+
+                                                <th class="no-print text-nowrap" style="width:110px;"></th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            @forelse($registrosPorFecha as $fechaGrupo => $items)
+                                                @php
+                                                    $fechaReal = $fechaGrupo !== 'sin_fecha'
+                                                        ? \Carbon\Carbon::parse($fechaGrupo)
+                                                        : null;
+
+                                                    $rowClass = $loop->index % 2 === 0 ? 'fila-blanca' : 'fila-violeta';
+                                                    $rowspan = $items->count();
+                                                @endphp
+
+                                                @foreach($items->values() as $posicion => $registro)
+                                                    @php
+                                                        $valores = $registro->valores->keyBy('programa_campo_id');
+                                                        $esEspecial = $registro->tipo_fila !== 'normal';
+                                                    @endphp
+
+                                                    <tr>
+                                                        @if($posicion === 0)
+                                                            <td rowspan="{{ $rowspan }}" class="{{ $rowClass }} fw-semibold">
+                                                                {{ $fechaReal ? strtoupper($fechaReal->translatedFormat('l')) : '-' }}
+                                                            </td>
+
+                                                            <td rowspan="{{ $rowspan }}" class="{{ $rowClass }}">
+                                                                <strong>{{ $fechaReal ? $fechaReal->format('d/m/Y') : '-' }}</strong>
+                                                            </td>
+                                                        @endif
+
+                                                        @if($esEspecial)
+                                                            <td colspan="{{ $camposVisibles->where('tipo', '!=', 'fecha')->count() }}"
+                                                                class="{{ $rowClass }} fw-bold text-center fila-especial-texto">
+                                                                {{ $registro->texto_especial ?: strtoupper($registro->tipo_fila) }}
+                                                            </td>
+                                                        @else
+                                                            @foreach($camposVisibles as $campo)
+                                                                @if($campo->tipo !== 'fecha')
+                                                                    @php
+                                                                        $valor = $valores->get($campo->id);
+                                                                    @endphp
+
+                                                                    <td class="{{ $rowClass }}">
+                                                                        @include('programas.registros.partials.valor', [
+                                                                            'campo' => $campo,
+                                                                            'valor' => $valor
+                                                                        ])
+                                                                    </td>
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
+
+                                                        <td class="no-print {{ $rowClass }} text-nowrap">
+                                                            <a href="{{ route('programas.bloques.registros.edit', [$programa, $bloque, $registro]) }}"
+                                                               class="btn btn-sm btn-outline-warning">
+                                                                <i class="fa-solid fa-edit"></i>
+                                                            </a>
+
+                                                            <form action="{{ route('programas.bloques.registros.destroy', [$programa, $bloque, $registro]) }}"
+                                                                  method="POST"
+                                                                  class="d-inline"
+                                                                  onsubmit="return confirm('¿Eliminar esta fila?')">
+                                                                @csrf
+                                                                @method('DELETE')
+
+                                                                <button class="btn btn-sm btn-outline-danger">
+                                                                    <i class="fa-solid fa-trash"></i>
+                                                                </button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @empty
+                                                <tr>
+                                                    <td colspan="{{ $camposVisibles->where('tipo', '!=', 'fecha')->count() + 3 }}"
+                                                        class="text-center text-muted py-4">
+                                                        Todavía no hay filas cargadas en este bloque.
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                @if($bloque->observaciones)
+                                    <div class="mt-4 px-3 py-2 texto-final">
+                                        {!! nl2br(e($bloque->observaciones)) !!}
+                                    </div>
+                                @endif
+
+                            </div>
+
                         </div>
                     </div>
                 </div>
             @endforeach
-        </div>
-
-        <div class="mt-3">
-            {{ $bloques->links('pagination::bootstrap-5') }}
         </div>
     @endif
 
 </div>
 
 <style>
-.bloque-card {
-    border-left: 6px solid #6b5b95 !important;
-    transition: all .2s ease-in-out;
+.banner-programa {
+    border: 3px solid #6b5b95;
+    border-radius: 8px;
+    padding: 12px;
+    background: #ffffff;
 }
 
-.bloque-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(0,0,0,.12) !important;
+.banner-programa .titulo {
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0;
+    color: #3d315b;
+}
+
+.banner-programa .subtitulo {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 4px 0 0;
+    color: #5f527f;
+}
+
+.tabla-programa {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.tabla-programa th {
+    background: #6b5b95;
+    color: white;
+    font-size: 12px;
+    padding: 9px;
+    border: 1px solid #59497d;
+}
+
+.tabla-programa td {
+    font-size: 12px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    vertical-align: middle;
+}
+
+.fila-blanca {
+    background: #ffffff;
+}
+
+.fila-violeta {
+    background: #f8f6ff;
+}
+
+.fila-especial-texto {
+    color: #624800;
+    background: #fff9d8 !important;
+    border: 1px solid #ffe175;
+}
+
+
+
+.texto-final {
+    font-size: 13px;
+    border: 2px solid #6b5b95;
+    border-radius: 6px;
+    background: #fff;
+}
+
+.accordion-button {
+    font-weight: 600;
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .container {
+        max-width: none !important;
+        width: 100% !important;
+    }
 }
 </style>
 @endsection

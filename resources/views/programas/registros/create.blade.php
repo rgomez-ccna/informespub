@@ -11,7 +11,7 @@
             </p>
         </div>
 
-        <a href="{{ route('programas.bloques.registros.index', [$programa, $bloque]) }}" class="btn btn-secondary btn-sm">
+        <a href="{{ route('programas.bloques.index', $programa) }}" class="btn btn-secondary btn-sm">
             <i class="fa-solid fa-arrow-left"></i> Volver
         </a>
     </div>
@@ -28,32 +28,32 @@
             <form action="{{ route('programas.bloques.registros.store', [$programa, $bloque]) }}" method="POST">
                 @csrf
 
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Tipo de fila</label>
-                        <select name="tipo_fila" id="tipo_fila" class="form-select">
-                            <option value="normal" {{ old('tipo_fila', 'normal') === 'normal' ? 'selected' : '' }}>Normal</option>
-                            <option value="evento" {{ old('tipo_fila') === 'evento' ? 'selected' : '' }}>Evento</option>
-                            <option value="nota" {{ old('tipo_fila') === 'nota' ? 'selected' : '' }}>Nota</option>
-                            <option value="separador" {{ old('tipo_fila') === 'separador' ? 'selected' : '' }}>Separador</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Orden</label>
-                        <input type="number"
-                               name="orden"
-                               class="form-control"
-                               value="{{ old('orden', 0) }}">
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label">Tipo de fila</label>
+                    <select name="tipo_fila" id="tipo_fila" class="form-select">
+                        <option value="normal" {{ old('tipo_fila', 'normal') === 'normal' ? 'selected' : '' }}>Normal</option>
+                        <option value="evento" {{ old('tipo_fila') === 'evento' ? 'selected' : '' }}>Evento</option>
+                        <option value="nota" {{ old('tipo_fila') === 'nota' ? 'selected' : '' }}>Nota</option>
+                        <option value="separador" {{ old('tipo_fila') === 'separador' ? 'selected' : '' }}>Separador</option>
+                    </select>
                 </div>
 
-                <div id="bloque_especial" class="mb-3" style="display:none;">
-                    <label class="form-label">Texto especial</label>
-                    <textarea name="texto_especial"
-                              class="form-control"
-                              rows="3"
-                              placeholder="Ej: No hay salida por asamblea / Semana especial / Nota importante">{{ old('texto_especial') }}</textarea>
+                <div id="bloque_especial" style="display:none;">
+                    <div class="mb-3">
+                        <label class="form-label">Fecha</label>
+                        <input type="date"
+                               name="fecha_especial"
+                               class="form-control"
+                               value="{{ old('fecha_especial') }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Texto especial</label>
+                        <textarea name="texto_especial"
+                                  class="form-control"
+                                  rows="3"
+                                  placeholder="Ej: No hay salida por asamblea / Semana especial / Nota importante">{{ old('texto_especial') }}</textarea>
+                    </div>
                 </div>
 
                 <div id="bloque_campos">
@@ -80,7 +80,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
-                    <a href="{{ route('programas.bloques.registros.index', [$programa, $bloque]) }}" class="btn btn-light border">
+                    <a href="{{ route('programas.bloques.index', $programa) }}" class="btn btn-light border">
                         Cancelar
                     </a>
 

@@ -5,178 +5,224 @@
     <title>{{ $programa->nombre }} - {{ $bloque->nombre }}</title>
 
     <style>
-        @page {
-            margin: 18px 20px;
-        }
+       @page {
+    margin: 22px 24px;
+}
 
-        body {
-            font-family: DejaVu Sans, sans-serif;
-            font-size: 9px;
-            color: #222;
-            margin: 0;
-        }
+body {
+    font-family: DejaVu Sans, sans-serif;
+    font-size: 10px;
+    color: #222;
+    margin: 0;
+}
 
-        .banner-programa {
-            border: 2px solid #6b5b95;
-            border-radius: 6px;
-            padding: 9px 12px;
-            background: #f4f0ff;
-            text-align: center;
-            margin-bottom: 10px;
-        }
+.banner-programa {
+    border: 2px solid #6b5b95;
+    border-radius: 6px;
+    padding: 10px 14px;
+    background: #ffffff;
+    text-align: center;
+    margin-bottom: 12px;
+}
 
-        .titulo {
-            font-size: 18px;
-            font-weight: bold;
-            margin: 0;
-            color: #3d315b;
-            letter-spacing: .5px;
-        }
+.titulo {
+    font-size: 19px;
+    font-weight: bold;
+    margin: 0;
+    color: #3d315b;
+    letter-spacing: .4px;
+}
 
-        .subtitulo {
-            font-size: 10px;
-            margin: 3px 0 0;
-            color: #5f527f;
-            font-weight: bold;
-        }
+.subtitulo {
+    font-size: 11px;
+    margin: 4px 0 0;
+    color: #5f527f;
+    font-weight: bold;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    border: 1px solid #b9b4c9;
+}
 
-        thead {
-            display: table-header-group;
-        }
+thead {
+    display: table-header-group;
+}
 
-        th {
-            background: #6b5b95;
-            color: white;
-            padding: 6px 4px;
-            border: 1px solid #59497d;
-            font-size: 8px;
-            text-align: center;
-            font-weight: bold;
-            line-height: 1.2;
-        }
+th {
+    background: #6b5b95;
+    color: white;
+    padding: 7px 5px;
+    border: 1px solid #5b4b85;
+    font-size: 9px;
+    text-align: center;
+    font-weight: bold;
+    line-height: 1.25;
+}
 
-        td {
-            padding: 5px 4px;
-            border: 1px solid #cfcfcf;
-            text-align: center;
-            font-size: 8px;
-            line-height: 1.25;
-            vertical-align: middle;
-            word-wrap: break-word;
-        }
+td {
+    padding: 6px 5px;
+    border: 1px solid #d4d0df;
+    text-align: center;
+    font-size: 9.5px;
+    line-height: 1.35;
+    vertical-align: middle;
+    word-wrap: break-word;
+}
 
-        tbody tr:nth-child(even) {
-            background: #f8f6ff;
-        }
+.fila-blanca {
+    background: #ffffff;
+}
 
-        .dia {
-            font-weight: bold;
-            white-space: nowrap;
-        }
+.fila-violeta {
+    background: #f8f6ff;
+}
 
-        .fila-especial td {
-            background: #fff3c4;
-            color: #4b3b00;
-            font-weight: bold;
-            text-align: center;
-            font-size: 9px;
-        }
+.dia-fecha {
+    font-weight: bold;
+    white-space: nowrap;
+    color: #3d315b;
+}
 
-        .observaciones {
-            margin-top: 12px;
-            padding: 8px 10px;
-            border: 2px solid #6b5b95;
-            border-radius: 5px;
-            font-size: 9px;
-            line-height: 1.4;
-        }
+.fila-especial-texto {
+    background: #fff9d8 !important;
+    color: #624800;
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid #ffe175;
+}
 
-        .footer {
-            margin-top: 8px;
-            font-size: 7px;
-            color: #666;
-            text-align: right;
-        }
+.observaciones {
+    margin-top: 12px;
+    padding: 8px 10px;
+    border: 2px solid #6b5b95;
+    border-radius: 5px;
+    font-size: 9.5px;
+    line-height: 1.45;
+    background: #ffffff;
+}
+
+.footer {
+    margin-top: 8px;
+    font-size: 7px;
+    color: #777;
+    text-align: right;
+}
     </style>
 </head>
 <body>
 
-    <div class="banner-programa">
-        <h1 class="titulo">{{ strtoupper($programa->nombre) }}</h1>
+@php
+    $camposVisibles = $programa->campos->where('visible_en_listado', true);
 
-        <div class="subtitulo">
-            {{ strtoupper($bloque->nombre) }}
+    $registrosOrdenados = $registros->sortBy([
+        ['fecha', 'asc'],
+        ['orden', 'asc'],
+        ['id', 'asc'],
+    ]);
 
-            @if($bloque->descripcion)
-                · {{ strtoupper($bloque->descripcion) }}
-            @endif
-        </div>
+    $registrosPorFecha = $registrosOrdenados->groupBy(function ($registro) {
+        return $registro->fecha ? $registro->fecha->format('Y-m-d') : 'sin_fecha';
+    });
+@endphp
+
+<div class="banner-programa">
+    <h1 class="titulo">{{ strtoupper($programa->nombre) }}</h1>
+
+    <div class="subtitulo">
+        {{ strtoupper($bloque->nombre) }}
+
+        @if($bloque->descripcion)
+            · {{ strtoupper($bloque->descripcion) }}
+        @endif
     </div>
+</div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>DÍA</th>
+<table>
+    <thead>
+        <tr>
+            <th style="width: 13%;">DÍA</th>
+            <th style="width: 13%;">FECHA</th>
 
-                @foreach($programa->campos as $campo)
+            @foreach($camposVisibles as $campo)
+                @if($campo->tipo !== 'fecha')
                     <th>{{ strtoupper($campo->nombre) }}</th>
-                @endforeach
-            </tr>
-        </thead>
+                @endif
+            @endforeach
+        </tr>
+    </thead>
 
-        <tbody>
-            @foreach($registros as $registro)
+    <tbody>
+        @forelse($registrosPorFecha as $fechaGrupo => $items)
+            @php
+                $fechaReal = $fechaGrupo !== 'sin_fecha'
+                    ? \Carbon\Carbon::parse($fechaGrupo)
+                    : null;
+
+                $rowClass = $loop->index % 2 === 0 ? 'fila-blanca' : 'fila-violeta';
+                $rowspan = $items->count();
+            @endphp
+
+            @foreach($items->values() as $posicion => $registro)
                 @php
                     $valores = $registro->valores->keyBy('programa_campo_id');
                     $esEspecial = $registro->tipo_fila !== 'normal';
-                    $cantidadColumnas = $programa->campos->count() + 1;
                 @endphp
 
-                @if($esEspecial)
-                    <tr class="fila-especial">
-                        <td colspan="{{ $cantidadColumnas }}">
+                <tr>
+                    @if($posicion === 0)
+                        <td rowspan="{{ $rowspan }}" class="{{ $rowClass }} dia-fecha">
+                            {{ $fechaReal ? strtoupper($fechaReal->translatedFormat('l')) : '-' }}
+                        </td>
+
+                        <td rowspan="{{ $rowspan }}" class="{{ $rowClass }} dia-fecha">
+                            {{ $fechaReal ? $fechaReal->format('d/m/Y') : '-' }}
+                        </td>
+                    @endif
+
+                    @if($esEspecial)
+                        <td colspan="{{ $camposVisibles->where('tipo', '!=', 'fecha')->count() }}"
+                            class="{{ $rowClass }} fila-especial-texto">
                             {{ $registro->texto_especial ?: strtoupper($registro->tipo_fila) }}
                         </td>
-                    </tr>
-                @else
-                    <tr>
-                        <td class="dia">
-                            {{ $registro->fecha ? strtoupper($registro->fecha->translatedFormat('l')) : '-' }}
-                        </td>
+                    @else
+                        @foreach($camposVisibles as $campo)
+                            @if($campo->tipo !== 'fecha')
+                                @php
+                                    $valor = $valores->get($campo->id);
+                                @endphp
 
-                        @foreach($programa->campos as $campo)
-                            @php
-                                $valor = $valores->get($campo->id);
-                            @endphp
-
-                            <td>
-                                @include('programas.registros.partials.valor', [
-                                    'campo' => $campo,
-                                    'valor' => $valor
-                                ])
-                            </td>
+                                <td class="{{ $rowClass }}">
+                                    @include('programas.registros.partials.valor', [
+                                        'campo' => $campo,
+                                        'valor' => $valor
+                                    ])
+                                </td>
+                            @endif
                         @endforeach
-                    </tr>
-                @endif
+                    @endif
+                </tr>
             @endforeach
-        </tbody>
-    </table>
+        @empty
+            <tr>
+                <td colspan="{{ $camposVisibles->where('tipo', '!=', 'fecha')->count() + 2 }}"
+                    style="text-align:center; padding: 12px;">
+                    No hay filas cargadas.
+                </td>
+            </tr>
+        @endforelse
+    </tbody>
+</table>
 
-    @if($bloque->observaciones)
-        <div class="observaciones">
-            {!! nl2br(e($bloque->observaciones)) !!}
-        </div>
-    @endif
-
-    <div class="footer">
-        Generado el {{ now()->format('d/m/Y H:i') }}
+@if($bloque->observaciones)
+    <div class="observaciones">
+        {!! nl2br(e($bloque->observaciones)) !!}
     </div>
+@endif
+
+
 
 </body>
 </html>

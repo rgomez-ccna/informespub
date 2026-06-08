@@ -56,6 +56,7 @@ class ProgramaRegistroController extends Controller
 
         $rules = [
             'tipo_fila' => ['required', 'in:normal,evento,nota,separador'],
+            'fecha_especial' => ['nullable', 'date'],
             'texto_especial' => ['nullable', 'string'],
             'orden' => ['nullable', 'integer'],
         ];
@@ -77,7 +78,12 @@ class ProgramaRegistroController extends Controller
         $request->validate($rules);
 
         $campoFecha = $programa->campos->firstWhere('tipo', 'fecha');
-        $fechaRegistro = $campoFecha ? $request->input('campos.' . $campoFecha->id) : null;
+
+        $fechaRegistro = $request->tipo_fila === 'normal'
+            ? ($campoFecha ? $request->input('campos.' . $campoFecha->id) : null)
+            : $request->fecha_especial;
+
+        $ordenSiguiente = ProgramaRegistro::where('programa_bloque_id', $bloque->id)->max('orden') + 1;
 
         $registro = ProgramaRegistro::create([
             'congregacion_id' => Auth::user()->congregacion_id,
@@ -89,7 +95,7 @@ class ProgramaRegistroController extends Controller
             'estado' => 'activo',
             'tipo_fila' => $request->tipo_fila,
             'texto_especial' => $request->texto_especial,
-            'orden' => $request->orden ?? 0,
+            'orden' => $ordenSiguiente,
         ]);
 
         if ($request->tipo_fila === 'normal') {
@@ -99,8 +105,8 @@ class ProgramaRegistroController extends Controller
         }
 
         return redirect()
-            ->route('programas.bloques.registros.index', [$programa, $bloque])
-            ->with('success', 'Fila agregada correctamente.');
+    ->route('programas.bloques.index', $programa)
+    ->with('success', 'Fila agregada correctamente.');
     }
 
     public function edit(Programa $programa, ProgramaBloque $bloque, ProgramaRegistro $registro)
@@ -132,6 +138,7 @@ class ProgramaRegistroController extends Controller
 
         $rules = [
             'tipo_fila' => ['required', 'in:normal,evento,nota,separador'],
+            'fecha_especial' => ['nullable', 'date'],
             'texto_especial' => ['nullable', 'string'],
             'orden' => ['nullable', 'integer'],
         ];
@@ -153,14 +160,17 @@ class ProgramaRegistroController extends Controller
         $request->validate($rules);
 
         $campoFecha = $programa->campos->firstWhere('tipo', 'fecha');
-        $fechaRegistro = $campoFecha ? $request->input('campos.' . $campoFecha->id) : null;
+
+        $fechaRegistro = $request->tipo_fila === 'normal'
+            ? ($campoFecha ? $request->input('campos.' . $campoFecha->id) : null)
+            : $request->fecha_especial;
 
         $registro->update([
             'fecha' => $fechaRegistro,
             'titulo' => null,
             'tipo_fila' => $request->tipo_fila,
             'texto_especial' => $request->texto_especial,
-            'orden' => $request->orden ?? 0,
+            'orden' => $request->orden ?? $registro->orden,
         ]);
 
         if ($request->tipo_fila === 'normal') {
@@ -172,7 +182,7 @@ class ProgramaRegistroController extends Controller
         }
 
         return redirect()
-            ->route('programas.bloques.registros.index', [$programa, $bloque])
+            ->route('programas.bloques.index', $programa)
             ->with('success', 'Fila actualizada correctamente.');
     }
 
@@ -184,9 +194,9 @@ class ProgramaRegistroController extends Controller
 
         $registro->delete();
 
-        return redirect()
-            ->route('programas.bloques.registros.index', [$programa, $bloque])
-            ->with('success', 'Fila eliminada correctamente.');
+       return redirect()
+    ->route('programas.bloques.index', $programa)
+    ->with('success', 'Fila eliminada correctamente.');
     }
 
     public function pdf(Programa $programa, ProgramaBloque $bloque)

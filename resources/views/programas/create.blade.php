@@ -34,12 +34,16 @@
                            name="nombre"
                            class="form-control @error('nombre') is-invalid @enderror"
                            value="{{ old('nombre') }}"
-                           placeholder="Ej: Acomodadores"
+                           placeholder="Ej: Acomodadores, Limpieza, Salidas al Ministerio"
                            required>
 
                     @error('nombre')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
+
+                    <div class="form-text">
+                        Este nombre aparecerá como tarjeta en el tablero.
+                    </div>
                 </div>
 
                 <div class="mb-3">
@@ -47,40 +51,24 @@
                     <textarea name="descripcion"
                               class="form-control @error('descripcion') is-invalid @enderror"
                               rows="3"
-                              placeholder="Ej: Programa mensual de acomodadores">{{ old('descripcion') }}</textarea>
+                              placeholder="Opcional. Ej: Programa mensual de asignaciones">{{ old('descripcion') }}</textarea>
 
                     @error('descripcion')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Orden</label>
-                        <input type="number"
-                               name="orden"
-                               class="form-control @error('orden') is-invalid @enderror"
-                               value="{{ old('orden', 0) }}">
+                <div class="form-check mb-4">
+                    <input type="checkbox"
+                           name="activo"
+                           value="1"
+                           class="form-check-input"
+                           id="activo"
+                           checked>
 
-                        @error('orden')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="col-md-6 mb-3 d-flex align-items-end">
-                        <div class="form-check">
-                            <input type="checkbox"
-                                   name="activo"
-                                   value="1"
-                                   class="form-check-input"
-                                   id="activo"
-                                   checked>
-
-                            <label for="activo" class="form-check-label">
-                                Activo en tablero
-                            </label>
-                        </div>
-                    </div>
+                    <label for="activo" class="form-check-label">
+                        Mostrar en tablero
+                    </label>
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">

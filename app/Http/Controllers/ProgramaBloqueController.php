@@ -13,11 +13,15 @@ class ProgramaBloqueController extends Controller
     {
         $this->autorizarPrograma($programa);
 
-        $bloques = ProgramaBloque::where('programa_id', $programa->id)
+        $programa->load(['campos' => function ($q) {
+            $q->where('activo', true)->orderBy('orden');
+        }]);
+
+        $bloques = ProgramaBloque::with(['registros.valores.campo'])
+            ->where('programa_id', $programa->id)
             ->where('congregacion_id', Auth::user()->congregacion_id)
-            ->orderByDesc('fecha_inicio')
             ->orderByDesc('id')
-            ->paginate(20);
+            ->get();
 
         return view('programas.bloques.index', compact('programa', 'bloques'));
     }
@@ -41,27 +45,24 @@ class ProgramaBloqueController extends Controller
         $request->validate([
             'nombre' => ['required', 'string', 'max:255'],
             'descripcion' => ['nullable', 'string'],
-            'fecha_inicio' => ['nullable', 'date'],
-            'fecha_fin' => ['nullable', 'date', 'after_or_equal:fecha_inicio'],
             'observaciones' => ['nullable', 'string'],
-            'orden' => ['nullable', 'integer'],
         ]);
 
-        $bloque = ProgramaBloque::create([
+        ProgramaBloque::create([
             'congregacion_id' => Auth::user()->congregacion_id,
             'programa_id' => $programa->id,
             'user_id' => Auth::id(),
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
-            'fecha_inicio' => $request->fecha_inicio,
-            'fecha_fin' => $request->fecha_fin,
+            'fecha_inicio' => null,
+            'fecha_fin' => null,
             'observaciones' => $request->observaciones,
             'activo' => true,
-            'orden' => $request->orden ?? 0,
+            'orden' => 0,
         ]);
 
         return redirect()
-            ->route('programas.bloques.registros.index', [$programa, $bloque])
+            ->route('programas.bloques.index', $programa)
             ->with('success', 'Bloque creado correctamente.');
     }
 
@@ -81,20 +82,14 @@ class ProgramaBloqueController extends Controller
         $request->validate([
             'nombre' => ['required', 'string', 'max:255'],
             'descripcion' => ['nullable', 'string'],
-            'fecha_inicio' => ['nullable', 'date'],
-            'fecha_fin' => ['nullable', 'date', 'after_or_equal:fecha_inicio'],
             'observaciones' => ['nullable', 'string'],
-            'orden' => ['nullable', 'integer'],
         ]);
 
         $bloque->update([
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
-            'fecha_inicio' => $request->fecha_inicio,
-            'fecha_fin' => $request->fecha_fin,
             'observaciones' => $request->observaciones,
             'activo' => $request->boolean('activo'),
-            'orden' => $request->orden ?? 0,
         ]);
 
         return redirect()

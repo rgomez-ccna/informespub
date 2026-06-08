@@ -163,7 +163,9 @@ Route::resource('congregaciones', CongregacionController::class)->parameters(['c
 //PROGRAMAS
 // PROGRAMAS
 Route::resource('programas', ProgramaController::class);
-
+Route::post('/programas/ordenar', [ProgramaController::class, 'ordenar'])
+    ->name('programas.ordenar');
+    
 Route::get('/programas/{programa}/bloques', [ProgramaBloqueController::class, 'index'])
     ->name('programas.bloques.index');
 
@@ -182,8 +184,6 @@ Route::put('/programas/{programa}/bloques/{bloque}', [ProgramaBloqueController::
 Route::delete('/programas/{programa}/bloques/{bloque}', [ProgramaBloqueController::class, 'destroy'])
     ->name('programas.bloques.destroy');
 
-Route::get('/programas/{programa}/bloques/{bloque}/registros', [ProgramaRegistroController::class, 'index'])
-    ->name('programas.bloques.registros.index');
 
 Route::get('/programas/{programa}/bloques/{bloque}/registros/create', [ProgramaRegistroController::class, 'create'])
     ->name('programas.bloques.registros.create');
@@ -196,7 +196,7 @@ Route::post('/programas/{programa}/bloques/{bloque}/registros', [ProgramaRegistr
 
 Route::delete('/programas/{programa}/campos/{campo}', [ProgramaController::class, 'destroyCampo'])
     ->name('programas.campos.destroy');
-    
+
 
 Route::get('/programas/{programa}/bloques/{bloque}/registros/{registro}/edit', [ProgramaRegistroController::class, 'edit'])
     ->name('programas.bloques.registros.edit');
@@ -209,6 +209,7 @@ Route::delete('/programas/{programa}/bloques/{bloque}/registros/{registro}', [Pr
 
 Route::get('/programas/{programa}/bloques/{bloque}/pdf', [ProgramaRegistroController::class, 'pdf'])
     ->name('programas.bloques.registros.pdf');
+
 
 Route::get('/tablero', [ProgramaController::class, 'tablero'])
     ->name('tablero.index');
