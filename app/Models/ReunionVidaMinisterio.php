@@ -9,6 +9,8 @@ class ReunionVidaMinisterio extends Model
     protected $table = 'reunion_vida_ministerios';
 
     protected $fillable = [
+        'congregacion_id',
+
         'fecha',
         'lectura_semanal',
         'presidente',
@@ -36,4 +38,10 @@ class ReunionVidaMinisterio extends Model
         'asignaciones_maestros' => 'array',
         'vida_cristiana' => 'array',
     ];
+
+    public function congregacion()
+    {
+        return $this->belongsTo(Congregacion::class);
+    }
+
 }

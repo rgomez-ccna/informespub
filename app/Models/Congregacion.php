@@ -27,4 +27,22 @@ class Congregacion extends Model
     {
         return $this->hasMany(Registro::class);
     }
+
+
+    // Tablero de programas
+    public function programas()
+{
+    return $this->hasMany(Programa::class);
+}
+
+public function programaRegistros()
+{
+    return $this->hasMany(ProgramaRegistro::class);
+}
+
+public function programaBloques()
+{
+    return $this->hasMany(ProgramaBloque::class);
+}
+
 }

@@ -2,52 +2,72 @@
 
 @section('content')
 <div class="container py-4">
-    <h2 class="mb-4 text-center fw-bold text-secondary">Tablero de Anuncios</h2>
 
-    <div class="row g-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0 fw-bold text-secondary">
+            Tablero de Anuncios
+        </h2>
 
-        @php
-           $departamentos = [
-                ['nombre' => 'Reunión Vida y Ministerio', 'ruta' => 'vidaministerio.index', 'color' => '#f34155'],
-                ['nombre' => 'Reunión Pública: Presidente y Lector', 'ruta' => 'publica.index', 'color' => '#4361ee'],
-                ['nombre' => 'Programa de Salidas al Ministerio', 'ruta' => 'ministerio.index', 'color' => '#48cae4'],
-                ['nombre' => 'Limpieza', 'ruta' => 'limpieza.index', 'color' => '#80ed99'],
-                ['nombre' => 'Discursos Públicos (Salidas y Visitas)', 'ruta' => 'discursos.index', 'color' => '#f9c74f'],
-                ['nombre' => 'Acomodadores', 'ruta' => 'acomodadores.index', 'color' => '#b388eb'],
+        <a href="{{ route('programas.index') }}" class="btn btn-primary btn-sm no-print">
+            <i class="fa-solid fa-gear"></i> Configurar programas
+        </a>
+    </div>
 
-                // Desactivados (gris y sin link)
-                ['nombre' => 'Anuncios', 'ruta' => null, 'color' => '#d3d3d3', 'disabled' => true],
-                ['nombre' => 'Informe Mensual de Cuentas', 'ruta' => null, 'color' => '#d3d3d3', 'disabled' => true],
-                ['nombre' => 'Territorio', 'ruta' => null, 'color' => '#d3d3d3', 'disabled' => true],
-            
-            ];
+    @if($programas->isEmpty())
+        <div class="alert alert-light border text-center">
+            Todavía no hay programas creados.
+            <br>
 
-        @endphp
+            <a href="{{ route('programas.create') }}" class="btn btn-primary btn-sm mt-3">
+                <i class="fa-solid fa-plus"></i> Crear primer programa
+            </a>
+        </div>
+    @else
+        <div class="row g-3">
+            @foreach($programas as $programa)
+                @php
+                    $colores = [
+                        '#f34155',
+                        '#4361ee',
+                        '#48cae4',
+                        '#80ed99',
+                        '#f9c74f',
+                        '#b388eb',
+                        '#ff9f1c',
+                        '#2ec4b6',
+                        '#577590',
+                    ];
 
-       @foreach($departamentos as $d)
-            <div class="col-md-6 col-lg-4">
-                @if(!empty($d['disabled']))
-                    <div class="card border rounded-3 shadow tablero-card bg-white position-relative opacity-50" style="--color: {{ $d['color'] }};">
-                        <div class="barra-color"></div>
-                        <div class="card-body d-flex justify-content-center align-items-center text-center" style="height: 100px; cursor: not-allowed;">
-                            <h5 class="mb-0 fw-semibold text-muted">{{ $d['nombre'] }}</h5>
-                        </div>
-                    </div>
-                @else
-                    <a href="{{ route($d['ruta']) }}" class="text-decoration-none">
-                        <div class="card border rounded-3 shadow tablero-card bg-white position-relative" style="--color: {{ $d['color'] }};">
+                    $color = $colores[$loop->index % count($colores)];
+                @endphp
+
+                <div class="col-md-6 col-lg-4">
+                    <a href="{{ route('programas.bloques.index', $programa) }}" class="text-decoration-none">
+                        <div class="card border rounded-3 shadow tablero-card bg-white position-relative h-100" style="--color: {{ $color }};">
                             <div class="barra-color"></div>
-                            <div class="card-body d-flex justify-content-center align-items-center text-center" style="height: 100px;">
-                                <h5 class="mb-0 fw-semibold text-dark">{{ $d['nombre'] }}</h5>
+
+                            <div class="card-body d-flex flex-column justify-content-center align-items-center text-center" style="height: 115px;">
+                                <h5 class="mb-1 fw-semibold text-dark">
+                                    {{ $programa->nombre }}
+                                </h5>
+
+                                @if($programa->descripcion)
+                                    <small class="text-muted px-2">
+                                        {{ \Illuminate\Support\Str::limit($programa->descripcion, 75) }}
+                                    </small>
+                                @else
+                                    <small class="text-muted">
+                                        Bloques imprimibles
+                                    </small>
+                                @endif
                             </div>
                         </div>
                     </a>
-                @endif
-            </div>
-        @endforeach
+                </div>
+            @endforeach
+        </div>
+    @endif
 
-
-    </div>
 </div>
 
 <style>
@@ -58,11 +78,13 @@
     border-left: 6px solid var(--color);
     overflow: hidden;
 }
+
 .tablero-card:hover {
-    transform: translateY(-2px) scale(1.05);
+    transform: translateY(-2px) scale(1.03);
     background-color: #f1f4f7;
     box-shadow: 0 10px 16px rgba(0,0,0,0.12);
 }
+
 .tablero-card .barra-color {
     position: absolute;
     top: 0;
@@ -73,8 +95,9 @@
     border-top-left-radius: .375rem;
     border-bottom-left-radius: .375rem;
 }
+
 .tablero-card h5 {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
 }
 </style>
 @endsection

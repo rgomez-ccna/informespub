@@ -15,6 +15,12 @@ return new class extends Migration
     {
         Schema::create('reunion_vida_ministerios', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('congregacion_id')
+            ->nullable()
+            ->constrained('congregacions')
+            ->cascadeOnDelete();
+
             $table->date('fecha');
             
             // Encabezado
@@ -50,6 +56,8 @@ return new class extends Migration
             // Final
             $table->string('cancion_final')->nullable();
             $table->string('oracion_final')->nullable();
+
+            $table->index(['congregacion_id', 'fecha']);
 
             $table->timestamps();
         });

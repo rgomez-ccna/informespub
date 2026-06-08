@@ -9,6 +9,11 @@ use App\Http\Controllers\PublicadorController;
 use App\Http\Controllers\RegistroController;
 
 use App\Http\Controllers\TableroController;
+
+use App\Http\Controllers\ProgramaController;
+use App\Http\Controllers\ProgramaBloqueController;
+use App\Http\Controllers\ProgramaRegistroController;
+
 use App\Http\Controllers\LimpiezaController;
 use App\Http\Controllers\LimpiezaMensualController;
 
@@ -106,7 +111,7 @@ Route::put('asistencia/{asistencia}',[AsistenciaController::class,'update'])->na
 
 
 
-Route::get('/tablero', [TableroController::class, 'index'])->name('tablero.index');
+
 // Rutas vacías de prueba (ajustar después con controladores reales)
 
 Route::view('/tablero/anuncios', 'tablero.anuncios')->name('tablero.anuncios');
@@ -154,6 +159,59 @@ Route::get('/fix-storage-link', function () {
 //CONGREGACIONES
 Route::resource('congregaciones', CongregacionController::class)->parameters(['congregaciones' => 'congregacion']);
 
+
+//PROGRAMAS
+// PROGRAMAS
+Route::resource('programas', ProgramaController::class);
+
+Route::get('/programas/{programa}/bloques', [ProgramaBloqueController::class, 'index'])
+    ->name('programas.bloques.index');
+
+Route::get('/programas/{programa}/bloques/create', [ProgramaBloqueController::class, 'create'])
+    ->name('programas.bloques.create');
+
+Route::post('/programas/{programa}/bloques', [ProgramaBloqueController::class, 'store'])
+    ->name('programas.bloques.store');
+
+Route::get('/programas/{programa}/bloques/{bloque}/edit', [ProgramaBloqueController::class, 'edit'])
+    ->name('programas.bloques.edit');
+
+Route::put('/programas/{programa}/bloques/{bloque}', [ProgramaBloqueController::class, 'update'])
+    ->name('programas.bloques.update');
+
+Route::delete('/programas/{programa}/bloques/{bloque}', [ProgramaBloqueController::class, 'destroy'])
+    ->name('programas.bloques.destroy');
+
+Route::get('/programas/{programa}/bloques/{bloque}/registros', [ProgramaRegistroController::class, 'index'])
+    ->name('programas.bloques.registros.index');
+
+Route::get('/programas/{programa}/bloques/{bloque}/registros/create', [ProgramaRegistroController::class, 'create'])
+    ->name('programas.bloques.registros.create');
+
+Route::post('/programas/{programa}/bloques/{bloque}/registros', [ProgramaRegistroController::class, 'store'])
+    ->name('programas.bloques.registros.store');
+
+    Route::post('/programas/{programa}/campos', [ProgramaController::class, 'storeCampo'])
+    ->name('programas.campos.store');
+
+Route::delete('/programas/{programa}/campos/{campo}', [ProgramaController::class, 'destroyCampo'])
+    ->name('programas.campos.destroy');
+    
+
+Route::get('/programas/{programa}/bloques/{bloque}/registros/{registro}/edit', [ProgramaRegistroController::class, 'edit'])
+    ->name('programas.bloques.registros.edit');
+
+Route::put('/programas/{programa}/bloques/{bloque}/registros/{registro}', [ProgramaRegistroController::class, 'update'])
+    ->name('programas.bloques.registros.update');
+
+Route::delete('/programas/{programa}/bloques/{bloque}/registros/{registro}', [ProgramaRegistroController::class, 'destroy'])
+    ->name('programas.bloques.registros.destroy');
+
+Route::get('/programas/{programa}/bloques/{bloque}/pdf', [ProgramaRegistroController::class, 'pdf'])
+    ->name('programas.bloques.registros.pdf');
+
+Route::get('/tablero', [ProgramaController::class, 'tablero'])
+    ->name('tablero.index');
 
 
 Route::get('/fix-link', function () {
