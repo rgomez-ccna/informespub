@@ -36,12 +36,24 @@ Route::get('/', function () {
 
     $rol = Auth::user()->role;
 
-    if (in_array($rol, ['usuario'])) {
+    if ($rol === 'disabled') {
+        Auth::logout();
+        return redirect()->route('login');
+    }
+
+    if ($rol === 'superadmin') {
+        return redirect()->route('congregaciones.index');
+    }
+
+    if ($rol === 'tablero') {
         return redirect()->route('tablero.index');
     }
 
-    // solo Para admin y superadmin // por ahora para el visita tambien
-    return redirect()->route('pub.listado');
+    if (in_array($rol, ['secretario', 'colaborador'])) {
+        return redirect()->route('pub.listado');
+    }
+
+    return redirect()->route('tablero.index');
 });
 
 

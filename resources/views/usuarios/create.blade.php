@@ -153,13 +153,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 roleSelector.classList.add('role-superadmin');
                 break;
             case 'secretario':
-                roleSelector.classList.add('role-admin');
+                roleSelector.classList.add('role-secretario');
                 break;
             case 'colaborador':
-                roleSelector.classList.add('role-usuario');
+                roleSelector.classList.add('role-colaborador');
                 break;
             case 'tablero':
-                roleSelector.classList.add('role-visita');
+                roleSelector.classList.add('role-tablero');
                 break;
             case 'disabled':
                 roleSelector.classList.add('role-disabled');

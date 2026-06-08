@@ -124,11 +124,30 @@
 
 
 <style>
-.role-superadmin { background-color: #c380ff !important; }
-.role-admin { background-color: #89a6ff !important; }
-.role-usuario { background-color: #caffbf !important; }
-.role-visita { background-color: #ffd6a5 !important; }
-.role-disabled { background-color: #ffb3b3 !important; }
+.role-superadmin {
+    background-color: #6f42c1 !important;
+    color: #fff !important;
+}
+
+.role-secretario {
+    background-color: #0d6efd !important;
+    color: #fff !important;
+}
+
+.role-colaborador {
+    background-color: #20c997 !important;
+    color: #fff !important;
+}
+
+.role-tablero {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+}
+
+.role-disabled {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+}
 </style>
 
 </head>
@@ -150,9 +169,9 @@
                         @php
                             $rol = Auth::user()->role;
 
-                            $puedeGestionarDatos = in_array($rol, ['secretario', 'colaborador']);
+                           $puedeGestionarDatos = in_array($rol, ['secretario', 'colaborador']);
                             $puedeVerTablero = in_array($rol, ['secretario', 'colaborador', 'tablero']);
-                            $puedeGestionarUsuarios = $rol === 'secretario';
+                            $puedeGestionarUsuarios = in_array($rol, ['secretario', 'superadmin']);
                             $puedeGestionarCongregaciones = $rol === 'superadmin';
                         @endphp
 

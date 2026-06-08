@@ -11,7 +11,6 @@ class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
-    // Redirección por defecto (solo si no se define manualmente)
     protected $redirectTo = RouteServiceProvider::HOME;
 
     public function __construct()
@@ -19,23 +18,28 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    // Redirección dinámica según el rol
     protected function authenticated(Request $request, $user)
     {
-        // 1. Bloquear cuentas deshabilitadas
         if ($user->role === 'disabled') {
             auth()->logout();
+
             return redirect()->route('login')->withErrors([
                 'email' => 'Tu cuenta ha sido desactivada. Contactá al administrador.'
             ]);
         }
 
-        // 2. Redirigir usuario o visita directo al tablero
-        if (in_array($user->role, ['usuario', 'visita'])) {
+        if ($user->role === 'superadmin') {
+            return redirect()->route('congregaciones.index');
+        }
+
+        if ($user->role === 'tablero') {
             return redirect()->route('tablero.index');
         }
 
-        // 3. Admin y superadmin al home normal
-        return redirect()->intended($this->redirectTo);
+        if (in_array($user->role, ['secretario', 'colaborador'])) {
+            return redirect()->route('pub.listado');
+        }
+
+        return redirect()->route('tablero.index');
     }
 }
