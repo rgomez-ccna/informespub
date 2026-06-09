@@ -148,6 +148,17 @@
     background-color: #dc3545 !important;
     color: #fff !important;
 }
+
+.congregacion-dot {
+    width: 9px;
+    height: 9px;
+    display: inline-block;
+    border-radius: 50%;
+    background: #ffffff;
+    opacity: .9;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, .12);
+}
+
 </style>
 
 </head>
@@ -155,9 +166,18 @@
     <div id="app">
        <nav class="navbar navbar-expand-md navbar-light" style="background: linear-gradient(135deg, #1a1a1a 0%, #878787 100%);">
             <div class="container">
-                <a class="navbar-brand text-white" href="{{ url('/') }}">
-                    {{ config('app.name', 'Sis360') }}
-                </a>
+              
+             @if(Auth::check() && Auth::user()->congregacion)
+                <span class="navbar-brand text-white d-flex align-items-center gap-2 mb-0">
+                    <span class="congregacion-dot"></span>
+                    {{ Auth::user()->congregacion->nombre }}
+                </span>
+            @elseif(session('free_access') && session('free_congregacion_nombre'))
+                <span class="navbar-brand text-white d-flex align-items-center gap-2 mb-0">
+                    <span class="congregacion-dot"></span>
+                    {{ session('free_congregacion_nombre') }}
+                </span>
+            @endif
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                     <span class="navbar-toggler-icon"></span>

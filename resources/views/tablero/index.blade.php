@@ -51,7 +51,7 @@
                                     {{ $programa->nombre }}
                                 </h5>
 
-                                @if($programa->descripcion)
+                                {{-- @if($programa->descripcion)
                                     <small class="text-muted px-2">
                                         {{ \Illuminate\Support\Str::limit($programa->descripcion, 75) }}
                                     </small>
@@ -59,7 +59,7 @@
                                     <small class="text-muted">
                                         Bloques imprimibles
                                     </small>
-                                @endif
+                                @endif --}}
                             </div>
                         </div>
                     </a>

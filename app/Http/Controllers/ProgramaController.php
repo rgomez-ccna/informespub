@@ -46,14 +46,27 @@ class ProgramaController extends Controller
 
         $ordenSiguiente = Programa::where('congregacion_id', Auth::user()->congregacion_id)->max('orden') + 1;
 
-        Programa::create([
-            'congregacion_id' => Auth::user()->congregacion_id,
-            'nombre' => $request->nombre,
-            'slug' => Str::slug($request->nombre),
-            'descripcion' => $request->descripcion,
-            'activo' => $request->boolean('activo', true),
-            'orden' => $ordenSiguiente,
-        ]);
+        $programa = Programa::create([
+                'congregacion_id' => Auth::user()->congregacion_id,
+                'nombre' => $request->nombre,
+                'slug' => Str::slug($request->nombre),
+                'descripcion' => $request->descripcion,
+                'activo' => $request->boolean('activo', true),
+                'orden' => $ordenSiguiente,
+            ]);
+
+            ProgramaCampo::create([
+                'programa_id' => $programa->id,
+                'nombre' => 'Fecha',
+                'slug' => 'fecha',
+                'tipo' => 'fecha',
+                'opciones' => null,
+                'obligatorio' => true,
+                'visible_en_listado' => true,
+                'buscable' => false,
+                'activo' => true,
+                'orden' => 1,
+            ]);
 
         return redirect()
             ->route('programas.index')
@@ -116,44 +129,44 @@ class ProgramaController extends Controller
             ->with('success', 'Programa eliminado correctamente.');
     }
 
-    public function storeCampo(Request $request, Programa $programa)
-    {
-        $this->autorizarPrograma($programa);
+  public function storeCampo(Request $request, Programa $programa)
+{
+    $this->autorizarPrograma($programa);
 
-        $request->validate([
-            'nombre' => ['required', 'string', 'max:255'],
-            'tipo' => ['required', 'in:texto,textarea,numero,fecha,hora,select,checkbox'],
-            'opciones' => ['nullable', 'string'],
-            'orden' => ['nullable', 'integer'],
-        ]);
+    $request->validate([
+        'nombre' => ['required', 'string', 'max:255'],
+        'tipo' => ['required', 'in:texto,textarea,numero,hora,select,checkbox'],
+        'opciones' => ['nullable', 'string'],
+        'orden' => ['nullable', 'integer'],
+    ]);
 
-        $opciones = null;
+    $opciones = null;
 
-        if ($request->tipo === 'select' && $request->filled('opciones')) {
-            $opciones = collect(explode("\n", $request->opciones))
-                ->map(fn ($item) => trim($item))
-                ->filter()
-                ->values()
-                ->toArray();
-        }
-
-        ProgramaCampo::create([
-            'programa_id' => $programa->id,
-            'nombre' => $request->nombre,
-            'slug' => Str::slug($request->nombre),
-            'tipo' => $request->tipo,
-            'opciones' => $opciones,
-            'obligatorio' => $request->boolean('obligatorio'),
-            'visible_en_listado' => $request->boolean('visible_en_listado', true),
-            'buscable' => $request->boolean('buscable'),
-            'activo' => true,
-            'orden' => $request->orden ?? 0,
-        ]);
-
-        return redirect()
-            ->route('programas.edit', $programa)
-            ->with('success', 'Campo agregado correctamente.');
+    if ($request->tipo === 'select' && $request->filled('opciones')) {
+        $opciones = collect(explode("\n", $request->opciones))
+            ->map(fn ($item) => trim($item))
+            ->filter()
+            ->values()
+            ->toArray();
     }
+
+    ProgramaCampo::create([
+        'programa_id' => $programa->id,
+        'nombre' => $request->nombre,
+        'slug' => Str::slug($request->nombre),
+        'tipo' => $request->tipo,
+        'opciones' => $opciones,
+        'obligatorio' => false,
+        'visible_en_listado' => $request->boolean('visible_en_listado', true),
+        'buscable' => false,
+        'activo' => true,
+        'orden' => $request->orden ?? (($programa->campos()->max('orden') ?? 1) + 1),
+    ]);
+
+    return redirect()
+        ->route('programas.edit', $programa)
+        ->with('success', 'Columna agregada correctamente.');
+}
 
     public function destroyCampo(Programa $programa, ProgramaCampo $campo)
     {

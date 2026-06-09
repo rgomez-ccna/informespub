@@ -46,7 +46,7 @@
                     </div>
                 </div>
 
-                <div class="mb-3">
+                {{-- <div class="mb-3">
                     <label class="form-label">Descripción</label>
                     <textarea name="descripcion"
                               class="form-control @error('descripcion') is-invalid @enderror"
@@ -56,7 +56,7 @@
                     @error('descripcion')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                </div>
+                </div> --}}
 
                 <div class="form-check mb-4">
                     <input type="checkbox"

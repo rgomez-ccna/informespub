@@ -53,7 +53,7 @@
                             <tr>
                                 <th style="width: 50px;"></th>
                                 <th>Programa</th>
-                                <th>Descripción</th>
+                                {{-- <th>Descripción</th> --}}
                                 <th class="text-center">Estado</th>
                                 <th class="text-end">Acciones</th>
                             </tr>
@@ -69,10 +69,10 @@
                                     <td class="fw-semibold">
                                         {{ $programa->nombre }}
                                     </td>
-
+{{-- 
                                     <td class="text-muted">
                                         {{ $programa->descripcion ?: 'Sin descripción' }}
-                                    </td>
+                                    </td> --}}
 
                                     <td class="text-center">
                                         @if($programa->activo)

@@ -36,11 +36,14 @@ class LinkAccesoController extends Controller
 
     public function enter($token)
     {
-        $link = LinkAcceso::where('token', $token)
+        $link = LinkAcceso::with('congregacion')
+            ->where('token', $token)
             ->where('expires_at', '>', now())
             ->first();
 
-        if (!$link) abort(403);
+        if (!$link) {
+            abort(403);
+        }
 
         if ($link->password_hash) {
             return view('access.password', compact('token'));
@@ -50,6 +53,7 @@ class LinkAccesoController extends Controller
             'free_access' => true,
             'free_token' => $token,
             'free_congregacion_id' => $link->congregacion_id,
+            'free_congregacion_nombre' => $link->congregacion->nombre ?? null,
         ]);
 
         return redirect()->route('pub.listado.free');
@@ -61,11 +65,14 @@ class LinkAccesoController extends Controller
             'password' => 'required|string',
         ]);
 
-        $link = LinkAcceso::where('token', $token)
+        $link = LinkAcceso::with('congregacion')
+            ->where('token', $token)
             ->where('expires_at', '>', now())
             ->first();
 
-        if (!$link) abort(403);
+        if (!$link) {
+            abort(403);
+        }
 
         if (!Hash::check($request->password, $link->password_hash)) {
             return back()->withErrors(['password' => 'Contraseña incorrecta']);
@@ -75,6 +82,7 @@ class LinkAccesoController extends Controller
             'free_access' => true,
             'free_token' => $token,
             'free_congregacion_id' => $link->congregacion_id,
+            'free_congregacion_nombre' => $link->congregacion->nombre ?? null,
         ]);
 
         return redirect()->route('pub.listado.free');
