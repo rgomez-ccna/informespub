@@ -9,6 +9,8 @@ use App\Models\ProgramaValor;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+
 
 class ProgramaRegistroController extends Controller
 {
@@ -54,15 +56,43 @@ class ProgramaRegistroController extends Controller
             $q->where('activo', true)->orderBy('orden');
         }]);
 
+        $tipoFila = $request->input('tipo_fila');
+        $campoFecha = $programa->campos->firstWhere('tipo', 'fecha');
+
         $rules = [
             'tipo_fila' => ['required', 'in:normal,especial'],
-            'fecha_especial' => ['nullable', 'date'],
-            'texto_especial' => ['nullable', 'string'],
+
+            'fecha_especial' => [
+                Rule::requiredIf($tipoFila === 'especial'),
+                'nullable',
+                'date',
+            ],
+
+            'texto_especial' => [
+                Rule::requiredIf($tipoFila === 'especial'),
+                'nullable',
+                'string',
+                'max:1000',
+            ],
+
             'orden' => ['nullable', 'integer'],
         ];
 
+        $attributes = [
+            'tipo_fila' => 'tipo de fila',
+            'fecha_especial' => 'fecha del aviso',
+            'texto_especial' => 'texto del aviso',
+            'orden' => 'orden',
+        ];
+
         foreach ($programa->campos as $campo) {
-            $campoRule = $campo->obligatorio ? ['required'] : ['nullable'];
+            $esCampoFecha = $campoFecha && (int) $campo->id === (int) $campoFecha->id;
+
+            $campoRule = ['nullable'];
+
+            if ($tipoFila === 'normal' && ($campo->obligatorio || $esCampoFecha)) {
+                array_unshift($campoRule, 'required');
+            }
 
             if ($campo->tipo === 'numero') {
                 $campoRule[] = 'numeric';
@@ -73,13 +103,12 @@ class ProgramaRegistroController extends Controller
             }
 
             $rules['campos.' . $campo->id] = $campoRule;
+            $attributes['campos.' . $campo->id] = $campo->nombre;
         }
 
-        $request->validate($rules);
+        $request->validate($rules, [], $attributes);
 
-        $campoFecha = $programa->campos->firstWhere('tipo', 'fecha');
-
-        $fechaRegistro = $request->tipo_fila === 'normal'
+        $fechaRegistro = $tipoFila === 'normal'
             ? ($campoFecha ? $request->input('campos.' . $campoFecha->id) : null)
             : $request->fecha_especial;
 
@@ -93,20 +122,20 @@ class ProgramaRegistroController extends Controller
             'fecha' => $fechaRegistro,
             'titulo' => null,
             'estado' => 'activo',
-            'tipo_fila' => $request->tipo_fila,
-            'texto_especial' => $request->texto_especial,
+            'tipo_fila' => $tipoFila,
+            'texto_especial' => $tipoFila === 'especial' ? $request->texto_especial : null,
             'orden' => $ordenSiguiente,
         ]);
 
-        if ($request->tipo_fila === 'normal') {
+        if ($tipoFila === 'normal') {
             foreach ($programa->campos as $campo) {
                 $this->guardarValor($registro, $campo, $request->input('campos.' . $campo->id));
             }
         }
 
         return redirect()
-    ->route('programas.bloques.index', $programa)
-    ->with('success', 'Fila agregada correctamente.');
+            ->route('programas.bloques.index', $programa)
+            ->with('success', 'Fila agregada correctamente.');
     }
 
     public function edit(Programa $programa, ProgramaBloque $bloque, ProgramaRegistro $registro)
@@ -126,65 +155,92 @@ class ProgramaRegistroController extends Controller
         return view('programas.registros.edit', compact('programa', 'bloque', 'registro', 'valores'));
     }
 
-    public function update(Request $request, Programa $programa, ProgramaBloque $bloque, ProgramaRegistro $registro)
-    {
-        $this->autorizarPrograma($programa);
-        $this->autorizarBloque($programa, $bloque);
-        $this->autorizarRegistro($programa, $bloque, $registro);
+public function update(Request $request, Programa $programa, ProgramaBloque $bloque, ProgramaRegistro $registro)
+{
+    $this->autorizarPrograma($programa);
+    $this->autorizarBloque($programa, $bloque);
+    $this->autorizarRegistro($programa, $bloque, $registro);
 
-        $programa->load(['campos' => function ($q) {
-            $q->where('activo', true)->orderBy('orden');
-        }]);
+    $programa->load(['campos' => function ($q) {
+        $q->where('activo', true)->orderBy('orden');
+    }]);
 
-        $rules = [
-            'tipo_fila' => ['required', 'in:normal,especial'],
-            'fecha_especial' => ['nullable', 'date'],
-            'texto_especial' => ['nullable', 'string'],
-            'orden' => ['nullable', 'integer'],
-        ];
+    $tipoFila = $request->input('tipo_fila');
+    $campoFecha = $programa->campos->firstWhere('tipo', 'fecha');
 
-        foreach ($programa->campos as $campo) {
-            $campoRule = $campo->obligatorio ? ['required'] : ['nullable'];
+    $rules = [
+        'tipo_fila' => ['required', 'in:normal,especial'],
 
-            if ($campo->tipo === 'numero') {
-                $campoRule[] = 'numeric';
-            }
+        'fecha_especial' => [
+            Rule::requiredIf($tipoFila === 'especial'),
+            'nullable',
+            'date',
+        ],
 
-            if ($campo->tipo === 'fecha') {
-                $campoRule[] = 'date';
-            }
+        'texto_especial' => [
+            Rule::requiredIf($tipoFila === 'especial'),
+            'nullable',
+            'string',
+            'max:1000',
+        ],
 
-            $rules['campos.' . $campo->id] = $campoRule;
+        'orden' => ['nullable', 'integer'],
+    ];
+
+    $attributes = [
+        'tipo_fila' => 'tipo de fila',
+        'fecha_especial' => 'fecha del aviso',
+        'texto_especial' => 'texto del aviso',
+        'orden' => 'orden',
+    ];
+
+    foreach ($programa->campos as $campo) {
+        $esCampoFecha = $campoFecha && (int) $campo->id === (int) $campoFecha->id;
+
+        $campoRule = ['nullable'];
+
+        if ($tipoFila === 'normal' && ($campo->obligatorio || $esCampoFecha)) {
+            array_unshift($campoRule, 'required');
         }
 
-        $request->validate($rules);
-
-        $campoFecha = $programa->campos->firstWhere('tipo', 'fecha');
-
-        $fechaRegistro = $request->tipo_fila === 'normal'
-            ? ($campoFecha ? $request->input('campos.' . $campoFecha->id) : null)
-            : $request->fecha_especial;
-
-        $registro->update([
-            'fecha' => $fechaRegistro,
-            'titulo' => null,
-            'tipo_fila' => $request->tipo_fila,
-            'texto_especial' => $request->texto_especial,
-            'orden' => $request->orden ?? $registro->orden,
-        ]);
-
-        if ($request->tipo_fila === 'normal') {
-            foreach ($programa->campos as $campo) {
-                $this->guardarValor($registro, $campo, $request->input('campos.' . $campo->id));
-            }
-        } else {
-            $registro->valores()->delete();
+        if ($campo->tipo === 'numero') {
+            $campoRule[] = 'numeric';
         }
 
-        return redirect()
-            ->route('programas.bloques.index', $programa)
-            ->with('success', 'Fila actualizada correctamente.');
+        if ($campo->tipo === 'fecha') {
+            $campoRule[] = 'date';
+        }
+
+        $rules['campos.' . $campo->id] = $campoRule;
+        $attributes['campos.' . $campo->id] = $campo->nombre;
     }
+
+    $request->validate($rules, [], $attributes);
+
+    $fechaRegistro = $tipoFila === 'normal'
+        ? ($campoFecha ? $request->input('campos.' . $campoFecha->id) : null)
+        : $request->fecha_especial;
+
+    $registro->update([
+        'fecha' => $fechaRegistro,
+        'titulo' => null,
+        'tipo_fila' => $tipoFila,
+        'texto_especial' => $tipoFila === 'especial' ? $request->texto_especial : null,
+        'orden' => $request->orden ?? $registro->orden,
+    ]);
+
+    if ($tipoFila === 'normal') {
+        foreach ($programa->campos as $campo) {
+            $this->guardarValor($registro, $campo, $request->input('campos.' . $campo->id));
+        }
+    } else {
+        $registro->valores()->delete();
+    }
+
+    return redirect()
+        ->route('programas.bloques.index', $programa)
+        ->with('success', 'Fila actualizada correctamente.');
+}
 
     public function destroy(Programa $programa, ProgramaBloque $bloque, ProgramaRegistro $registro)
     {

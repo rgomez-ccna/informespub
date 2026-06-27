@@ -14,13 +14,8 @@ use App\Http\Controllers\ProgramaController;
 use App\Http\Controllers\ProgramaBloqueController;
 use App\Http\Controllers\ProgramaRegistroController;
 
-use App\Http\Controllers\LimpiezaController;
-use App\Http\Controllers\LimpiezaMensualController;
-
-use App\Http\Controllers\ProgramaCapturaController;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
+use App\Http\Controllers\VidaMinisterioController;
+use App\Http\Controllers\VidaMinisterioCalificacionController;
 
 use App\Http\Controllers\LinkAccesoController;
 use App\Http\Controllers\AsistenciaController;
@@ -144,22 +139,28 @@ Route::resource('tablero/publica', App\Http\Controllers\ReunionPublicaController
 // Discurso público VISITAS y SALIDAS
 Route::resource('tablero/discursos', App\Http\Controllers\DiscursoPublicoController::class)->names('discursos');
 
-Route::prefix('tablero/vida-ministerio')->name('vidaministerio.')->group(function () {
-    Route::get('/', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'index'])->name('index');
-    Route::get('/crear', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'create'])->name('create');
-    Route::post('/', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'store'])->name('store');
-    Route::get('/{id}/editar', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'edit'])->name('edit');
-    Route::put('/{id}', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'update'])->name('update');
-    Route::delete('/{id}', [App\Http\Controllers\ReunionVidaMinisterioController::class, 'destroy'])->name('destroy');
-});
 
-Route::prefix('tablero')->name('tablero.')->group(function () {
-    Route::resource('programa-capturas', ProgramaCapturaController::class)
-        ->only(['index','create','store','edit','update','destroy']);
+//Modulo Vida y ministerio
+Route::prefix('vida-ministerio')
+    ->name('vida-ministerio.')
+    ->group(function () {
+        Route::get('/calificaciones', [VidaMinisterioCalificacionController::class, 'index'])
+            ->name('calificaciones.index');
 
-    Route::delete('programa-capturas/{id}/imagen/{idx}', [ProgramaCapturaController::class,'destroyImagen'])
-        ->name('programa-capturas.imagen.destroy');
-});
+        Route::post('/calificaciones', [VidaMinisterioCalificacionController::class, 'store'])
+            ->name('calificaciones.store');
+
+        Route::get('/pdf-seleccionados', [VidaMinisterioController::class, 'pdfSeleccionados'])
+            ->name('pdf.seleccionados');
+
+        Route::get('/', [VidaMinisterioController::class, 'index'])->name('index');
+        Route::get('/create', [VidaMinisterioController::class, 'create'])->name('create');
+        Route::post('/', [VidaMinisterioController::class, 'store'])->name('store');
+        Route::get('/{programa}/edit', [VidaMinisterioController::class, 'edit'])->name('edit');
+        Route::put('/{programa}', [VidaMinisterioController::class, 'update'])->name('update');
+        Route::delete('/{programa}', [VidaMinisterioController::class, 'destroy'])->name('destroy');
+        Route::get('/{programa}/pdf', [VidaMinisterioController::class, 'pdf'])->name('pdf');
+    });
 
 
 Route::get('/fix-storage-link', function () {

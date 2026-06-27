@@ -37,4 +37,16 @@ public function congregacion()
     return $this->belongsTo(Congregacion::class);
 }
 
+
+// Reunion vida y ministerio
+public function vidaMinisterioCalificacions()
+{
+    return $this->hasMany(VidaMinisterioCalificacion::class);
+}
+
+public function vidaMinisterioAsignacions()
+{
+    return $this->hasMany(VidaMinisterioAsignacion::class);
+}
+
 }
