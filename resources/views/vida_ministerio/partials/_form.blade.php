@@ -220,12 +220,12 @@
         </div>
 
         <div class="d-flex gap-2">
-            <a href="{{ route('vida-ministerio.calificaciones.index') }}" class="btn btn-outline-dark btn-sm">
+            <a href="{{ route('vida-ministerio.calificaciones.index') }}" class="btn btn-dark btn-sm">
                 <i class="fa-solid fa-list-check"></i> Calificaciones
             </a>
 
           <a href="{{ route('vida-ministerio.index', $filtros ?? request()->only(['desde', 'hasta'])) }}"
-            class="btn btn-outline-secondary btn-sm">
+            class="btn btn-secondary btn-sm">
                 <i class="fa-solid fa-arrow-left"></i>
                 Volver
             </a>
