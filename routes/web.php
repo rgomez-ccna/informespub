@@ -127,17 +127,6 @@ Route::view('/tablero/anuncios', 'tablero.anuncios')->name('tablero.anuncios');
 Route::view('/tablero/cuentas', 'tablero.cuentas')->name('tablero.cuentas');
 Route::view('/tablero/territorio', 'tablero.territorio')->name('tablero.territorio');
 
-// limpieza
-Route::resource('tablero/limpieza', LimpiezaController::class)->names('limpieza');
-Route::resource('limpieza-mensual', LimpiezaMensualController::class)->except(['index']); // porque se muestra en el index de limpieza
-// acomodadores
-Route::resource('tablero/acomodadores', App\Http\Controllers\AcomodadorController::class)->names('acomodadores');
-// Salidas de ministerio
-Route::resource('tablero/ministerio', App\Http\Controllers\SalidaMinisterioController::class)->names('ministerio');
-// Reunion pública
-Route::resource('tablero/publica', App\Http\Controllers\ReunionPublicaController::class)->names('publica');
-// Discurso público VISITAS y SALIDAS
-Route::resource('tablero/discursos', App\Http\Controllers\DiscursoPublicoController::class)->names('discursos');
 
 
 //Modulo Vida y ministerio
@@ -152,6 +141,8 @@ Route::prefix('vida-ministerio')
 
         Route::get('/pdf-seleccionados', [VidaMinisterioController::class, 'pdfSeleccionados'])
             ->name('pdf.seleccionados');
+
+        Route::post('/importar-wol', [VidaMinisterioController::class, 'importarWol'])->name('importar-wol');
 
         Route::get('/', [VidaMinisterioController::class, 'index'])->name('index');
         Route::get('/create', [VidaMinisterioController::class, 'create'])->name('create');

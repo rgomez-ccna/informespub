@@ -60,6 +60,48 @@
     $topicStyle = 'width:30% !important; min-width:30% !important; max-width:30% !important;';
     $assignStyle = 'width:60% !important; min-width:60% !important; max-width:60% !important;';
     $restStyle = 'width:90% !important; min-width:90% !important; max-width:90% !important;';
+    $topicWideStyle = 'width:60% !important; min-width:60% !important; max-width:60% !important;';
+    $assignDirectStyle = 'width:30% !important; min-width:30% !important; max-width:30% !important;';
+
+    $asignadosPdf = function ($principal, $auxiliar = '', $labelPrincipal = '') use ($nombreSalaAuxiliar) {
+        $principal = trim((string) $principal);
+        $auxiliar = trim((string) $auxiliar);
+        $labelPrincipal = trim((string) $labelPrincipal);
+
+        $html = '<table class="assign-layout">';
+        $html .= '<colgroup>';
+        $html .= '<col style="width:50%;">';
+        $html .= '<col style="width:50%;">';
+        $html .= '</colgroup>';
+
+        if ($auxiliar !== '') {
+            $html .= '<tr class="assign-head">';
+            $html .= '<td>' . e($nombreSalaAuxiliar) . '</td>';
+            $html .= '<td>Sala principal</td>';
+            $html .= '</tr>';
+
+            $html .= '<tr>';
+            $html .= '<td class="assign-aux">' . e($auxiliar) . '</td>';
+            $html .= '<td class="assign-principal">' . e($principal) . '</td>';
+            $html .= '</tr>';
+        } else {
+            $html .= '<tr>';
+            $html .= '<td class="assign-aux assign-empty">&nbsp;</td>';
+            $html .= '<td class="assign-principal">';
+
+            if ($labelPrincipal !== '') {
+                $html .= '<span class="assign-simple-label">' . e($labelPrincipal) . '</span>';
+            }
+
+            $html .= '<span class="assign-simple-name">' . e($principal) . '</span>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        $html .= '</table>';
+
+        return $html;
+    };
 @endphp
 
 <div class="programa-card {{ $esAviso ? 'aviso' : '' }}">
@@ -141,17 +183,24 @@
         <div class="section-bar bar-tesoros">TESOROS DE LA BIBLIA</div>
 
         <table class="program-table">
+            <colgroup>
+                <col style="{{ $timeStyle }}">
+                <col style="{{ $topicStyle }}">
+                <col style="{{ $assignStyle }}">
+            </colgroup>
+
             @if($parteTesoro)
                 <tr>
                     <td class="time" width="10%" style="{{ $timeStyle }}">{{ $hora($parteTesoro) }}</td>
+
                     <td class="topic" width="30%" style="{{ $topicStyle }}">
                         <strong>{{ $parteTesoro->numero ?: 1 }}.</strong>
                         {{ $tituloSeguro($parteTesoro, 'Tema pendiente') }}
                         <span class="duration">{{ $duracion($parteTesoro) }}</span>
                     </td>
+
                     <td class="assign-cell" width="60%" style="{{ $assignStyle }}">
-                        <span class="row-label">Disertante:</span>
-                        <span class="row-person">{{ $nombreAsignado($parteTesoro, 'disertante') }}</span>
+                        {!! $asignadosPdf($nombreAsignado($parteTesoro, 'disertante'), '', 'Disertante:') !!}
                     </td>
                 </tr>
             @endif
@@ -159,14 +208,15 @@
             @if($partePerlas)
                 <tr>
                     <td class="time" width="10%" style="{{ $timeStyle }}">{{ $hora($partePerlas) }}</td>
+
                     <td class="topic" width="30%" style="{{ $topicStyle }}">
                         <strong>{{ $partePerlas->numero ?: 2 }}.</strong>
                         Busquemos perlas escondidas
                         <span class="duration">{{ $duracion($partePerlas) }}</span>
                     </td>
+
                     <td class="assign-cell" width="60%" style="{{ $assignStyle }}">
-                        <span class="row-label">Disertante:</span>
-                        <span class="row-person">{{ $nombreAsignado($partePerlas, 'disertante') }}</span>
+                        {!! $asignadosPdf($nombreAsignado($partePerlas, 'disertante'), '', 'Disertante:') !!}
                     </td>
                 </tr>
             @endif
@@ -174,30 +224,19 @@
             @if($parteLectura)
                 <tr>
                     <td class="time" width="10%" style="{{ $timeStyle }}">{{ $hora($parteLectura) }}</td>
+
                     <td class="topic" width="30%" style="{{ $topicStyle }}">
                         <strong>{{ $parteLectura->numero ?: 3 }}.</strong>
                         Lectura de la Biblia
                         <span class="duration">{{ $duracion($parteLectura) }}</span>
                     </td>
-                    <td class="assign-cell" width="60%" style="{{ $assignStyle }}">
-                        <div class="assign-title">
-                            <span class="row-label">Estudiante:</span>
-                        </div>
 
-                        @if($hayAuxiliarLectura)
-                            <table class="rooms-table">
-                                <tr class="rooms-head">
-                                    <td>{{ $nombreSalaAuxiliar }}</td>
-                                    <td>Sala principal</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ $nombreAsignado($parteLectura, 'estudiante', 'auxiliar') }}</td>
-                                    <td>{{ $nombreAsignado($parteLectura, 'estudiante', 'principal') }}</td>
-                                </tr>
-                            </table>
-                        @else
-                            <span class="row-person">{{ $nombreAsignado($parteLectura, 'estudiante', 'principal') }}</span>
-                        @endif
+                    <td class="assign-cell" width="60%" style="{{ $assignStyle }}">
+                        {!! $asignadosPdf(
+                            $nombreAsignado($parteLectura, 'estudiante', 'principal'),
+                            $hayAuxiliarLectura ? $nombreAsignado($parteLectura, 'estudiante', 'auxiliar') : '',
+                            'Estudiante:'
+                        ) !!}
                     </td>
                 </tr>
             @endif
@@ -206,6 +245,12 @@
         <div class="section-bar bar-maestros">SEAMOS MEJORES MAESTROS</div>
 
         <table class="program-table">
+            <colgroup>
+                <col style="{{ $timeStyle }}">
+                <col style="{{ $topicStyle }}">
+                <col style="{{ $assignStyle }}">
+            </colgroup>
+
             @if($hayContenidoMaestros)
                 @foreach($partesMaestros as $parte)
                     @php
@@ -224,121 +269,126 @@
 
                     <tr>
                         <td class="time" width="10%" style="{{ $timeStyle }}">{{ $hora($parte) }}</td>
+
                         <td class="topic" width="30%" style="{{ $topicStyle }}">
                             <strong>{{ $parte->numero }}.</strong>
                             {{ $parte->titulo }}
                             <span class="duration">{{ $duracion($parte) }}</span>
                         </td>
-                        <td class="assign-cell" width="60%" style="{{ $assignStyle }}">
-                            <div class="assign-title">
-                                <span class="row-label">Est./Ayud.:</span>
-                            </div>
 
-                            @if($auxiliar)
-                                <table class="rooms-table">
-                                    <tr class="rooms-head">
-                                        <td>{{ $nombreSalaAuxiliar }}</td>
-                                        <td>Sala principal</td>
-                                    </tr>
-                                    <tr>
-                                        <td>{{ $auxiliar }}</td>
-                                        <td>{{ $principal }}</td>
-                                    </tr>
-                                </table>
-                            @else
-                                <span class="row-person">{{ $principal }}</span>
-                            @endif
+                        <td class="assign-cell" width="60%" style="{{ $assignStyle }}">
+                            {!! $asignadosPdf($principal, $auxiliar, 'Est./Ayud.:') !!}
                         </td>
                     </tr>
                 @endforeach
             @else
                 <tr>
                     <td class="time" width="10%" style="{{ $timeStyle }}"></td>
-                    <td class="topic empty-line" colspan="2" width="90%" style="{{ $restStyle }}">Sin partes cargadas.</td>
+
+                    <td class="topic empty-line" colspan="2" width="90%" style="{{ $restStyle }}">
+                        Sin partes cargadas.
+                    </td>
                 </tr>
             @endif
         </table>
 
         <div class="section-bar bar-vida">NUESTRA VIDA CRISTIANA</div>
 
-        <table class="program-table">
-            @if($programa->cancion_medio)
-                <tr>
-                    <td class="time" width="10%" style="{{ $timeStyle }}">{{ $horaCancionMedia }}</td>
-                    <td class="topic" colspan="2" width="90%" style="{{ $restStyle }}">
-                        <span class="dot">•</span>
-                        Canción {{ $programa->cancion_medio }}
-                    </td>
-                </tr>
-            @endif
+@if($programa->cancion_medio)
+    <table class="program-table">
+        <tr>
+            <td class="time" width="10%" style="{{ $timeStyle }}">{{ $horaCancionMedia }}</td>
 
-            @if($hayContenidoVida)
-                @foreach($partesVida as $parte)
-                    @php
-                        $disertante = $nombreAsignado($parte, 'disertante');
-                        $tieneFila = trim(($parte->titulo ?? '') . $disertante) !== '';
-                    @endphp
+            <td class="topic" width="90%" style="{{ $restStyle }}">
+                <span class="dot">•</span>
+                Canción {{ $programa->cancion_medio }}
+            </td>
+        </tr>
+    </table>
+@endif
 
-                    @continue(!$tieneFila)
+<table class="program-table">
+    @if($hayContenidoVida)
+        @foreach($partesVida as $parte)
+            @php
+                $disertante = $nombreAsignado($parte, 'disertante');
+                $tieneFila = trim(($parte->titulo ?? '') . $disertante) !== '';
+            @endphp
 
-                    <tr>
-                        <td class="time" width="10%" style="{{ $timeStyle }}">{{ $hora($parte) }}</td>
-                        <td class="topic" width="30%" style="{{ $topicStyle }}">
-                            <strong>{{ $parte->numero }}.</strong>
-                            {{ $parte->titulo }}
-                            <span class="duration">{{ $duracion($parte) }}</span>
-                        </td>
-                        <td class="assign-cell" width="60%" style="{{ $assignStyle }}">
-                            <span class="row-label">Disertante:</span>
-                            <span class="row-person">{{ $disertante }}</span>
-                        </td>
-                    </tr>
-                @endforeach
-            @endif
+            @continue(!$tieneFila)
 
-            @if($parteEstudio)
-                @php
-                    $conductor = $nombreAsignado($parteEstudio, 'conductor');
-                    $lector = $nombreAsignado($parteEstudio, 'lector');
-                    $conductorLector = trim($conductor . ($conductor && $lector ? ' / ' : '') . $lector);
-                @endphp
+            <tr>
+                <td class="time" width="10%" style="{{ $timeStyle }}">{{ $hora($parte) }}</td>
 
-                <tr>
-                    <td class="time" width="10%" style="{{ $timeStyle }}">{{ $hora($parteEstudio) }}</td>
-                    <td class="topic" width="30%" style="{{ $topicStyle }}">
-                        <strong>{{ $parteEstudio->numero }}.</strong>
-                        {{ $tituloSeguro($parteEstudio, 'Estudio bíblico de la congregación') }}
-                        <span class="duration">{{ $duracion($parteEstudio) }}</span>
-                    </td>
-                    <td class="assign-cell" width="60%" style="{{ $assignStyle }}">
-                        <span class="row-label">Cond./Lector:</span>
-                        <span class="row-person">{{ $conductorLector }}</span>
-                    </td>
-                </tr>
-            @endif
+                <td class="topic" width="60%" style="{{ $topicWideStyle }}">
+                    <strong>{{ $parte->numero }}.</strong>
+                    {{ $parte->titulo }}
+                    <span class="duration">{{ $duracion($parte) }}</span>
+                </td>
 
-            @if($parteOracionFinal)
-                <tr>
-                    <td class="time" width="10%" style="{{ $timeStyle }}">{{ $hora($parteOracionFinal) }}</td>
-                    <td class="topic" colspan="2" width="90%" style="{{ $restStyle }}">
-                        <span class="dot">•</span>
-                        Palabras de conclusión
-                        <span class="duration">{{ $duracion($parteOracionFinal) }}</span>
-                    </td>
-                </tr>
+                <td class="assign-cell" width="30%" style="{{ $assignDirectStyle }} padding-left:6px !important;">
+                    <span class="assign-simple-label">Disertante:</span>
+                    <span class="assign-simple-name">{{ $disertante }}</span>
+                </td>
+            </tr>
+        @endforeach
+    @endif
 
-                <tr>
-                    <td class="time" width="10%" style="{{ $timeStyle }}">{{ $horaFin($parteOracionFinal) }}</td>
-                    <td class="topic" width="30%" style="{{ $topicStyle }}">
-                        <span class="dot">•</span>
-                        Canción {{ $programa->cancion_final }}
-                    </td>
-                    <td class="assign-cell" width="60%" style="{{ $assignStyle }}">
-                        <span class="row-label">Oración:</span>
-                        <span class="row-person">{{ $nombreAsignado($parteOracionFinal, 'principal') }}</span>
-                    </td>
-                </tr>
-            @endif
+    @if($parteEstudio)
+        @php
+            $conductor = $nombreAsignado($parteEstudio, 'conductor');
+            $lector = $nombreAsignado($parteEstudio, 'lector');
+            $conductorLector = trim($conductor . ($conductor && $lector ? ' / ' : '') . $lector);
+        @endphp
+
+        <tr>
+            <td class="time" width="10%" style="{{ $timeStyle }}">{{ $hora($parteEstudio) }}</td>
+
+            <td class="topic" width="60%" style="{{ $topicWideStyle }}">
+                <strong>{{ $parteEstudio->numero }}.</strong>
+                {{ $tituloSeguro($parteEstudio, 'Estudio bíblico de la congregación') }}
+                <span class="duration">{{ $duracion($parteEstudio) }}</span>
+            </td>
+
+            <td class="assign-cell" width="30%" style="{{ $assignDirectStyle }} padding-left:6px !important;">
+                <span class="assign-simple-label">Cond./Lector:</span>
+                <span class="assign-simple-name">{{ $conductorLector }}</span>
+            </td>
+        </tr>
+    @endif
+</table>
+
+@if($parteOracionFinal)
+    <table class="program-table">
+        <tr>
+            <td class="time" width="10%" style="{{ $timeStyle }}">{{ $hora($parteOracionFinal) }}</td>
+
+            <td class="topic" width="90%" style="{{ $restStyle }}">
+                <span class="dot">•</span>
+                Palabras de conclusión
+                <span class="duration">{{ $duracion($parteOracionFinal) }}</span>
+            </td>
+        </tr>
+    </table>
+
+    <table class="program-table">
+        <tr>
+            <td class="time" width="10%" style="{{ $timeStyle }}">{{ $horaFin($parteOracionFinal) }}</td>
+
+            <td class="topic" width="60%" style="{{ $topicWideStyle }}">
+                <span class="dot">•</span>
+                Canción {{ $programa->cancion_final }}
+            </td>
+
+            <td class="assign-cell" width="30%" style="{{ $assignDirectStyle }} padding-left:6px !important;">
+                <span class="assign-simple-label">Oración:</span>
+                <span class="assign-simple-name">{{ $nombreAsignado($parteOracionFinal, 'principal') }}</span>
+            </td>
+        </tr>
+    </table>
+@endif
+
+
         </table>
 
     @endif

@@ -132,7 +132,7 @@ body {
 }
 
 .slot-uno {
-    margin-bottom: 2mm; /* ESPACIO ENTRE EL PROGRAMA DE ARRIBA Y ABAJO */
+    margin-bottom: 2mm; /* ESPACIO ENTRE PROGRAMA DE ARRIBA Y ABAJO */
 }
 
 .slot-dos {
@@ -174,11 +174,15 @@ body {
 
 /* =========================
    ENCABEZADO: SEMANA + PUBLICADORES
+   IMPORTANTE:
+   70% izquierda | 30% derecha
+   Así la columna derecha queda alineada con la columna principal inferior.
    ========================= */
 
 .program-header {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
     margin-bottom: 3px; /* ESPACIO DEBAJO DEL ENCABEZADO */
 }
 
@@ -187,13 +191,14 @@ body {
 }
 
 .head-left {
-    width: 58%; /* ANCHO DEL BLOQUE IZQUIERDO: FECHA, LECTURA, CANCIÓN */
+    width: 70%; /* ANCHO DEL BLOQUE IZQUIERDO: FECHA, LECTURA, CANCIÓN */
     padding-right: 5px;
 }
 
 .head-right {
-    width: 42%; /* ANCHO DEL BLOQUE DERECHO: PRESIDENTE, AYUDANTES, ORACIÓN */
-    text-align: right;
+    width: 30%; /* ANCHO DEL BLOQUE DERECHO: PRESIDENTE, AYUDANTES, ORACIÓN */
+    text-align: left;
+    padding-left: 6px;
 }
 
 .week-title {
@@ -229,6 +234,7 @@ body {
     line-height: 1.1; /* ALTO ENTRE LÍNEAS DE PUBLICADORES DEL ENCABEZADO */
     margin-bottom: 1px;
     white-space: normal;
+    text-align: left;
 }
 
 .assign-label {
@@ -273,8 +279,11 @@ body {
 /* =========================
    TABLA PRINCIPAL
    IMPORTANTE:
-   El ancho real 10% hora | 30% tema | 60% asignados
-   está forzado en el partial con style inline.
+   El ancho real está forzado en el partial:
+   10% hora | 30% tema | 60% asignados
+   Dentro de asignados:
+   50% auxiliar | 50% principal
+   Por eso la columna principal empieza visualmente en 70%.
    ========================= */
 
 .program-table {
@@ -318,44 +327,120 @@ body {
     font-weight: bold;
 }
 
-/* COLUMNA DE ASIGNADOS */
+/* COLUMNA GRANDE DE ASIGNADOS */
 .assign-cell {
-    font-size: 9px; /* TAMAÑO GENERAL DE LA COLUMNA DE ASIGNADOS */
+    font-size: 9px;
     font-weight: bold;
-    line-height: 1.1; /* ESPACIO ENTRE LÍNEAS EN ASIGNADOS */
+    line-height: 1.1;
     white-space: normal;
     word-break: normal;
-    padding-left: 4px !important; /* ESPACIO ENTRE TEMA Y ASIGNADOS */
+    padding-left: 0 !important;
     padding-right: 0 !important;
 }
+
+/* =========================
+   ASIGNADOS ALINEADOS:
+   Izquierda = auxiliar cuando existe
+   Derecha = sala principal / asignado principal siempre
+   ========================= */
+
+.assign-layout {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    border-spacing: 0;
+}
+
+.assign-layout td {
+    width: 50%;
+    vertical-align: top;
+    text-align: left;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    font-size: 9.1px;
+    font-weight: bold;
+    line-height: 1.08;
+    white-space: normal;
+    word-break: normal;
+}
+
+/* COLUMNA AUXILIAR: queda en el medio visual */
+.assign-layout .assign-aux {
+    padding-left: 0 !important;
+    padding-right: 6px !important;
+    text-align: left;
+}
+
+/* COLUMNA PRINCIPAL: siempre última columna derecha */
+.assign-layout .assign-principal {
+    padding-left: 6px !important;
+    padding-right: 0 !important;
+    text-align: left;
+}
+
+/* Cuando no hay auxiliar, esta celda invisible mantiene la principal alineada a la derecha */
+.assign-layout .assign-empty {
+    color: transparent;
+    font-size: 1px;
+    line-height: 1px;
+}
+
+/* Encabezado pequeño: Sala auxiliar | Sala principal */
+.assign-head td {
+    font-size: 6.4px;
+    color: #555;
+    font-weight: bold;
+    padding-bottom: 1px !important;
+    line-height: 1;
+}
+
+/* Etiqueta pequeña dentro de la columna principal: Disertante, Oración, etc. */
+.assign-simple-label {
+    color: #555;
+    font-size: 6.8px;
+    font-weight: bold;
+    margin-right: 3px;
+}
+
+/* Nombre principal */
+.assign-simple-name {
+    font-size: 9.1px;
+    font-weight: bold;
+}
+
+/* =========================
+   CLASES ANTIGUAS
+   Se dejan para compatibilidad si alguna fila vieja aún las usa
+   ========================= */
 
 /* TEXTO PEQUEÑO: Disertante, Estudiante, Est./Ayud., Cond./Lector */
 .row-label {
     color: #555;
-    font-size: 6.8px; /* TAMAÑO DE LAS ETIQUETAS EN LAS FILAS */
+    font-size: 6.8px;
     font-weight: bold;
     margin-right: 3px;
 }
 
 /* NOMBRES DE PUBLICADORES EN LAS FILAS */
 .row-person {
-    font-size: 9.1px; /* TAMAÑO DE LOS NOMBRES EN LAS FILAS */
+    font-size: 9.1px;
     font-weight: bold;
 }
 
 .assign-title {
     line-height: 1;
-    margin-bottom: 1px; /* ESPACIO ENTRE ETIQUETA Y SALAS */
+    margin-bottom: 1px;
 }
 
 /* DURACIÓN: (10 min.), (5 min.), ETC. */
 .duration {
     color: #444;
-    font-size: 8.3px; /* TAMAÑO DE LA DURACIÓN */
+    font-size: 8.3px;
 }
 
 /* =========================
-   TABLA INTERNA DE SALAS
+   TABLA INTERNA ANTIGUA DE SALAS
+   Se mantiene por seguridad, pero el nuevo partial usa assign-layout.
    ========================= */
 
 .rooms-table {
@@ -363,22 +448,23 @@ body {
     border-collapse: collapse;
     table-layout: fixed;
     border-spacing: 0;
-    margin-top: 1px; /* ESPACIO ENTRE ETIQUETA Y SALAS */
+    margin-top: 1px;
 }
 
 .rooms-table td {
-    width: 50%; /* 50% SALA AUXILIAR | 50% SALA PRINCIPAL */
-    padding: 0 7px 0 0; /* ESPACIO ENTRE LAS 2 SALAS */
+    width: 50%;
+    padding: 0 7px 0 0;
     vertical-align: top;
-    font-size: 10px; /* TAMAÑO DE NOMBRES DENTRO DE SALAS */
+    font-size: 10px;
     font-weight: bold;
-    line-height: 1.08; /* ESPACIO ENTRE LÍNEAS SI EL NOMBRE BAJA */
+    line-height: 1.08;
     white-space: normal;
     word-break: normal;
+    text-align: left;
 }
 
 .rooms-head td {
-    font-size: 6.4px; /* TAMAÑO DE "Sala auxiliar" Y "Sala principal" */
+    font-size: 6.4px;
     color: #555;
     font-weight: bold;
     padding-bottom: 1px;
