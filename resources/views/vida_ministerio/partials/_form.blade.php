@@ -224,7 +224,9 @@
                 <i class="fa-solid fa-list-check"></i> Calificaciones
             </a>
 
-            <a href="{{ route('vida-ministerio.index', $filtros ?? request()->only(['desde', 'hasta'])) }}">
+          <a href="{{ route('vida-ministerio.index', $filtros ?? request()->only(['desde', 'hasta'])) }}"
+            class="btn btn-outline-secondary btn-sm">
+                <i class="fa-solid fa-arrow-left"></i>
                 Volver
             </a>
         </div>

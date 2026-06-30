@@ -191,8 +191,8 @@
                     </span>
                 </div>
 
-                <button type="submit"
-                        form="formPdfSeleccionados"
+                <button type="button"
+                        id="btnPdfSeleccionados"
                         class="btn btn-danger btn-sm">
                     <i class="fa-solid fa-file-pdf"></i> Imprimir en PDF
                 </button>
@@ -304,12 +304,14 @@
                                         <a href="{{ route('vida-ministerio.edit', array_merge(
                                                 ['programa' => $programa->id],
                                                 request()->only(['desde', 'hasta'])
-                                            )) }}">
-                                                Editar
-                                            </a>
+                                            )) }}"
+                                        class="btn btn-outline-primary btn-sm">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                            Editar
+                                        </a>
 
                                         <form method="POST"
-                                            class="form-eliminar-programa"
+                                            class="form-eliminar-programa d-inline"
                                             action="{{ route('vida-ministerio.destroy', array_merge(
                                                 ['programa' => $programa->id],
                                                 request()->only(['desde', 'hasta'])
@@ -317,7 +319,8 @@
                                             @csrf
                                             @method('DELETE')
 
-                                            <button type="submit">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                <i class="fa-solid fa-trash"></i>
                                                 Eliminar
                                             </button>
                                         </form>
@@ -377,13 +380,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     actualizarSeleccionados();
 
-    formPdf?.addEventListener('submit', function (e) {
+    const btnPdfSeleccionados = document.getElementById('btnPdfSeleccionados');
+
+    btnPdfSeleccionados?.addEventListener('click', function () {
         const seleccionados = document.querySelectorAll('.check-programa:checked');
 
         if (!seleccionados.length) {
-            e.preventDefault();
             alert('Seleccioná al menos una semana para imprimir.');
+            return;
         }
+
+        formPdf.submit();
     });
 
     document.querySelectorAll('.form-eliminar-programa').forEach(form => {
