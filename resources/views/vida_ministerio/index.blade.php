@@ -162,9 +162,12 @@
 
     {{-- FORMULARIO REAL PARA PDF SELECCIONADOS --}}
     <form method="GET"
-          action="{{ route('vida-ministerio.pdf.seleccionados') }}"
-          target="_blank"
-          id="formPdfSeleccionados">
+      action="{{ route('vida-ministerio.pdf.seleccionados') }}"
+      target="_blank"
+      id="formPdfSeleccionados">
+
+        <input type="hidden" name="desde" value="{{ $desde }}">
+        <input type="hidden" name="hasta" value="{{ $hasta }}">
     </form>
 
     {{-- ACCIONES PDF --}}
@@ -298,21 +301,24 @@
 
                                 <td class="text-end">
                                     <div class="d-inline-flex gap-1">
-                                        <a href="{{ route('vida-ministerio.edit', $programa) }}"
-                                           class="btn btn-outline-primary btn-sm">
-                                            <i class="fa-solid fa-pen-to-square"></i> Editar
-                                        </a>
+                                        <a href="{{ route('vida-ministerio.edit', array_merge(
+                                                ['programa' => $programa->id],
+                                                request()->only(['desde', 'hasta'])
+                                            )) }}">
+                                                Editar
+                                            </a>
 
-                                        <form action="{{ route('vida-ministerio.destroy', $programa) }}"
-                                              method="POST"
-                                              class="d-inline form-eliminar-programa">
+                                        <form method="POST"
+                                            class="form-eliminar-programa"
+                                            action="{{ route('vida-ministerio.destroy', array_merge(
+                                                ['programa' => $programa->id],
+                                                request()->only(['desde', 'hasta'])
+                                            )) }}">
                                             @csrf
                                             @method('DELETE')
 
-                                            <button type="submit"
-                                                    class="btn btn-outline-danger btn-sm"
-                                                    title="Eliminar">
-                                                <i class="fa-solid fa-trash"></i>
+                                            <button type="submit">
+                                                Eliminar
                                             </button>
                                         </form>
                                     </div>

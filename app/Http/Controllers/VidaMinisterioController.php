@@ -74,7 +74,12 @@ class VidaMinisterioController extends Controller
         ];
     }
 
-    
+    private function filtrosPeriodo(Request $request): array
+{
+    return collect($request->only(['desde', 'hasta']))
+        ->filter()
+        ->all();
+}
 
     public function index(Request $request)
     {
@@ -323,7 +328,7 @@ public function create(Request $request)
 
 
 
-public function edit(VidaMinisterio $programa)
+public function edit(Request $request, VidaMinisterio $programa)
 {
     $this->puedeGestionar();
     $this->autorizarPrograma($programa);
@@ -337,13 +342,15 @@ public function edit(VidaMinisterio $programa)
     $asignacionesActuales = $programa->asignaciones->groupBy('vida_ministerio_parte_id');
     $fechaReferencia = $programa->fecha->toDateString();
     $historial = $this->historialAnteriorHasta($fechaReferencia);
+    $filtros = $this->filtrosPeriodo($request);
 
     return view('vida_ministerio.edit', compact(
         'programa',
         'publicadoresPorTipo',
         'asignacionesActuales',
         'historial',
-        'fechaReferencia'
+        'fechaReferencia',
+        'filtros'
     ));
 }
 
@@ -498,21 +505,24 @@ public function edit(VidaMinisterio $programa)
     });
 
     return redirect()
-        ->route('vida-ministerio.edit', $programa)
-        ->with('success', 'Programa actualizado correctamente.');
+    ->route('vida-ministerio.edit', array_merge(
+        ['programa' => $programa->id],
+        $this->filtrosPeriodo($request)
+    ))
+    ->with('success', 'Programa actualizado correctamente.');
 }
 
-    public function destroy(VidaMinisterio $programa)
-    {
-        $this->puedeGestionar();
-        $this->autorizarPrograma($programa);
+public function destroy(Request $request, VidaMinisterio $programa)
+{
+    $this->puedeGestionar();
+    $this->autorizarPrograma($programa);
 
-        $programa->delete();
+    $programa->delete();
 
-        return redirect()
-            ->route('vida-ministerio.index')
-            ->with('success', 'Programa eliminado correctamente.');
-    }
+    return redirect()
+        ->route('vida-ministerio.index', $this->filtrosPeriodo($request))
+        ->with('success', 'Programa eliminado correctamente.');
+}
 
    public function pdf(VidaMinisterio $programa)
 {

@@ -224,8 +224,8 @@
                 <i class="fa-solid fa-list-check"></i> Calificaciones
             </a>
 
-            <a href="{{ route('vida-ministerio.index') }}" class="btn btn-secondary btn-sm">
-                <i class="fa-solid fa-arrow-left"></i> Volver
+            <a href="{{ route('vida-ministerio.index', $filtros ?? request()->only(['desde', 'hasta'])) }}">
+                Volver
             </a>
         </div>
     </div>
@@ -250,6 +250,9 @@
         @if($esEdit)
             @method('PUT')
         @endif
+
+        <input type="hidden" name="desde" value="{{ request('desde') }}">
+        <input type="hidden" name="hasta" value="{{ request('hasta') }}">
 
         <div class="card shadow-sm border-0 mb-3">
             <div class="card-body py-3">
@@ -842,7 +845,7 @@
         </div>
 
         <div class="d-flex justify-content-end gap-2">
-            <a href="{{ route('vida-ministerio.index') }}" class="btn btn-light border">
+           <a href="{{ route('vida-ministerio.index', request()->only(['desde', 'hasta'])) }}" class="btn btn-light border">
                 Cancelar
             </a>
 
