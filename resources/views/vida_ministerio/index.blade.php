@@ -21,7 +21,7 @@
         </div>
 
         <div class="d-flex flex-wrap gap-2">
-            <a href="{{ route('vida-ministerio.calificaciones.index') }}" class="btn btn-outline-dark btn-sm">
+            <a href="{{ route('vida-ministerio.calificaciones.index') }}" class="btn btn-dark btn-sm">
                 <i class="fa-solid fa-list-check"></i> Calificaciones
             </a>
 
@@ -190,8 +190,8 @@
 
                 <button type="submit"
                         form="formPdfSeleccionados"
-                        class="btn btn-outline-danger btn-sm">
-                    <i class="fa-solid fa-file-pdf"></i> PDF seleccionadas
+                        class="btn btn-danger btn-sm">
+                    <i class="fa-solid fa-file-pdf"></i> Imprimir en PDF
                 </button>
             </div>
         </div>

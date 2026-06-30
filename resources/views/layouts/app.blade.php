@@ -221,6 +221,13 @@
                                         Enviar Informes
                                     </a>
                                 </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-white {{ request()->is('vida-ministerio*') ? 'bg-light bg-opacity-25' : '' }} rounded-4"
+                                    href="{{ route('vida-ministerio.index') }}">
+                                        Vida y Ministerio
+                                    </a>
+                                </li>
                             @endif
 
                             @if($puedeVerTablero)
