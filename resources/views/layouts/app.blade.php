@@ -159,6 +159,76 @@
     box-shadow: 0 0 0 4px rgba(255, 255, 255, .12);
 }
 
+.navbar .container {
+    max-width: 1320px;
+}
+
+.congregacion-brand {
+    max-width: 190px;
+    min-width: 0;
+    font-size: .95rem;
+    flex-shrink: 1;
+}
+
+.congregacion-brand-text {
+    display: inline-block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.main-navbar {
+    gap: .35rem !important;
+}
+
+.main-navbar .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    white-space: nowrap;
+    font-size: .9rem;
+    padding: .45rem .55rem;
+}
+
+.main-navbar .nav-link i {
+    font-size: .9rem;
+}
+
+@media (min-width: 768px) {
+    .navbar-collapse {
+        min-width: 0;
+    }
+
+    .main-navbar {
+        flex-wrap: nowrap;
+        min-width: 0;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1199.98px) {
+    .congregacion-brand {
+        max-width: 130px;
+        font-size: .88rem;
+    }
+
+    .main-navbar .nav-link {
+        font-size: .84rem;
+        padding-left: .42rem;
+        padding-right: .42rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .congregacion-brand {
+        max-width: calc(100vw - 92px);
+    }
+
+    .main-navbar .nav-link {
+        width: 100%;
+    }
+}
+
 </style>
 
 </head>
@@ -168,14 +238,14 @@
             <div class="container">
               
              @if(Auth::check() && Auth::user()->congregacion)
-                <span class="navbar-brand text-white d-flex align-items-center gap-2 mb-0">
+                <span class="navbar-brand text-white d-flex align-items-center gap-2 mb-0 congregacion-brand" title="{{ Auth::user()->congregacion->nombre }}">
                     <span class="congregacion-dot"></span>
-                    {{ Auth::user()->congregacion->nombre }}
+                    <span class="congregacion-brand-text">{{ Auth::user()->congregacion->nombre }}</span>
                 </span>
             @elseif(session('free_access') && session('free_congregacion_nombre'))
-                <span class="navbar-brand text-white d-flex align-items-center gap-2 mb-0">
+                <span class="navbar-brand text-white d-flex align-items-center gap-2 mb-0 congregacion-brand" title="{{ session('free_congregacion_nombre') }}">
                     <span class="congregacion-dot"></span>
-                    {{ session('free_congregacion_nombre') }}
+                    <span class="congregacion-brand-text">{{ session('free_congregacion_nombre') }}</span>
                 </span>
             @endif
 
@@ -196,37 +266,37 @@
                             $puedeEliminarDatosCongregacion = $rol === 'secretario';
                         @endphp
 
-                        <ul class="navbar-nav me-auto gap-3">
+                        <ul class="navbar-nav me-auto main-navbar">
 
                             @if($puedeGestionarDatos)
                                 <li class="nav-item">
                                     <a class="nav-link text-white {{ request()->is('pub') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('pub.index') }}">
-                                        Agregar Informes
+                                        <i class="fa-solid fa-file-circle-plus"></i> Informes
                                     </a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a class="nav-link text-white {{ request()->is('pub/listado') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('pub.listado') }}">
-                                        Publicadores
+                                        <i class="fa-solid fa-users"></i> Publicadores
                                     </a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a class="nav-link text-white {{ request()->is('asistencia') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('asist.index') }}">
-                                        Asistencia
+                                        <i class="fa-solid fa-calendar-check"></i> Asistencia
                                     </a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a class="nav-link text-white {{ request()->is('reg/enviar-informes') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('reg.enviar-informes') }}">
-                                        Enviar Informes
+                                        <i class="fa-solid fa-paper-plane"></i> Enviar
                                     </a>
                                 </li>
 
                                 <li class="nav-item">
                                     <a class="nav-link text-white {{ request()->is('vida-ministerio*') ? 'bg-light bg-opacity-25' : '' }} rounded-4"
                                     href="{{ route('vida-ministerio.index') }}">
-                                        Vida y Ministerio
+                                        <i class="fa-solid fa-list-check"></i> V. Ministerio
                                     </a>
                                 </li>
                             @endif
@@ -234,7 +304,7 @@
                             @if($puedeVerTablero)
                                 <li class="nav-item">
                                     <a class="nav-link text-white {{ request()->is('tablero') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('tablero.index') }}">
-                                        Tablero de Anuncios
+                                        <i class="fa-solid fa-table-columns"></i> Tablero
                                     </a>
                                 </li>
                             @endif
@@ -242,7 +312,7 @@
                             @if($puedeGestionarUsuarios)
                                 <li class="nav-item">
                                     <a class="nav-link text-white {{ request()->is('usuarios') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('usuarios.index') }}">
-                                        Usuarios
+                                        <i class="fa-solid fa-user-gear"></i> Usuarios
                                     </a>
                                 </li>
                             @endif
@@ -250,7 +320,7 @@
                             @if($puedeEliminarDatosCongregacion)
                                 <li class="nav-item">
                                     <a class="nav-link text-white {{ request()->is('mi-congregacion/datos') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('congregacion.datos') }}">
-                                        Datos / baja
+                                        <i class="fa-solid fa-database"></i> Datos
                                     </a>
                                 </li>
                             @endif
@@ -258,7 +328,7 @@
                             @if($puedeGestionarCongregaciones)
                                 <li class="nav-item">
                                     <a class="nav-link text-white {{ request()->is('congregaciones*') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('congregaciones.index') }}">
-                                        Congregaciones
+                                        <i class="fa-solid fa-building"></i> Congregaciones
                                     </a>
                                 </li>
                             @endif
