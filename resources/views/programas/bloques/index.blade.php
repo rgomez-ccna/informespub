@@ -5,38 +5,38 @@
 
     {{-- BOTONES SUPERIORES --}}
     <div class="d-flex justify-content-end gap-2 mb-3 no-print sticky-top bg-white pt-2 pb-2" style="z-index:20;">
-        <a href="{{ route('tablero.index') }}" class="btn btn-secondary btn-sm">
-            <i class="fa-solid fa-arrow-left"></i> Volver al Tablero
+        <a href="{{ route('tablero.index') }}" class="btn btn-light border btn-sm">
+            <i class="fa-solid fa-arrow-left"></i> Volver al tablero
         </a>
 
-        <a href="{{ route('programas.edit', $programa) }}" class="btn btn-outline-warning btn-sm">
-            <i class="fa-solid fa-gear"></i> Configurar
+        <a href="{{ route('programas.edit', $programa) }}" class="btn btn-warning btn-sm">
+            <i class="fa-solid fa-table-columns"></i> Editar programa y columnas
         </a>
 
         <a href="{{ route('programas.bloques.create', $programa) }}" class="btn btn-primary btn-sm">
-            <i class="fa-solid fa-plus"></i> Nuevo bloque
+            <i class="fa-solid fa-plus"></i> Nueva planilla
         </a>
     </div>
 
     <div class="text-center mb-3">
-        <h4 class="titulo">PROGRAMAS - {{ strtoupper($programa->nombre) }}</h4>
+        <h4 class="titulo">PLANILLAS - {{ strtoupper($programa->nombre) }}</h4>
     </div>
 
     @if(session('success'))
         <div class="alert alert-success no-print">{{ session('success') }}</div>
     @endif
 
-    @if($programa->campos->isEmpty())
-        <div class="alert alert-warning">
-            Este programa todavía no tiene campos configurados.
-            <a href="{{ route('programas.edit', $programa) }}">Configurar campos</a>
+    @if($programa->campos->where('tipo', '!=', 'fecha')->isEmpty())
+        <div class="alert alert-info border">
+            Este programa todavía no tiene columnas para cargar datos.
+            <a href="{{ route('programas.edit', $programa) }}">Agregar columnas</a>
         </div>
     @elseif($bloques->isEmpty())
         <div class="alert alert-light border text-center">
-            Todavía no hay bloques creados.
+            Todavía no hay planillas creadas.
             <br>
             <a href="{{ route('programas.bloques.create', $programa) }}" class="btn btn-primary btn-sm mt-3">
-                <i class="fa-solid fa-plus"></i> Crear primer bloque
+                <i class="fa-solid fa-plus"></i> Crear primera planilla
             </a>
         </div>
     @else
@@ -96,25 +96,25 @@
                                 </a>
 
                                 <a href="{{ route('programas.bloques.edit', [$programa, $bloque]) }}"
-                                class="btn btn-outline-warning btn-sm">
-                                    <i class="fa-solid fa-edit"></i> Editar bloque
+                                class="btn btn-warning btn-sm">
+                                    <i class="fa-solid fa-edit"></i> Editar planilla
                                 </a>
 
                                 <a href="{{ route('programas.bloques.registros.pdf', [$programa, $bloque]) }}"
                                 class="btn btn-outline-danger btn-sm"
                                 target="_blank">
-                                    <i class="fa-solid fa-file-pdf"></i> PDF
+                                    <i class="fa-solid fa-file-pdf"></i> Imprimir PDF
                                 </a>
 
                                 <form action="{{ route('programas.bloques.destroy', [$programa, $bloque]) }}"
                                     method="POST"
                                     class="d-inline"
-                                    onsubmit="return confirm('¿Eliminar este bloque y todas sus filas cargadas?')">
+                                    onsubmit="return confirm('¿Eliminar esta planilla y todas sus filas cargadas?')">
                                     @csrf
                                     @method('DELETE')
 
                                     <button type="submit" class="btn btn-outline-danger btn-sm">
-                                        <i class="fa-solid fa-trash"></i> Eliminar bloque
+                                        <i class="fa-solid fa-trash"></i> Eliminar planilla
                                     </button>
                                 </form>
                             </div>
@@ -204,7 +204,7 @@
 
                                                         <td class="no-print {{ $rowClass }} text-nowrap">
                                                             <a href="{{ route('programas.bloques.registros.edit', [$programa, $bloque, $registro]) }}"
-                                                               class="btn btn-sm btn-outline-warning">
+                                                               class="btn btn-sm btn-warning">
                                                                 <i class="fa-solid fa-edit"></i>
                                                             </a>
 
@@ -226,7 +226,7 @@
                                                 <tr>
                                                     <td colspan="{{ $camposVisibles->where('tipo', '!=', 'fecha')->count() + 3 }}"
                                                         class="text-center text-muted py-4">
-                                                        Todavía no hay filas cargadas en este bloque.
+                                                        Todavía no hay filas cargadas en esta planilla.
                                                     </td>
                                                 </tr>
                                             @endforelse

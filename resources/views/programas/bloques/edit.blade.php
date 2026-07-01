@@ -5,11 +5,11 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h3 class="mb-1 fw-bold text-secondary">Editar bloque</h3>
+            <h3 class="mb-1 fw-bold text-secondary">Editar planilla</h3>
             <p class="text-muted mb-0">{{ $programa->nombre }}</p>
         </div>
 
-        <a href="{{ route('programas.bloques.index', $programa) }}" class="btn btn-secondary btn-sm">
+        <a href="{{ route('programas.bloques.index', $programa) }}" class="btn btn-light border btn-sm">
             <i class="fa-solid fa-arrow-left"></i> Volver
         </a>
     </div>
@@ -28,7 +28,7 @@
                 @method('PUT')
 
                 <div class="mb-3">
-                    <label class="form-label">Nombre del bloque</label>
+                    <label class="form-label">Título de la planilla</label>
                     <input type="text"
                            name="nombre"
                            class="form-control @error('nombre') is-invalid @enderror"
@@ -40,7 +40,7 @@
                     @enderror
 
                     <div class="form-text">
-                        Este nombre aparece como título del bloque y en el PDF.
+                        Este título aparece debajo del nombre del programa y en el PDF.
                     </div>
                 </div>
 
@@ -58,11 +58,15 @@
                 </div> --}}
 
                 <div class="mb-3">
-                    <label class="form-label">Observaciones finales</label>
+                    <label class="form-label">Notas adicionales al final <span class="text-muted fw-normal">(opcional)</span></label>
                     <textarea name="observaciones"
                               class="form-control @error('observaciones') is-invalid @enderror"
                               rows="4"
-                              placeholder="Opcional. Este texto sale debajo de la tabla en el PDF.">{{ old('observaciones', $bloque->observaciones) }}</textarea>
+                              placeholder="Ej: A fin de brindar un servicio eficaz, seguro y a tiempo, tenga en cuenta estas instrucciones. Su labor empieza 30 minutos antes de cada reunion y termina cuando todos los asistentes hayan salido del edificio.">{{ old('observaciones', $bloque->observaciones) }}</textarea>
+
+                    <div class="form-text">
+                        Este texto se muestra debajo de la tabla en la vista y en el PDF. Usalo para aclaraciones, instrucciones o notas generales de la planilla.
+                    </div>
 
                     @error('observaciones')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -78,7 +82,7 @@
                            {{ old('activo', $bloque->activo) ? 'checked' : '' }}>
 
                     <label for="activo" class="form-check-label">
-                        Bloque activo
+                        Planilla activa
                     </label>
                 </div>
 

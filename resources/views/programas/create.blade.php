@@ -7,12 +7,12 @@
         <div>
             <h3 class="mb-1 fw-bold text-secondary">Crear programa</h3>
             <p class="text-muted mb-0">
-                Creá un nuevo programa para mostrarlo en el tablero.
+                El programa sera una tarjeta del tablero. Despues vas a poder agregarle columnas y crear sus planillas.
             </p>
         </div>
 
-        <a href="{{ route('programas.index') }}" class="btn btn-secondary btn-sm">
-            <i class="fa-solid fa-arrow-left"></i> Volver
+        <a href="{{ route('programas.index') }}" class="btn btn-light border btn-sm">
+            <i class="fa-solid fa-arrow-left"></i> Volver a programas
         </a>
     </div>
 
@@ -34,7 +34,7 @@
                            name="nombre"
                            class="form-control @error('nombre') is-invalid @enderror"
                            value="{{ old('nombre') }}"
-                           placeholder="Ej: Acomodadores, Limpieza, Salidas al Ministerio"
+                           placeholder="Ej: Limpieza mensual, Acomodadores, Salidas al ministerio"
                            required>
 
                     @error('nombre')
@@ -42,7 +42,7 @@
                     @enderror
 
                     <div class="form-text">
-                        Este nombre aparecerá como tarjeta en el tablero.
+                        Este nombre aparece como tarjeta en el tablero y como titulo principal en las planillas y PDF.
                     </div>
                 </div>
 
@@ -67,7 +67,7 @@
                            checked>
 
                     <label for="activo" class="form-check-label">
-                        Mostrar en tablero
+                        Mostrar este programa en el tablero
                     </label>
                 </div>
 

@@ -9,7 +9,7 @@
         </h2>
 
         <a href="{{ route('programas.index') }}" class="btn btn-primary btn-sm no-print">
-            <i class="fa-solid fa-gear"></i> Configurar programas
+            <i class="fa-solid fa-list-check"></i> Administrar programas
         </a>
     </div>
 

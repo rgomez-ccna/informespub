@@ -63,7 +63,7 @@ class ProgramaBloqueController extends Controller
 
         return redirect()
             ->route('programas.bloques.index', $programa)
-            ->with('success', 'Bloque creado correctamente.');
+            ->with('success', 'Planilla creada correctamente.');
     }
 
     public function edit(Programa $programa, ProgramaBloque $bloque)
@@ -94,7 +94,7 @@ class ProgramaBloqueController extends Controller
 
         return redirect()
             ->route('programas.bloques.index', $programa)
-            ->with('success', 'Bloque actualizado correctamente.');
+            ->with('success', 'Planilla actualizada correctamente.');
     }
 
     public function destroy(Programa $programa, ProgramaBloque $bloque)
@@ -106,7 +106,7 @@ class ProgramaBloqueController extends Controller
 
         return redirect()
             ->route('programas.bloques.index', $programa)
-            ->with('success', 'Bloque eliminado correctamente.');
+            ->with('success', 'Planilla eliminada correctamente.');
     }
 
     private function autorizarPrograma(Programa $programa): void

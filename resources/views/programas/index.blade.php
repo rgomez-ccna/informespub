@@ -6,20 +6,20 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h3 class="mb-1 fw-bold text-secondary">
-                Programas del tablero
+                Administrar programas
             </h3>
             <p class="text-muted mb-0">
-                Creá programas, configurá sus columnas y ordená cómo aparecen en el tablero.
+                Cada programa es una tarjeta del tablero. Desde aca podes ordenar tarjetas, editar columnas o crear un programa nuevo.
             </p>
         </div>
 
         <div class="d-flex gap-2">
-            <a href="{{ route('tablero.index') }}" class="btn btn-secondary btn-sm">
-                <i class="fa-solid fa-arrow-left"></i> Volver al tablero
+            <a href="{{ route('tablero.index') }}" class="btn btn-light border btn-sm">
+                <i class="fa-solid fa-arrow-left"></i> Ir al tablero
             </a>
 
             <a href="{{ route('programas.create') }}" class="btn btn-primary btn-sm">
-                <i class="fa-solid fa-plus"></i> Crear programa
+                <i class="fa-solid fa-plus"></i> Nuevo programa
             </a>
         </div>
     </div>
@@ -82,15 +82,20 @@
                                         @endif
                                     </td>
 
-                                    <td class="text-end text-nowrap">
-                                        <a href="{{ route('programas.edit', $programa) }}" class="btn btn-sm btn-outline-warning">
-                                            <i class="fa-solid fa-gear"></i> Configurar columnas
+                                    <td class="text-end">
+                                        <div class="d-flex flex-wrap justify-content-end gap-1">
+                                        <a href="{{ route('programas.bloques.index', $programa) }}" class="btn btn-sm btn-success">
+                                            <i class="fa-solid fa-folder-open"></i> Ver planillas
+                                        </a>
+
+                                        <a href="{{ route('programas.edit', $programa) }}" class="btn btn-sm btn-warning">
+                                            <i class="fa-solid fa-table-columns"></i> Editar nombre y columnas
                                         </a>
 
                                         <form action="{{ route('programas.destroy', $programa) }}"
                                             method="POST"
                                             class="d-inline"
-                                            onsubmit="return confirm('¿Eliminar este programa y todos sus bloques, filas y datos cargados?')">
+                                            onsubmit="return confirm('¿Eliminar este programa y todas sus planillas, filas y datos cargados?')">
                                             @csrf
                                             @method('DELETE')
 
@@ -98,6 +103,7 @@
                                                 <i class="fa-solid fa-trash"></i> Eliminar
                                             </button>
                                         </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

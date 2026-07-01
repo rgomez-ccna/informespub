@@ -69,8 +69,8 @@ class ProgramaController extends Controller
             ]);
 
         return redirect()
-            ->route('programas.index')
-            ->with('success', 'Programa creado correctamente.');
+            ->route('programas.edit', $programa)
+            ->with('success', 'Programa creado correctamente. Ahora agregá las columnas que tendrá la planilla.');
     }
 
     public function show(Programa $programa)

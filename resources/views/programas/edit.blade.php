@@ -7,20 +7,24 @@
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
         <div>
             <h3 class="mb-1 fw-bold text-dark">
-                Configurar programa
+                Editar programa y columnas
             </h3>
             <div class="text-muted small">
-                Definí las columnas que tendrá este programa en el tablero y en el PDF.
+                Cambia el nombre de la tarjeta y define que columnas tendran sus planillas.
             </div>
         </div>
 
-        <div class="d-flex gap-2">
-            <a href="{{ route('tablero.index') }}" class="btn btn-outline-primary btn-sm">
-                <i class="fa-solid fa-table-columns"></i> Tablero
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ route('tablero.index') }}" class="btn btn-light border btn-sm">
+                <i class="fa-solid fa-table-columns"></i> Ver tablero
             </a>
 
-            <a href="{{ route('programas.index') }}" class="btn btn-secondary btn-sm">
-                <i class="fa-solid fa-arrow-left"></i> Volver
+            <a href="{{ route('programas.bloques.index', $programa) }}" class="btn btn-success btn-sm">
+                <i class="fa-solid fa-folder-open"></i> Ver planillas
+            </a>
+
+            <a href="{{ route('programas.index') }}" class="btn btn-light border btn-sm">
+                <i class="fa-solid fa-arrow-left"></i> Volver a programas
             </a>
         </div>
     </div>
@@ -61,7 +65,7 @@
                     <div class="col-lg-7">
                         <div class="d-flex flex-column flex-md-row align-items-md-center gap-2">
                             <label class="form-label fw-semibold small mb-0 ajuste-label">
-                                Programa
+                                Nombre del programa
                             </label>
 
                             <input type="text"
@@ -80,7 +84,7 @@
                     <div class="col-lg-3">
                         <div class="visible-inline">
                             <div>
-                                <span class="fw-semibold small">Visible</span>
+                                <span class="fw-semibold small">Mostrar</span>
                                 <span class="text-muted mini-text ms-1">en tablero</span>
                             </div>
 
@@ -97,7 +101,7 @@
 
                     <div class="col-lg-2 d-grid">
                         <button type="submit" class="btn btn-primary btn-sm">
-                            <i class="fa-solid fa-save"></i> Guardar
+                            <i class="fa-solid fa-save"></i> Guardar programa
                         </button>
                     </div>
                 </div>
@@ -110,10 +114,10 @@
         <div class="card-header sol-card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
             <div>
                 <div class="fw-bold text-dark">
-                    Estructura del programa
+                    Columnas de las planillas
                 </div>
                 <small class="text-muted">
-                    Día y fecha ya vienen por defecto. Desde el orden 2 agregás las columnas propias.
+                    Dia y fecha ya vienen por defecto. Agrega solo las columnas que vas a completar en cada fila.
                 </small>
             </div>
 
@@ -132,10 +136,10 @@
                 <div class="col-lg-5">
                     <div class="section-title mb-2">
                         <div class="fw-bold text-dark">
-                            Columnas del programa
+                            Columnas de la tabla
                         </div>
                         <small class="text-muted">
-                            Estas son las columnas reales que tendrá la tabla.
+                            Estas columnas aparecen al cargar filas, en la vista de la planilla y en el PDF.
                         </small>
                     </div>
 
@@ -222,7 +226,7 @@
                                                 </div>
                                             @else
                                                 <div class="small text-muted">
-                                                    Campo editable en cada fila.
+                                                    Se completa al cargar cada fila.
                                                 </div>
                                             @endif
                                         </td>
@@ -283,14 +287,14 @@
                             Vista previa
                         </div>
                         <small class="text-muted">
-                            Ejemplo real de cómo se verá al cargar filas.
+                            Asi se vera una planilla cuando cargues filas.
                         </small>
                     </div>
 
                     <div class="preview-box">
                         <div class="preview-title text-center">
                             <h5>{{ strtoupper($programa->nombre) }}</h5>
-                            <small>Bloque de ejemplo</small>
+                            <small>Planilla de ejemplo</small>
                         </div>
 
                         <div class="table-responsive mt-3">
@@ -361,7 +365,7 @@
 
                     <div class="info-line mt-3">
                         <i class="fa-solid fa-circle-info"></i>
-                        <span>Día y fecha son columnas fijas del sistema.</span>
+                        <span>Dia y fecha son columnas fijas del sistema. Las demas las definis vos.</span>
                     </div>
                 </div>
 
@@ -381,10 +385,10 @@
                 <div class="modal-header">
                     <div>
                         <h6 class="modal-title fw-bold mb-0">
-                            Agregar columna
+                            Agregar columna a la tabla
                         </h6>
                         <small class="text-muted">
-                            Se agregará después de Día y Fecha.
+                            Se agregara despues de Dia y Fecha.
                         </small>
                     </div>
 
@@ -398,7 +402,7 @@
                         <input type="text"
                                name="nombre"
                                class="form-control @error('nombre') is-invalid @enderror"
-                               placeholder="Ej: Grupo, Encargado, Horario"
+                               placeholder="Ej: Grupo, Encargado, Horario, Observacion"
                                value="{{ old('nombre') }}"
                                required>
 
@@ -458,8 +462,8 @@ Grupo 3">{{ old('opciones') }}</textarea>
                                {{ old('visible_en_listado', true) ? 'checked' : '' }}>
 
                         <span>
-                            <strong>Mostrar en tabla y PDF</strong>
-                            <small>Si está activo, esta columna se verá al cargar datos e imprimir.</small>
+                            <strong>Mostrar en la planilla y en el PDF</strong>
+                            <small>Si esta activo, esta columna se vera al cargar datos e imprimir.</small>
                         </span>
                     </label>
 
