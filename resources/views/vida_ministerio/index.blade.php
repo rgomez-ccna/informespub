@@ -8,6 +8,7 @@
 
     $anioImportacion = old('anio', 2026);
     $periodoImportacion = old('periodo', 'enero');
+    $puedeGestionar = in_array(auth()->user()->role, ['secretario', 'colaborador']);
 @endphp
 
 <div class="container py-4" style="max-width: 1150px;">
@@ -20,6 +21,7 @@
             </p>
         </div>
 
+        @if($puedeGestionar)
         <div class="d-flex flex-wrap gap-2">
             <a href="{{ route('vida-ministerio.calificaciones.index') }}" class="btn btn-dark btn-sm">
                 <i class="fa-solid fa-list-check"></i> Calificaciones
@@ -29,6 +31,7 @@
                 <i class="fa-solid fa-plus"></i> Nuevo programa / aviso
             </a>
         </div>
+        @endif
     </div>
 
     @if(session('success'))
@@ -94,6 +97,7 @@
     </div>
 </form>
 
+    @if($puedeGestionar)
     {{-- IMPORTAR --}}
     <div class="card shadow-sm border-0 mb-3">
         <div class="card-body py-3">
@@ -159,6 +163,7 @@
             </form>
         </div>
     </div>
+    @endif
 
     {{-- FORMULARIO REAL PARA PDF SELECCIONADOS --}}
     <form method="GET"
@@ -300,6 +305,7 @@
                                 </td>
 
                                 <td class="text-end">
+                                    @if($puedeGestionar)
                                     <div class="d-inline-flex gap-1">
                                         <a href="{{ route('vida-ministerio.edit', array_merge(
                                                 ['programa' => $programa->id],
@@ -325,6 +331,9 @@
                                             </button>
                                         </form>
                                     </div>
+                                    @else
+                                        <span class="text-muted small">Solo lectura</span>
+                                    @endif
                                 </td>
                             </tr>
                         @empty

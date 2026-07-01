@@ -4,12 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Congregacion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CongregacionController extends Controller
 {
     private function soloSuperadmin()
     {
         abort_if(auth()->user()->role !== 'superadmin', 403);
+    }
+
+    private function soloSecretario()
+    {
+        abort_if(auth()->user()->role !== 'secretario', 403);
     }
 
     public function index()
@@ -83,5 +90,60 @@ class CongregacionController extends Controller
 
         return redirect()->route('congregaciones.index')
             ->with('success', 'Congregación eliminada correctamente.');
+    }
+    public function datos()
+    {
+        $this->soloSecretario();
+
+        $congregacion = auth()->user()->congregacion;
+        abort_if(!$congregacion, 404);
+
+        $congregacionId = $congregacion->id;
+
+        $resumen = [
+            'Usuarios' => DB::table('users')->where('congregacion_id', $congregacionId)->count(),
+            'Publicadores' => DB::table('publicadors')->where('congregacion_id', $congregacionId)->count(),
+            'Informes S-21' => DB::table('registros')->where('congregacion_id', $congregacionId)->count(),
+            'Asistencia' => DB::table('asistencias')->where('congregacion_id', $congregacionId)->count(),
+            'Tablero' => DB::table('programas')->where('congregacion_id', $congregacionId)->count()
+                + DB::table('programa_bloques')->where('congregacion_id', $congregacionId)->count()
+                + DB::table('programa_registros')->where('congregacion_id', $congregacionId)->count(),
+            'Vida y Ministerio' => DB::table('vida_ministerios')->where('congregacion_id', $congregacionId)->count()
+                + DB::table('vida_ministerio_partes')->where('congregacion_id', $congregacionId)->count()
+                + DB::table('vida_ministerio_asignacions')->where('congregacion_id', $congregacionId)->count()
+                + DB::table('vida_ministerio_calificacions')->where('congregacion_id', $congregacionId)->count(),
+        ];
+
+        return view('congregaciones.datos', compact('congregacion', 'resumen'));
+    }
+
+    public function destruirPropia(Request $request)
+    {
+        $this->soloSecretario();
+
+        $congregacion = auth()->user()->congregacion;
+        abort_if(!$congregacion, 404);
+
+        $request->merge([
+            'confirmacion' => mb_strtolower(trim((string) $request->input('confirmacion'))),
+        ]);
+
+        $request->validate([
+            'confirmacion' => ['required', 'in:eliminar'],
+        ], [
+            'confirmacion.in' => 'Para confirmar, escribi eliminar.',
+        ]);
+
+        $nombre = $congregacion->nombre;
+
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        $congregacion->delete();
+
+        return redirect()
+            ->route('login')
+            ->with('status', 'La congregacion "' . $nombre . '" y todos sus datos fueron eliminados definitivamente.');
     }
 }

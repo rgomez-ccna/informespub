@@ -162,6 +162,10 @@ Route::get('/fix-storage-link', function () {
 
 //CONGREGACIONES
 Route::resource('congregaciones', CongregacionController::class)->parameters(['congregaciones' => 'congregacion']);
+Route::get('/mi-congregacion/datos', [CongregacionController::class, 'datos'])
+    ->name('congregacion.datos');
+Route::delete('/mi-congregacion/datos', [CongregacionController::class, 'destruirPropia'])
+    ->name('congregacion.destruir-propia');
 
 
 //PROGRAMAS

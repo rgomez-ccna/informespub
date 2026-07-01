@@ -13,18 +13,26 @@
         </a>
     </div>
 
-    @if($programas->isEmpty())
-        <div class="alert alert-light border text-center">
-            Todavía no hay programas creados.
-            <br>
+    <div class="row g-3">
+        <div class="col-md-6 col-lg-4">
+            <a href="{{ route('vida-ministerio.index') }}" class="text-decoration-none">
+                <div class="card border rounded-3 shadow tablero-card tablero-card-fijo bg-white position-relative h-100" style="--color: #6b5b95;">
+                    <div class="barra-color"></div>
 
-            <a href="{{ route('programas.create') }}" class="btn btn-primary btn-sm mt-3">
-                <i class="fa-solid fa-plus"></i> Crear primer programa
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center text-center" style="height: 115px;">
+                        <h5 class="mb-1 fw-semibold text-dark">
+                            Programa Vida y Ministerio
+                        </h5>
+
+                        <small class="text-muted">
+                            Modulo independiente
+                        </small>
+                    </div>
+                </div>
             </a>
         </div>
-    @else
-        <div class="row g-3">
-            @foreach($programas as $programa)
+
+        @foreach($programas as $programa)
                 @php
                     $colores = [
                         '#f34155',
@@ -65,6 +73,16 @@
                     </a>
                 </div>
             @endforeach
+    </div>
+
+    @if($programas->isEmpty())
+        <div class="alert alert-light border text-center mt-4">
+            Todavia no hay programas personalizados.
+            <br>
+
+            <a href="{{ route('programas.create') }}" class="btn btn-primary btn-sm mt-3">
+                <i class="fa-solid fa-plus"></i> Crear primer programa personalizado
+            </a>
         </div>
     @endif
 
@@ -99,5 +117,10 @@
 .tablero-card h5 {
     font-size: 1.15rem;
 }
+
+.tablero-card-fijo {
+    background: linear-gradient(180deg, #ffffff 0%, #fbfaff 100%);
+}
+
 </style>
 @endsection

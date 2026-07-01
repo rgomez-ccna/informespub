@@ -193,6 +193,7 @@
                             $puedeVerTablero = in_array($rol, ['secretario', 'colaborador', 'tablero']);
                             $puedeGestionarUsuarios = in_array($rol, ['secretario', 'superadmin']);
                             $puedeGestionarCongregaciones = $rol === 'superadmin';
+                            $puedeEliminarDatosCongregacion = $rol === 'secretario';
                         @endphp
 
                         <ul class="navbar-nav me-auto gap-3">
@@ -242,6 +243,14 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-white {{ request()->is('usuarios') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('usuarios.index') }}">
                                         Usuarios
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if($puedeEliminarDatosCongregacion)
+                                <li class="nav-item">
+                                    <a class="nav-link text-white {{ request()->is('mi-congregacion/datos') ? 'bg-light bg-opacity-25' : '' }} rounded-4" href="{{ route('congregacion.datos') }}">
+                                        Datos / baja
                                     </a>
                                 </li>
                             @endif

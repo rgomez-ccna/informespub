@@ -69,9 +69,9 @@
                         <option value="superadmin" {{ old('role', $usuario->role ?? '') == 'superadmin' ? 'selected' : '' }}>Superadmin</option>
                     @endif
 
-                    <option value="secretario" {{ old('role', $usuario->role ?? '') == 'secretario' ? 'selected' : '' }}>Secretario</option>
-                    <option value="colaborador" {{ old('role', $usuario->role ?? '') == 'colaborador' ? 'selected' : '' }}>Colaborador</option>
-                    <option value="tablero" {{ old('role', $usuario->role ?? '') == 'tablero' ? 'selected' : '' }}>Tablero</option>
+                    <option value="secretario" {{ old('role', $usuario->role ?? '') == 'secretario' ? 'selected' : '' }}>Secretario - administrador principal</option>
+                    <option value="colaborador" {{ old('role', $usuario->role ?? '') == 'colaborador' ? 'selected' : '' }}>Colaborador - carga y edicion de datos</option>
+                    <option value="tablero" {{ old('role', $usuario->role ?? '') == 'tablero' ? 'selected' : '' }}>Tablero - solo ver e imprimir</option>
                     <option value="disabled" {{ old('role', $usuario->role ?? '') == 'disabled' ? 'selected' : '' }}>Desactivado</option>
                 </select>
             </div>
