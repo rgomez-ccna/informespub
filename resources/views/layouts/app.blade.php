@@ -448,7 +448,11 @@
     const forms = document.querySelectorAll('form');
 
     forms.forEach(form => {
-        form.addEventListener('submit', function () {
+        form.addEventListener('submit', function (event) {
+            if (event.defaultPrevented) {
+                return;
+            }
+
             const submitButton = this.querySelector('button[type="submit"]');
             if (submitButton) {
                 submitButton.disabled = true;

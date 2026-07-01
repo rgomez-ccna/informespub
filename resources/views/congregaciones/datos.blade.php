@@ -65,12 +65,12 @@
 
                     <p class="small text-muted mb-3">
                         Se eliminan usuarios, publicadores, informes, asistencia, tablero,
-                        Vida y Ministerio y registros asociados. No se puede recuperar desde el sistema.
+                        Vida y Ministerio y registros asociados. Esta accion es irreversible.
                     </p>
 
                     <form method="POST"
                           action="{{ route('congregacion.destruir-propia') }}"
-                          onsubmit="return confirm('Esta accion eliminara definitivamente toda la congregacion y sus datos. Si presionas Cancelar no se hara ningun cambio. ¿Continuar?')">
+                          id="formEliminarCongregacion">
                         @csrf
                         @method('DELETE')
 
@@ -92,7 +92,7 @@
 
                         <button type="submit" class="btn btn-danger btn-sm w-100">
                             <i class="fa-solid fa-triangle-exclamation"></i>
-                            Eliminar congregacion
+                            Eliminar definitivamente todos los datos
                         </button>
                     </form>
                 </div>
@@ -108,4 +108,23 @@
     padding-bottom: 7px;
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('formEliminarCongregacion');
+
+    if (!form) {
+        return;
+    }
+
+    form.addEventListener('submit', function (event) {
+        const ok = confirm('Esta accion eliminara definitivamente toda la congregacion y sus datos. ¿Continuar?');
+
+        if (!ok) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+        }
+    }, true);
+});
+</script>
 @endsection
